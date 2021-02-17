@@ -145,6 +145,8 @@ ___________________________________________
   
 # 2. Data visualization
 
+## Point data
+
 We can visualize multiple spatial objects in the same map adding several layers to our plot. We use the argument `add = T` in the layers we want to add to our base plot.
 
 ```{r}
@@ -223,7 +225,7 @@ tm_shape(Iop) +  # base layer
             frame = F, # remove frame
             legend.hist.width = 3) # wisth of histogram
 ```
-### Interactive maps
+### 3.1.1 Interactive maps
 
 One of the nice things about tmap is that we can ver easy convert our static map into something interactive. We use the function `tmap_mode()` to switch between the interctive mode ('view') to the static mode ('plot'). Now we will create a choropleth map like the one we did before, but add it as an interactive map laer.  
 
@@ -256,7 +258,6 @@ Similarly to `tmap`, we can also convert our map into an interactive map using t
 plotly::ggplotly(p)
 ```
 
-
-ggplot tiene muchas opciones de personalizacion pero en este tutorial no las cubriremos
+ggplot and tmap have more personalization options that will not be covered in this tutorial. For more plotting information i recommend the [R Graph Gallery](https://www.r-graph-gallery.com) which has several examples and code for making different types of plots
 
 [Go Back](index.html)
