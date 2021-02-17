@@ -1,6 +1,10 @@
 ---
 title: "Introduction to R"
 author: Jose Pablo Gomez-Vazquez
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ____________________________________________________________________
@@ -35,7 +39,7 @@ When we have a vector, we can ask R specific values inside an object.
 ```{r}
 # Here we ask the 3rd value from our sequence
 x[3]
-# MNow we multiply the 3rd value of the x sequence times the 5th value of the y sequence
+# Now we multiply the 3rd value of the x sequence times the 5th value of the y sequence
 x[3] * y[5]
 ```
 
@@ -310,5 +314,5 @@ plot(N~week, # Our variables
      ylab = "Number of movements") # label for y axis
 ```
 
-[Go Back](Temario_WS02.html)
+[Go Back](index.html)
 

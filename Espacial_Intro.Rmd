@@ -1,6 +1,10 @@
 ---
 title: "Spatial data maipulation"
 author: Pablo Gomez-Vazquez
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 # Introduction.  
 
@@ -50,7 +54,7 @@ devtools::install_github("jpablo91/STNet")
 ________________________________________
   
   
-# 1. Loading th data
+# 1. Loading the data
 
 ```{r message = F}
 # Loading the libraries
@@ -126,7 +130,7 @@ Nodesp <- Nodes %>%
   st_transform(st_crs(Iop))
 ```
 
-If we observe our mos (projected and not projected) side by side, we can notice that there is a slight curvature on the straight lines such as the north and south borders.  
+If we observe our map (projected and not projected) side by side, we can notice that there is a slight curvature on the straight lines such as the north and south borders.  
 
 ```{r}
 par(mfrow = c(1,2), mar = c(0, 0, 0, 0))
@@ -141,41 +145,40 @@ ___________________________________________
   
 # 2. Data visualization
 
-Podemos visualizar multiples objetos espaciales en un mismo mapa. En R, los mapas funcionan por capas, podemos agregar multiples capas en un mapa, usamos el argumento `add = T` en las capas que queramos agregar al mapa base.
+We can visualize multiple spatial objects in the same map adding several layers to our plot. We use the argument `add = T` in the layers we want to add to our base plot.
 
 ```{r}
-# Visualizar los datos:
-plot(Io$geometry) # Mapa base, primera capa
-plot(Nodes["Prevalence"], pch = 16, add = T) # segunda capa
+plot(Io$geometry) # Base map, first layer
+plot(Nodes["Prevalence"], pch = 16, add = T) # Second layer
 ```
 
-
-Usando la informacion de la prevalencia aparente por predio podems asignar el tamaño de los puntos, y colorearlos conforme al tipo de granja. Usaremos la funcion `rescale()` del paquete `scales` para reescalar el tamaño de los puntos entre 0.5 a 1.5 de acuerdo a su prevalencia aparente.  
-Tambien podemos agregar una leyenda que nos describa los simbolos del mapa, para esto usamos la funcion `legend()`, la cual puede tomar varios argumentos, como la posicion, los nombres de los niveles, entre otros.  
+Using the information of the apparent prevalence by farm we can change the size of the point and color them by type of farm. We use the function `rescale()` from the `scales` package to rescale the points between 0.5 - 1.5 according to their apparent prevalence.  
+We can also add a legend that shows what they symbology means in our map. For this we use the function `legend()`, which will take multiple arguments such as the location, names to display, among others.  
 
 ```{r}
-# Usaremos R color brewer para obtener una palera de colores
-colpal <- RColorBrewer::brewer.pal(n = length(levels(Nodes$farm_type)), # Numero de colores que necesitamos
-                                   name = "Dark2") # Paleta de la cual los obtendremos
-# Visualizar el mapa
-## mapa de fondo
-plot(Iop$geometry, col = "grey90", main = "Distribucion de las granjas y su prevalencia") 
-## Primera capa
-plot(Nodesp$geometry, # objeto que agregaremos
-     pch = 16, # tipo de punto 
-     cex = scales::rescale(Nodesp$Prevalence, to = c(0.5, 1.5)), # Tamaño de punto
-     col = colpal[Nodesp$farm_type], # Color para cada punto
-     add = T) # agregar el objeto a la figura anterior
-## Leyenda
-legend("topright", # Posicion de la leyenda
-       legend = levels(Nodesp$farm_type), # Las categorias de la leyenda
-       pch = 16, # Tipo de punto
-       col = colpal)  # Color de los puntoa
+# UWe use the function rainbow to obtain a palette
+colpal <- rainbow(length(levels(Nodes$farm_type)), # Number of colors needed
+                  s = 0.6) # saturation for the colors
+
+# Visualize the map
+## background map
+plot(Iop$geometry, col = "grey90", main = "Farm distribution and its prevalence") 
+## First layer
+plot(Nodesp$geometry, # Spatial points object
+     pch = 16, # Type of point
+     cex = scales::rescale(Nodesp$Prevalence, to = c(0.5, 1.5)), # Size
+     col = colpal[Nodesp$farm_type], # Color for the points
+     add = T) # Add as a second layer for previous plot
+## Legend
+legend("topright", # Position of the legend
+       legend = levels(Nodesp$farm_type), # Categories to show
+       pch = 16, # Type of point
+       col = colpal)  # Colors for the points
 ```
 
-## 2.1 Mapa coroplético
+## 2.1 Choropleth Maps
 
-Podemos agregar la informacion de prevalencia a nivel de condado y representarla en un mapa coropletico. Primero uniremos la informacion de los puntos (Nodes) con el mapa de los condados (Io) usando la funcion `st_join()`. Esta funcion creara duplicados de los condados que tienen mas de una granja, entonces tendremos que sumar el numero de casos de esos duplicados usando la funcion `group_by()` y `summarise()`, y despues calcularemos a nivel condado.  
+We can aggregate the data at county level to create a choropleth map.  First we will join the farm information with the county using a spatial joint with the function `st_join()`. This function will create duplicates of our conuties since we have multiple farms per county, so then we will sum all the cases and number of observations using `group_by()` and `summarise()`, and calculate the prevalence at county level (instead of farm level).    
 
 ```{r}
 Iop <- Iop %>%
@@ -193,59 +196,67 @@ ___________________________________________
   
   
 
-# 3. Otras librerias para mapas
+# 3. Other mapping libraries
 
-Existen otras librerias que facilitan la visualizacion de mapas en R, usando el lenguaje basico de R se pueden hacer mapas de manera muy flexible, pero requiere mas conocimiento de las funciones en R. Otras opciones como tmap y ggplot, ofrecen funciones mas intuitivas para crear mapas de maner mas rapida.  
-  
+There are other libraries that can be used to create maps in R, the base R functions for graphics can be very flexible, but require more knowledge about the functions in R. There ar other options such as `tmap` and `ggplot` that allow us to use more intuitive functions to create maps.  
   
 ## 3.1 tmap
 
-La libreria [tmap](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) tiene varias opciones para mapas, la syntaxis es muy similar a ggplot, se pueden crear varios mapas y luego acomodarlos todos en un layout.  
-Por ejemplo, podemos especificar una paleta de colores para nuestro mapa 
+[`tmap`](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) has several options for mapping and with very similar syntax to the tydiverse packages (`dplyr`, `ggplot2`). We can create several maps and arrange them into a layout. For example, we can specify a predefined color palette for our map without the need of telling R how many colors we need.  
 
 ```{r message = F}
 library(tmap)
 ```
 
-Primero crearemos un mapa de los predios y su prevalencia aparente. 
+First we create a map of the farms and their apparent prevalence  
 
 ```{r}
-# capa base
-tm_shape(Iop) + 
-  # color y otras opciones de la capa base
-  tm_polygons(col = "grey80") + 
-  # segunda capa
-  tm_shape(Nodesp) + 
-  # Opciones de la segunda capa
-  tm_symbols("Prevalence", # Nombre de la variable que se va a usar
-             size = 0.5, # Tamaño de los puntos
-             legend.hist = T) + # Aggregar un histograma  
-  # Opciones del layout
-  tm_layout(legend.outside = T, # leyendas afuera
-            frame = F, # quitaremos el marco
-            legend.hist.width = 3) # ancho del histograma
+tm_shape(Iop) +  # base layer
+  tm_polygons(col = "grey80") + # color of the base layer
+  tm_shape(Nodesp) + # second layer
+  # Options for second layer
+  tm_symbols("Prevalence", # Name of the variable we will use
+             size = 0.5, # Size of the points
+             legend.hist = T) + # Add a histogram
+  # Layout options
+  tm_layout(legend.outside = T, # We want the legend outside the box
+            frame = F, # remove frame
+            legend.hist.width = 3) # wisth of histogram
 ```
+### Interactive maps
 
-
-Podemos tambien crear un mapa coropletico como el que hicimos anteriormente 
+One of the nice things about tmap is that we can ver easy convert our static map into something interactive. We use the function `tmap_mode()` to switch between the interctive mode ('view') to the static mode ('plot'). Now we will create a choropleth map like the one we did before, but add it as an interactive map laer.  
 
 ```{r}
+tmap_mode('view')
 tm_shape(Iop) +
-  tm_polygons("Prevalence", palette = "-RdYlBu") +
+  tm_polygons("Prevalence", palette = "-RdYlBu", alpha = 0.5) +
   tm_layout(legend.outside = T, frame = F)
 ```
 
 ## 3.2 ggplot2
 
-ggplot2 es una de las librerias mas populares para figuras en R, podemos agregar objetos sf usando la funcion `geom_sf()`
+`ggplot2` is one of the most popular libraries for creating figures in R, we can add sf objects using the function `geom_sf()`  
 
 ```{r}
 library(ggplot2)
 
-ggplot() +
+p <- ggplot() +
   geom_sf(data = Iop, aes(fill = Prevalence)) +
-  theme_classic()
+  theme_void()
+
+p
+```
+
+Similarly to `tmap`, we can also convert our map into an interactive map using the library `plotly`
+
+```{r}
+# make sure you have it installed 
+# install.packages("plotly")
+plotly::ggplotly(p)
 ```
 
 
 ggplot tiene muchas opciones de personalizacion pero en este tutorial no las cubriremos
+
+[Go Back](index.html)
