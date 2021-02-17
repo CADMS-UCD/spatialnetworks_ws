@@ -18,7 +18,7 @@ navbar:
     - text: Intro to R
       href: Intro_to_R.html
     - text: Intro to Spatial data
-      href: Espacial_Intro.html
+      href: Spatial_intro.html
   
   - text: Contact
     menu:

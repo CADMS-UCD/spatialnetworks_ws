@@ -51,7 +51,7 @@ ________________________________________________________________________________
 An introduction to R and spatial data can be found in the following links:  
 
   - [Introduction to R](Intro_a_R.html)
-  - [Spatial data in R](Espacial_Intro.html)
+  - [Spatial data in R](Spatial_intro)
   
 ### Recommended reading
   
