@@ -1,10 +1,14 @@
 ---
 title: ""
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 <img src ="Images/cadms-left.png" style="width:50%;position:center">
 
-# Introduction:
+# Introduction
 
 Most of infectious disease are transmitted via direct contacts, therefore, animal trade and other contacts between animals play an escential role in the disease spread.  
 Social network analysis (SNA) is a powerful tool to explore the interactions between agents in a contact network and obtain additional information regarding the structure and dynamic on a community. The agents or nodes could be defined as the farms that belng to a trade network, wildlife animals followed by gps collars, or animals observed in a group. Using these methodologies we can identify individuals that could have a bigger role in disease spread when a disease is introduced to the community.  
@@ -13,7 +17,7 @@ In this workshop we will use data regarding movement of production animals in a 
 
 This workshop is aimed for students, researchers and other people interested in disease transmission and population dynamics.
 
-# Objectives:
+# Objectives
 
  - Analyze and describe static and dynamic networks.
  - Advantages and disadvantages of static and dynamic networks and when we can use them.
@@ -23,7 +27,7 @@ This workshop is aimed for students, researchers and other people interested in 
  - How to incorporate the results from network analysis with other statistical methods.
  
 
-# Requisites:
+# Requisites
   - Laptop or desktop computer  
   - Software we will use:
     - R and R studio.
@@ -49,7 +53,7 @@ An introduction to R and spatial data can be found in the following links:
   - [Introduction to R](Intro_a_R.html)
   - [Spatial data in R](Espacial_Intro.html)
   
-### Recommended reading:
+### Recommended reading
   
   
   - Martínez-López B, Perez AM, Sánchez-Vizcaíno JM. Social network analysis. Review of general concepts and use in preventive veterinary medicine. Transbound Emerg Dis. 2009 May;56(4):109-20. doi: 10.1111/j.1865-1682.2009.01073.x. PMID: 19341388.
@@ -61,9 +65,7 @@ An introduction to R and spatial data can be found in the following links:
   
 ____________________________________________________________________________________________________________
   
-## Schedule
-
-### Day 1
+# Schedule
 
 |Time       |Day 1              | Day 2                           | Day 3                                   |
 |-----------|-------------------|---------------------------------|-----------------------------------------|

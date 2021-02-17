@@ -20,6 +20,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -261,6 +264,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -268,6 +334,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -343,14 +419,14 @@ $(document).ready(function () {
 
 <p><img src ="Images/cadms-left.png" style="width:50%;position:center"></p>
 <div id="introduction" class="section level1">
-<h1>Introduction:</h1>
+<h1>Introduction</h1>
 <p>Most of infectious disease are transmitted via direct contacts, therefore, animal trade and other contacts between animals play an escential role in the disease spread.<br />
 Social network analysis (SNA) is a powerful tool to explore the interactions between agents in a contact network and obtain additional information regarding the structure and dynamic on a community. The agents or nodes could be defined as the farms that belng to a trade network, wildlife animals followed by gps collars, or animals observed in a group. Using these methodologies we can identify individuals that could have a bigger role in disease spread when a disease is introduced to the community.</p>
 <p>In this workshop we will use data regarding movement of production animals in a contact network to demonstrate the applications of spatio-temporal network analysis. These methodologies can be applied to other settings such as wildlife monitoring, exploring hierarchical relationships between animal groups, among others. The first part of the workshop will focus on the description of static networks and the second part will be using dynamic network analysis, which includes temporal dynamics of the movements. Both parts also will include the spatial component.</p>
 <p>This workshop is aimed for students, researchers and other people interested in disease transmission and population dynamics.</p>
 </div>
 <div id="objectives" class="section level1">
-<h1>Objectives:</h1>
+<h1>Objectives</h1>
 <ul>
 <li>Analyze and describe static and dynamic networks.</li>
 <li>Advantages and disadvantages of static and dynamic networks and when we can use them.</li>
@@ -361,7 +437,7 @@ Social network analysis (SNA) is a powerful tool to explore the interactions bet
 </ul>
 </div>
 <div id="requisites" class="section level1">
-<h1>Requisites:</h1>
+<h1>Requisites</h1>
 <ul>
 <li>Laptop or desktop computer<br />
 </li>
@@ -385,7 +461,7 @@ Social network analysis (SNA) is a powerful tool to explore the interactions bet
 <li><a href="Espacial_Intro.html">Spatial data in R</a></li>
 </ul>
 <div id="recommended-reading" class="section level3">
-<h3>Recommended reading:</h3>
+<h3>Recommended reading</h3>
 <ul>
 <li>Martínez-López B, Perez AM, Sánchez-Vizcaíno JM. Social network analysis. Review of general concepts and use in preventive veterinary medicine. Transbound Emerg Dis. 2009 May;56(4):109-20. doi: 10.1111/j.1865-1682.2009.01073.x. PMID: 19341388.</li>
 <li>Farine, DR. When to choose dynamic vs. static social network analysis. J Anim Ecol. 2018; 87: 128– 138. <a href="https://doi.org/10.1111/1365-2656.12764" class="uri">https://doi.org/10.1111/1365-2656.12764</a><br />
@@ -396,10 +472,9 @@ Social network analysis (SNA) is a powerful tool to explore the interactions bet
 <hr />
 </div>
 </div>
-<div id="schedule" class="section level2">
-<h2>Schedule</h2>
-<div id="day-1" class="section level3">
-<h3>Day 1</h3>
+</div>
+<div id="schedule" class="section level1">
+<h1>Schedule</h1>
 <table>
 <colgroup>
 <col width="10%" />
@@ -431,11 +506,11 @@ Social network analysis (SNA) is a powerful tool to explore the interactions bet
 </tbody>
 </table>
 </div>
+
+
+
 </div>
 </div>
-
-
-
 
 </div>
 
@@ -468,6 +543,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
