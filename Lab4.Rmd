@@ -277,8 +277,6 @@ data.frame(id = 1:length(fwd), fwd, bwd) %>%
   head(10)
 ```
 
-Al parecer el nodo 7 tiene l mayour numero de alcance entre la granjas. Podemos visualizar el set de alcance
-
 Looks like the node 7 has the highest number of reachable farms among the farms. We can visualize he reachable st using the functions `tpath` and `transmissionTimeline`, both provide the noode id and time when the contact happened. The first function allow us to visualize the nodes spatially and the second in a nice timeline.  
 
 ```{r}
@@ -306,8 +304,6 @@ P17 <- tPath(n1, 17, direction = "bkwd", type = "latest.depart")
 plot(P17, edge.col = colpal[3])
 ```
 
-
-
 Now we will create a function to show the paths in a spatial plot and non spatial.
 
 ```{r}
@@ -325,7 +321,7 @@ MaPaths <- function(Net, v, direction, Pts, coords, BG){
 MaPaths(Net = n1, v = 17, direction = "fwd", Pts = node_attrib, coords = a, BG = IO$geometry)
 ```` 
 
-Another way tovisualize the network activity is showing at which time points each of the node was active. the unpper part of the plot represent the presence of the node in the network and the lower part represent the activity of the node in the network.  
+Another way to visualize the network activity is showing at which time points each of the node was active. the unpper part of the plot represent the presence of the node in the network and the lower part represent the activity of the node in the network.  
 
 ```{r}
 timeline(n1)

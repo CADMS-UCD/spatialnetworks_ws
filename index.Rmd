@@ -11,7 +11,7 @@ Análisis de redes sociales ha sido reconocido como una valiosa herramienta para
 
 En este curso utilizamos datos de movimientos de animales de produccion en una red de comercio en el contexto de transmision de enfermedades para demostrar las aplicaciones de el análisis espacio-temporal de redes. Estas metodologias pueden ser aplicadas a otras areas como monitoreo de fauna silvestre, explorar las relaciones jerarquicas entre animales en un grupo, entre otras. La primera parte del curso se enfoca en las descripcion de redes estaticas y la segunda en el análisis de redes dinamicas que consideran la temporalidad, ambas partes incluyen tambien las relaciones espaciales entre agentes en la red.  
 
-El curso esta dirigido para estudiantes, investigadores y profesionistas interesados en transmision de enfermedades y dinamicas de poblaciones.
+This workshop is aimed for students, researchers and other people interested in disease transmission and population dynamics.
 
 # Objectives:
 
@@ -60,29 +60,8 @@ ________________________________________________________________________________
 ## Schedule
 
 ### Day 1
-Introduction to SNA
-|Time       |Topic                                         |
-|-----------|----------------------------------------------|
-|9:00-9:30  |Introduction to SNA                           |
-<!-- |10:00-11:00|[I: Static Network Analysis](Part_I.html)     | -->
-|11:00-12:00|[Lab 1](Lab1.html)                            |
 
-
-### Day 2
-Spatial networks
-
-|Time       |Topic                                       |
-|-----------|--------------------------------------------|
-|13:00-14:00|[II: Network Statistics](Part_II.html)      |
-|14:00-15:00|[Lab 2](Lab2.html)                          |
-
-### Day 3
-Dynamic Networks and network based models
-|Time       |Topic                                         |
-|-----------|----------------------------------------------|
-|9:50-10:30 |[III: Dynamic Network Analysis](Part_III.html)|
-|10:30-11:30|[Lab 4](Lab4.html)                            |
-|13:30-14:20|[IV: Network Based Models](Part_IV.html)      |
-|14:20-15:00|[Lab 5](Lab5.html)                            |
-
-
+|Time       |Day 1              | Day 2                           | Day 3                                   |
+|-----------|-------------------|---------------------------------|-----------------------------------------|
+|6:00-6:30  |Introduction to SNA|Visualization of spatial networks|Dynamic Networks and network based models|
+|6:30-8:00  |Lab 1              | Lab 2                           | Lab 3                                   |
