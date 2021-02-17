@@ -1,0 +1,88 @@
+---
+title: ""
+---
+
+<img src ="Images/cadms-left.png" style="width:50%;position:center">
+
+# Introduction:
+
+Gran parte de las enfermedades infecciosas son transmitidas a traves de contactos directos, por lo que el comercio de animales y los contactos entre animales juega un papel muy importante en la diseminacion de enfermedades.  
+Análisis de redes sociales ha sido reconocido como una valiosa herramienta para describir las interacciones entre agentes en una red de contactos y obtener informacion adicional sobre la estructura y dinamica de una comunidad. Los agentes o nodos en una red pueden ser definidos como las granjas que forman parte de una red de comercio, animales que pueden ser monitoreados para detectar contactos con otros animales silvestres o domesticos, o animales que pueden ser observados dentro de un grupo. Usando estas metodologias podemos identificar agentes que potencialmente tendrian un mayor rol en caso de una epidemia en la transmision de enfermedades.  
+
+En este curso utilizamos datos de movimientos de animales de produccion en una red de comercio en el contexto de transmision de enfermedades para demostrar las aplicaciones de el análisis espacio-temporal de redes. Estas metodologias pueden ser aplicadas a otras areas como monitoreo de fauna silvestre, explorar las relaciones jerarquicas entre animales en un grupo, entre otras. La primera parte del curso se enfoca en las descripcion de redes estaticas y la segunda en el análisis de redes dinamicas que consideran la temporalidad, ambas partes incluyen tambien las relaciones espaciales entre agentes en la red.  
+
+El curso esta dirigido para estudiantes, investigadores y profesionistas interesados en transmision de enfermedades y dinamicas de poblaciones.
+
+# Objectives:
+
+ - Analyze and describe static and dynamic networks.
+ - Advantages and disadvantages of static and dynamic networks and when we can use them.
+ - How to incorporate the spatial relationships in the analysis of networks.
+ - Visualize and present networks using spatial and non spatial approaches.
+ - How to incorporate the transmission and potential spread of diseases in a network.
+ - How to incorporate the results from network analysis with other statistical methods.
+ 
+
+# Requisites:
+  - Laptop or desktop computer  
+  - Software we will use:
+    - R and R studio.
+    - Google earth. 
+  - Recommended reading:  
+    - Farine, DR. When to choose dynamic vs. static social network analysis. J Anim Ecol. 2018; 87: 128– 138. https://doi.org/10.1111/1365-2656.12764  
+    - 
+  
+
+**Please make sure you have R version >3.5**  
+
+____________________________________________________________________________________________________________
+
+  
+ 
+## Data
+ 
+The data used for this workshop is contained in the package `STNet`.
+To install `STNet` we need the package `devtools` and use the command `devtools::install_github("jpablo91/STNet")`. Some of the data used for the introduction tutorial can be found on [this google drive folder](https://drive.google.com/drive/u/0/folders/1m7Y9yxkD4M_wPRnyWE3a-JUjyy7nJCTk).  
+  
+  
+____________________________________________________________________________________________________________
+  
+## Pre-workshop materials
+
+An introduction to R and spatial data can be found in the following links:  
+
+  - [Introduction to R](Intro_a_R.html)
+  - [Spatial data in R](Espacial_Intro.html)
+
+  
+____________________________________________________________________________________________________________
+  
+## Schedule
+
+### Day 1
+Introduction to SNA
+|Time       |Topic                                         |
+|-----------|----------------------------------------------|
+|9:00-9:30  |Introduction to SNA                           |
+<!-- |10:00-11:00|[I: Static Network Analysis](Part_I.html)     | -->
+|11:00-12:00|[Lab 1](Lab1.html)                            |
+
+
+### Day 2
+Spatial networks
+
+|Time       |Topic                                       |
+|-----------|--------------------------------------------|
+|13:00-14:00|[II: Network Statistics](Part_II.html)      |
+|14:00-15:00|[Lab 2](Lab2.html)                          |
+
+### Day 3
+Dynamic Networks and network based models
+|Time       |Topic                                         |
+|-----------|----------------------------------------------|
+|9:50-10:30 |[III: Dynamic Network Analysis](Part_III.html)|
+|10:30-11:30|[Lab 4](Lab4.html)                            |
+|13:30-14:20|[IV: Network Based Models](Part_IV.html)      |
+|14:20-15:00|[Lab 5](Lab5.html)                            |
+
+

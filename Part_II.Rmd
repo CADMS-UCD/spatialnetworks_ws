@@ -1,0 +1,11 @@
+---
+title: "Part II: Network Statistics"
+---
+
+<object data="PDFs/Part_II.pdf" width="750px" height="750px">
+    <embed src="PDFs/Part_II.pdf">
+    </embed>
+</object>
+
+
+[Inicio](index.html)

@@ -1,0 +1,11 @@
+---
+title: "Part IV: Introduction to Network Based Models"
+---
+
+<object data="PDFs/Part_IV.pdf" width="750px" height="750px">
+    <embed src="PDFs/Part_IV.pdf">
+    </embed>
+</object>
+
+
+[Inicio](index.html)

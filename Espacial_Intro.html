@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Pablo Gomez-Vazquez" />
+
+
+<title>Manipulacion de datos espaciales</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">CADMS</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Pre Workshop
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Intro_a_R.html">Intro to R</a>
+    </li>
+    <li>
+      <a href="Espacial_Intro.html">Intro to Spatial data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Contact
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://cadms.vetmed.ucdavis.edu">
+        <span class="fas fa-server"></span>
+         
+        CADMS Website
+      </a>
+    </li>
+    <li>
+      <a href="mailto:jpgo@ucdavis.edu">
+        <span class="fas fa-envelope"></span>
+         
+        Email
+      </a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Manipulacion de datos espaciales</h1>
+<h4 class="author">Pablo Gomez-Vazquez</h4>
+
+</div>
+
+
+<div id="introduccion." class="section level1">
+<h1>Introduccion.</h1>
+<p>La informacion espacial puede ser representada de dos maneras principalmente:<br />
+- <em>Vectores</em>: representan objetos en diferentes dimensiones.<br />
+- <em>Rasters</em>: Representan valores continuos en una cuadricula.</p>
+<div id="vectores" class="section level2">
+<h2>Vectores</h2>
+<p>Podemos representar objetos espaciales en diferentes dimensines:<br />
+- <em>Punto</em>, es el tio de objeto mas basico, contiene informacion sobre la localizacion geografica de un evento u objeto. Por ejemplo, ubicacion geografica de una granja, una captura, o un reporte de caso.<br />
+- <em>Linea</em>, contiene informacion sobre la ubicacion y direccion de un objeto. Por ejemplo una carretera, rio, o una ruta.<br />
+- <em>Poligono</em>, contiene ubicacion geografica y geometria de un objeto. Usamos poligonos para representar la forma de un territorio, un edificio, un lago.</p>
+<p>Ademas de tener la geometria de un objeto, podemos agregar informacion sobre el objeto, por ejemplo, el nombre, identificador, temperatura registrada en ese punto entre otros.</p>
+</div>
+<div id="rasters" class="section level2">
+<h2>Rasters:</h2>
+<p>Usamos rasters para representar valores continuos en un campo. Los rasters son una coleccion de valores en una cuadricula. La resolucion del es basicamente el tamaño de la celda en nuestra cuadricula. Usamos rasters para representar valores como tipo de suelo, temperatura altitud, entre otros.</p>
+</div>
+<div id="objetos-espaciales-en-r." class="section level2">
+<h2>Objetos espaciales en R.</h2>
+<p>En este tutorial introduciremos a manipulacion de datos espaciales en R.</p>
+<p>Existen dos formatos principales para manipular datos espaciales en R:</p>
+<ul>
+<li><strong>SpatialDataFrame</strong> de la libreria <code>sp</code>: Este formato fue de los primeros introducidos para cargar datos en R, por lo tanto existen muchas librerias que dependen de este formato (i.e. <code>raster</code>, <code>spdep</code>, <code>spstat</code>).<br />
+</li>
+<li><strong>Simple features</strong> de la libreria <code>sf</code>: Esta libreria fue desarrollada mas recientemente, esta libreria fue creada para ser mas intuitiva con otros paquetes de tidyverse. este tipo de objetos tiene sopporte para el formato de pipelines (<code>%&gt;%</code>). El problema de esta libreria es que dado a ue es mas reciente, aldunas librerias no son compatibles con este formato.</li>
+</ul>
+<p>Aprender a trabajar con los dos formatos tiene sus ventajas, para manipulacion de los datos <code>sf</code> es mas intuitivo y poderoso, pero para analisis espacial <code>sp</code> es mas robusto.</p>
+<p>En este curso usaremos <code>sf</code> principalmente, pero habra situaciones en las que tengamos que cambiar de un formato a otro.</p>
+<hr />
+<p>Para este curso, se ha desarrollado el paquete en R <code>STNet</code> que incluye los datos y algunas funciones que usaremos.<br />
+Para instalar la libreria tenemos que usar el paquete <code>devtools</code>, si no esta instalado habra que instalarlo.</p>
+<pre class="r"><code># Instalamos devtools
+install.packages(&quot;devtools&quot;)
+# Instalamos STNet desde github
+devtools::install_github(&quot;jpablo91/STNet&quot;)</code></pre>
+<hr />
+</div>
+</div>
+<div id="cargar-los-datos" class="section level1">
+<h1>1. Cargar los datos</h1>
+<pre class="r"><code># Cargamos las librerias
+library(STNet) 
+library(sf)
+library(dplyr)
+# cargamos los datos
+data(&quot;PRRS&quot;) 
+data(&quot;SwinePrem&quot;)
+# Cargamos los datos espaciales
+Io &lt;- st_read(system.file(&quot;data/Io.shp&quot;, package = &quot;STNet&quot;))</code></pre>
+<pre><code>## Reading layer `Io&#39; from data source `/Library/Frameworks/R.framework/Versions/4.0/Resources/library/STNet/data/Io.shp&#39; using driver `ESRI Shapefile&#39;
+## Simple feature collection with 99 features and 2 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -96.63567 ymin: 40.37454 xmax: -90.13931 ymax: 43.50465
+## geographic CRS: WGS 84</code></pre>
+<p>La funcion <code>st_read()</code> automaticamente muestra algo de informacion sobre nuestro shapefile, pero podemos ver mas detalles cuando lo imprimimos desde la consola:</p>
+<pre class="r"><code>Io</code></pre>
+<pre><code>## Simple feature collection with 99 features and 2 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -96.63567 ymin: 40.37454 xmax: -90.13931 ymax: 43.50465
+## geographic CRS: WGS 84
+## First 10 features:
+##    NAME_1     NAME_2                       geometry
+## 1    Iowa      Adair POLYGON ((-94.24274 41.5030...
+## 2    Iowa      Adams POLYGON ((-94.4728 41.1566,...
+## 3    Iowa  Allamakee POLYGON ((-91.20658 43.4250...
+## 4    Iowa  Appanoose POLYGON ((-92.71506 40.5902...
+## 5    Iowa    Audubon POLYGON ((-94.74762 41.8609...
+## 6    Iowa     Benton POLYGON ((-91.83191 42.2986...
+## 7    Iowa Black Hawk POLYGON ((-92.29958 42.2974...
+## 8    Iowa      Boone POLYGON ((-93.70088 42.2079...
+## 9    Iowa     Bremer POLYGON ((-92.08252 42.9061...
+## 10   Iowa   Buchanan POLYGON ((-91.60603 42.6437...</code></pre>
+<p>El resultado muestra:<br />
+- <code>geometry type</code>: El tipo de shapefiles (ya sea point, lines o polygons).<br />
+- <code>dimension</code> Dimensiones usadas en el shapefile.<br />
+- <code>bbox</code>: La extension de nuestros datos.<br />
+- <code>epsg (SRID)</code>: La proyeccion en formato <em>EPSG</em> (El cual es un codigo estandarizado para describir la proyeccion).<br />
+- <code>proj4string</code>: La proyeccion en formato proj4string.<br />
+- Los 10 primeros elementos.</p>
+<p>Los objetos <code>sf</code> son escencialmente un <code>data.frame</code> con informacion extra sobre la geometria y proyeccion. Podemos obtener la geometria unicamente usando el operador <code>$</code> o la funcion <code>st_geometry()</code> y despues mostrarla en una figura</p>
+<pre class="r"><code>plot(Io$geometry)</code></pre>
+<p><img src="Espacial_Intro_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Asi mismo, podemos extraer unicamente los datos sin la geometria usando la funcion <code>data.frame()</code>:</p>
+<pre class="r"><code>data.frame(Io) %&gt;%
+  head() # usamos la funcion head para ver unicamente los primeros 6</code></pre>
+<pre><code>##   NAME_1    NAME_2                       geometry
+## 1   Iowa     Adair POLYGON ((-94.24274 41.5030...
+## 2   Iowa     Adams POLYGON ((-94.4728 41.1566,...
+## 3   Iowa Allamakee POLYGON ((-91.20658 43.4250...
+## 4   Iowa Appanoose POLYGON ((-92.71506 40.5902...
+## 5   Iowa   Audubon POLYGON ((-94.74762 41.8609...
+## 6   Iowa    Benton POLYGON ((-91.83191 42.2986...</code></pre>
+<div id="convirtiendo-data.frames-a-sf" class="section level2">
+<h2>1.1 Convirtiendo data.frames a sf</h2>
+<p>Primero obtenemos la prevalencia por predio:</p>
+<pre class="r"><code>PRRS_S &lt;- PRRS %&gt;% 
+  group_by(id) %&gt;%  # Agrupamos por Id
+  summarise(N = n(), Cases = sum(Result)) %&gt;% # Obtenemos el numero de muestras y positivos
+  mutate(Prevalence = Cases/N) # Estimamos una prevalencia</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<p>Despues vamos a unir esta nueva tabla con las ubicaciones de los predios (SwinePrem):</p>
+<pre class="r"><code>SwinePrem &lt;- SwinePrem %&gt;% 
+  left_join(PRRS_S, by = &quot;id&quot;)</code></pre>
+<p>Ahora usatemos la funcion <code>st_as_sf()</code> para convertir la <code>data.frame</code> a <code>sf</code>. Necesitamos especificar la base de datos, coordinadas y CRS.</p>
+<pre class="r"><code>Nodes &lt;- SwinePrem %&gt;%
+  st_as_sf(coords = c(&quot;long&quot;, &quot;lat&quot;), # Los nombres en nuestra base de datos para coordenadas
+           crs = st_crs(Io)) # el sistema de coordenadas que usaremos</code></pre>
+</div>
+<div id="proyeccion-de-los-datos." class="section level2">
+<h2>1.2 Proyeccion de los datos.</h2>
+<p>Nuestro objeto espacial no esta proyectado, lo que significa que estamos representando los datos en un plano sin considerar la curvatura de la tierra, algo que solo un terraplanista haria. El impacto de la proyeccion en nuestros datos, estara asociado con el tamaño de nuestra area de estudio. En areas pequeñas no habra mucho impacto, pero en areas grandes podemos ver mayor impacto.</p>
+<p>Usaremos la funcion <code>st_transform()</code> para proyectar nuestros datos:</p>
+<pre class="r"><code>Iop &lt;- Io %&gt;%
+  st_transform(st_crs(&quot;+init=EPSG:26975&quot;))
+Nodesp &lt;- Nodes %&gt;% 
+  st_transform(st_crs(Iop))</code></pre>
+<p>Si observamos nuestros dos mapas (proyectado y no proyectado), podemos ver una curvatura en las lineas rectas, por ejemplo en los bordes norte y sur son mas notorias.</p>
+<pre class="r"><code>par(mfrow = c(1,2), mar = c(0, 0, 0, 0))
+plot(Io$geometry)
+plot(Iop$geometry)</code></pre>
+<p><img src="Espacial_Intro_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Ahora que nuestros datos tienen una proyeccion, podemos mejorar el aspecto visual de nuestro mapa.</p>
+<hr />
+</div>
+</div>
+<div id="visualizacion-de-los-datos" class="section level1">
+<h1>2. Visualizacion de los datos</h1>
+<p>Podemos visualizar multiples objetos espaciales en un mismo mapa. En R, los mapas funcionan por capas, podemos agregar multiples capas en un mapa, usamos el argumento <code>add = T</code> en las capas que queramos agregar al mapa base.</p>
+<pre class="r"><code># Visualizar los datos:
+plot(Io$geometry) # Mapa base, primera capa
+plot(Nodes[&quot;Prevalence&quot;], pch = 16, add = T) # segunda capa</code></pre>
+<p><img src="Espacial_Intro_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>Usando la informacion de la prevalencia aparente por predio podems asignar el tamaño de los puntos, y colorearlos conforme al tipo de granja. Usaremos la funcion <code>rescale()</code> del paquete <code>scales</code> para reescalar el tamaño de los puntos entre 0.5 a 1.5 de acuerdo a su prevalencia aparente.<br />
+Tambien podemos agregar una leyenda que nos describa los simbolos del mapa, para esto usamos la funcion <code>legend()</code>, la cual puede tomar varios argumentos, como la posicion, los nombres de los niveles, entre otros.</p>
+<pre class="r"><code># Usaremos R color brewer para obtener una palera de colores
+colpal &lt;- RColorBrewer::brewer.pal(n = length(levels(Nodes$farm_type)), # Numero de colores que necesitamos
+                                   name = &quot;Dark2&quot;) # Paleta de la cual los obtendremos
+# Visualizar el mapa
+## mapa de fondo
+plot(Iop$geometry, col = &quot;grey90&quot;, main = &quot;Distribucion de las granjas y su prevalencia&quot;) 
+## Primera capa
+plot(Nodesp$geometry, # objeto que agregaremos
+     pch = 16, # tipo de punto 
+     cex = scales::rescale(Nodesp$Prevalence, to = c(0.5, 1.5)), # Tamaño de punto
+     col = colpal[Nodesp$farm_type], # Color para cada punto
+     add = T) # agregar el objeto a la figura anterior
+## Leyenda
+legend(&quot;topright&quot;, # Posicion de la leyenda
+       legend = levels(Nodesp$farm_type), # Las categorias de la leyenda
+       pch = 16, # Tipo de punto
+       col = colpal)  # Color de los puntoa</code></pre>
+<p><img src="Espacial_Intro_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<div id="mapa-coroplético" class="section level2">
+<h2>2.1 Mapa coroplético</h2>
+<p>Podemos agregar la informacion de prevalencia a nivel de condado y representarla en un mapa coropletico. Primero uniremos la informacion de los puntos (Nodes) con el mapa de los condados (Io) usando la funcion <code>st_join()</code>. Esta funcion creara duplicados de los condados que tienen mas de una granja, entonces tendremos que sumar el numero de casos de esos duplicados usando la funcion <code>group_by()</code> y <code>summarise()</code>, y despues calcularemos a nivel condado.</p>
+<pre class="r"><code>Iop &lt;- Iop %&gt;%
+  st_join(Nodesp) %&gt;% # the data we are joining with
+  group_by(NAME_2) %&gt;% # group by county
+  summarise_at(vars(N, Cases), .funs = ~sum(.,na.rm = T)) %&gt;% # apply the sum function to the variables sN and Cases
+  mutate(Prevalence = Cases/N) # get the apparent prevalence at county level</code></pre>
+<pre class="r"><code>plot(Iop[&quot;Prevalence&quot;])</code></pre>
+<p><img src="Espacial_Intro_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<hr />
+</div>
+</div>
+<div id="otras-librerias-para-mapas" class="section level1">
+<h1>3. Otras librerias para mapas</h1>
+<p>Existen otras librerias que facilitan la visualizacion de mapas en R, usando el lenguaje basico de R se pueden hacer mapas de manera muy flexible, pero requiere mas conocimiento de las funciones en R. Otras opciones como tmap y ggplot, ofrecen funciones mas intuitivas para crear mapas de maner mas rapida.</p>
+<div id="tmap" class="section level2">
+<h2>3.1 tmap</h2>
+<p>La libreria <a href="https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html">tmap</a> tiene varias opciones para mapas, la syntaxis es muy similar a ggplot, se pueden crear varios mapas y luego acomodarlos todos en un layout.<br />
+Por ejemplo, podemos especificar una paleta de colores para nuestro mapa</p>
+<pre class="r"><code>library(tmap)</code></pre>
+<p>Primero crearemos un mapa de los predios y su prevalencia aparente.</p>
+<pre class="r"><code># capa base
+tm_shape(Iop) + 
+  # color y otras opciones de la capa base
+  tm_polygons(col = &quot;grey80&quot;) + 
+  # segunda capa
+  tm_shape(Nodesp) + 
+  # Opciones de la segunda capa
+  tm_symbols(&quot;Prevalence&quot;, # Nombre de la variable que se va a usar
+             size = 0.5, # Tamaño de los puntos
+             legend.hist = T) + # Aggregar un histograma  
+  # Opciones del layout
+  tm_layout(legend.outside = T, # leyendas afuera
+            frame = F, # quitaremos el marco
+            legend.hist.width = 3) # ancho del histograma</code></pre>
+<p><img src="Espacial_Intro_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>Podemos tambien crear un mapa coropletico como el que hicimos anteriormente</p>
+<pre class="r"><code>tm_shape(Iop) +
+  tm_polygons(&quot;Prevalence&quot;, palette = &quot;-RdYlBu&quot;) +
+  tm_layout(legend.outside = T, frame = F)</code></pre>
+<p><img src="Espacial_Intro_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+<div id="ggplot2" class="section level2">
+<h2>3.2 ggplot2</h2>
+<p>ggplot2 es una de las librerias mas populares para figuras en R, podemos agregar objetos sf usando la funcion <code>geom_sf()</code></p>
+<pre class="r"><code>library(ggplot2)
+
+ggplot() +
+  geom_sf(data = Iop, aes(fill = Prevalence)) +
+  theme_classic()</code></pre>
+<p><img src="Espacial_Intro_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>ggplot tiene muchas opciones de personalizacion pero en este tutorial no las cubriremos</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

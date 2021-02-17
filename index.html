@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>index.utf8</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">CADMS</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Pre Workshop
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Intro_a_R.html">Intro to R</a>
+    </li>
+    <li>
+      <a href="Espacial_Intro.html">Intro to Spatial data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Contact
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://cadms.vetmed.ucdavis.edu">
+        <span class="fas fa-server"></span>
+         
+        CADMS Website
+      </a>
+    </li>
+    <li>
+      <a href="mailto:jpgo@ucdavis.edu">
+        <span class="fas fa-envelope"></span>
+         
+        Email
+      </a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<p><img src ="Images/cadms-left.png" style="width:50%;position:center"></p>
+<div id="introduction" class="section level1">
+<h1>Introduction:</h1>
+<p>Gran parte de las enfermedades infecciosas son transmitidas a traves de contactos directos, por lo que el comercio de animales y los contactos entre animales juega un papel muy importante en la diseminacion de enfermedades.<br />
+Análisis de redes sociales ha sido reconocido como una valiosa herramienta para describir las interacciones entre agentes en una red de contactos y obtener informacion adicional sobre la estructura y dinamica de una comunidad. Los agentes o nodos en una red pueden ser definidos como las granjas que forman parte de una red de comercio, animales que pueden ser monitoreados para detectar contactos con otros animales silvestres o domesticos, o animales que pueden ser observados dentro de un grupo. Usando estas metodologias podemos identificar agentes que potencialmente tendrian un mayor rol en caso de una epidemia en la transmision de enfermedades.</p>
+<p>En este curso utilizamos datos de movimientos de animales de produccion en una red de comercio en el contexto de transmision de enfermedades para demostrar las aplicaciones de el análisis espacio-temporal de redes. Estas metodologias pueden ser aplicadas a otras areas como monitoreo de fauna silvestre, explorar las relaciones jerarquicas entre animales en un grupo, entre otras. La primera parte del curso se enfoca en las descripcion de redes estaticas y la segunda en el análisis de redes dinamicas que consideran la temporalidad, ambas partes incluyen tambien las relaciones espaciales entre agentes en la red.</p>
+<p>El curso esta dirigido para estudiantes, investigadores y profesionistas interesados en transmision de enfermedades y dinamicas de poblaciones.</p>
+</div>
+<div id="objectives" class="section level1">
+<h1>Objectives:</h1>
+<ul>
+<li>Analyze and describe static and dynamic networks.</li>
+<li>Advantages and disadvantages of static and dynamic networks and when we can use them.</li>
+<li>How to incorporate the spatial relationships in the analysis of networks.</li>
+<li>Visualize and present networks using spatial and non spatial approaches.</li>
+<li>How to incorporate the transmission and potential spread of diseases in a network.</li>
+<li>How to incorporate the results from network analysis with other statistical methods.</li>
+</ul>
+</div>
+<div id="requisites" class="section level1">
+<h1>Requisites:</h1>
+<ul>
+<li>Laptop or desktop computer<br />
+</li>
+<li>Software we will use:
+<ul>
+<li>R and R studio.</li>
+<li>Google earth.</li>
+</ul></li>
+<li>Recommended reading:
+<ul>
+<li>Farine, DR. When to choose dynamic vs. static social network analysis. J Anim Ecol. 2018; 87: 128– 138. <a href="https://doi.org/10.1111/1365-2656.12764" class="uri">https://doi.org/10.1111/1365-2656.12764</a><br />
+</li>
+<li></li>
+</ul></li>
+</ul>
+<p><strong>Please make sure you have R version &gt;3.5</strong></p>
+<hr />
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>The data used for this workshop is contained in the package <code>STNet</code>. To install <code>STNet</code> we need the package <code>devtools</code> and use the command <code>devtools::install_github("jpablo91/STNet")</code>. Some of the data used for the introduction tutorial can be found on <a href="https://drive.google.com/drive/u/0/folders/1m7Y9yxkD4M_wPRnyWE3a-JUjyy7nJCTk">this google drive folder</a>.</p>
+<hr />
+</div>
+<div id="pre-workshop-materials" class="section level2">
+<h2>Pre-workshop materials</h2>
+<p>An introduction to R and spatial data can be found in the following links:</p>
+<ul>
+<li><a href="Intro_a_R.html">Introduction to R</a></li>
+<li><a href="Espacial_Intro.html">Spatial data in R</a></li>
+</ul>
+<hr />
+</div>
+<div id="schedule" class="section level2">
+<h2>Schedule</h2>
+<div id="day-1" class="section level3">
+<h3>Day 1</h3>
+<p>Introduction to SNA |Time |Topic | |———–|———————————————-| |9:00-9:30 |Introduction to SNA | <!-- |10:00-11:00|[I: Static Network Analysis](Part_I.html)     | --> |11:00-12:00|<a href="Lab1.html">Lab 1</a> |</p>
+</div>
+<div id="day-2" class="section level3">
+<h3>Day 2</h3>
+<p>Spatial networks</p>
+<table>
+<thead>
+<tr class="header">
+<th>Time</th>
+<th>Topic</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>13:00-14:00</td>
+<td><a href="Part_II.html">II: Network Statistics</a></td>
+</tr>
+<tr class="even">
+<td>14:00-15:00</td>
+<td><a href="Lab2.html">Lab 2</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="day-3" class="section level3">
+<h3>Day 3</h3>
+<p>Dynamic Networks and network based models |Time |Topic | |———–|———————————————-| |9:50-10:30 |<a href="Part_III.html">III: Dynamic Network Analysis</a>| |10:30-11:30|<a href="Lab4.html">Lab 4</a> | |13:30-14:20|<a href="Part_IV.html">IV: Network Based Models</a> | |14:20-15:00|<a href="Lab5.html">Lab 5</a> |</p>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

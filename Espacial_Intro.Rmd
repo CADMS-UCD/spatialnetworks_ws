@@ -1,0 +1,259 @@
+---
+title: "Manipulacion de datos espaciales"
+author: Pablo Gomez-Vazquez
+---
+# Introduccion.  
+
+La informacion espacial puede ser representada de dos maneras principalmente:  
+  - *Vectores*: representan objetos en diferentes dimensiones.  
+  - *Rasters*: Representan valores continuos en una cuadricula.
+
+## Vectores
+
+Podemos representar objetos espaciales en diferentes dimensines:  
+  - *Punto*, es el tio de objeto mas basico, contiene informacion sobre la localizacion geografica de un evento u objeto. Por ejemplo, ubicacion geografica de una granja, una captura, o un reporte de caso.  
+  - *Linea*, contiene informacion sobre la ubicacion y direccion de un objeto. Por ejemplo una carretera, rio, o una ruta.  
+  - *Poligono*, contiene ubicacion geografica y geometria de un objeto. Usamos poligonos para representar la forma de un territorio, un edificio, un lago.  
+  
+Ademas de tener la geometria de un objeto, podemos agregar informacion sobre el objeto, por ejemplo, el nombre, identificador, temperatura registrada en ese punto entre otros.  
+
+## Rasters:
+
+Usamos rasters para representar valores continuos en un campo. Los rasters son una coleccion de valores en una cuadricula. La resolucion del es basicamente el tamaño de la celda  en nuestra cuadricula. Usamos rasters para representar valores como tipo de suelo, temperatura altitud, entre otros.
+
+
+## Objetos espaciales en R.  
+
+
+En este tutorial introduciremos a manipulacion de datos espaciales en R.  
+
+
+Existen dos formatos principales para manipular datos espaciales en R:  
+  
+  - **SpatialDataFrame** de la libreria `sp`: Este formato fue de los primeros introducidos para cargar datos en R, por lo tanto existen muchas librerias que dependen de este formato (i.e. `raster`, `spdep`, `spstat`).  
+  - **Simple features** de la libreria `sf`: Esta libreria fue desarrollada mas recientemente, esta libreria fue creada para ser mas intuitiva con otros paquetes de tidyverse. este tipo de objetos tiene sopporte para el formato de pipelines (`%>%`). El problema de esta libreria es que dado a ue es mas reciente, aldunas librerias no son compatibles con este formato.  
+  
+   
+
+Aprender a trabajar con los dos formatos tiene sus ventajas, para manipulacion de los datos `sf` es mas intuitivo y poderoso, pero para analisis espacial `sp` es mas robusto.  
+    
+  
+En este curso usaremos `sf` principalmente, pero habra situaciones en las que tengamos que cambiar de un formato a otro.    
+  
+  
+___________________________________________
+  
+  
+Para este curso, se ha desarrollado el paquete en R `STNet` que incluye los datos y algunas funciones que usaremos.  
+Para instalar la libreria tenemos que usar el paquete `devtools`, si no esta instalado habra que instalarlo.  
+
+```{r eval=FALSE}
+# Instalamos devtools
+install.packages("devtools")
+# Instalamos STNet desde github
+devtools::install_github("jpablo91/STNet")
+```
+  
+________________________________________
+  
+  
+# 1. Cargar los datos
+
+
+```{r message = F}
+# Cargamos las librerias
+library(STNet) 
+library(sf)
+library(dplyr)
+# cargamos los datos
+data("PRRS") 
+data("SwinePrem")
+# Cargamos los datos espaciales
+Io <- st_read(system.file("data/Io.shp", package = "STNet"))
+```
+
+La funcion `st_read()` automaticamente muestra algo de informacion sobre nuestro shapefile, pero podemos ver mas detalles cuando lo imprimimos desde la consola:
+
+```{r}
+Io
+```
+
+
+El resultado muestra:  
+  - `geometry type`: El tipo de shapefiles (ya sea point, lines o polygons).  
+  - `dimension` Dimensiones usadas en el shapefile.  
+  - `bbox`: La extension de nuestros datos.  
+  - `epsg (SRID)`: La proyeccion en formato *EPSG* (El cual es un codigo estandarizado para describir la proyeccion).  
+  - `proj4string`: La proyeccion en formato proj4string.  
+  - Los 10 primeros elementos.  
+  
+Los objetos `sf` son escencialmente un `data.frame` con informacion extra sobre la geometria y proyeccion. Podemos obtener la geometria unicamente usando el operador `$` o la funcion `st_geometry()` y despues mostrarla en una figura
+
+```{r}
+plot(Io$geometry)
+```
+
+Asi mismo, podemos extraer unicamente los datos sin la geometria usando la funcion `data.frame()`:  
+```{r}
+data.frame(Io) %>%
+  head() # usamos la funcion head para ver unicamente los primeros 6
+```
+
+## 1.1 Convirtiendo data.frames a sf
+
+Primero obtenemos la prevalencia por predio: 
+
+```{r}
+PRRS_S <- PRRS %>% 
+  group_by(id) %>%  # Agrupamos por Id
+  summarise(N = n(), Cases = sum(Result)) %>% # Obtenemos el numero de muestras y positivos
+  mutate(Prevalence = Cases/N) # Estimamos una prevalencia
+```
+
+Despues vamos a unir esta nueva tabla con las ubicaciones de los predios (SwinePrem):
+```{r}
+SwinePrem <- SwinePrem %>% 
+  left_join(PRRS_S, by = "id")
+```
+
+Ahora usatemos la funcion `st_as_sf()` para convertir la `data.frame` a `sf`. Necesitamos especificar la base de datos, coordinadas y CRS.  
+```{r}
+Nodes <- SwinePrem %>%
+  st_as_sf(coords = c("long", "lat"), # Los nombres en nuestra base de datos para coordenadas
+           crs = st_crs(Io)) # el sistema de coordenadas que usaremos
+```
+
+## 1.2 Proyeccion de los datos.
+
+Nuestro objeto espacial no esta proyectado, lo que significa que estamos representando los datos en un plano sin considerar la curvatura de la tierra, algo que solo un terraplanista haria. El impacto de la proyeccion en nuestros datos, estara asociado con el tamaño de nuestra area de estudio. En areas pequeñas no habra mucho impacto, pero en areas grandes podemos ver mayor impacto.  
+
+Usaremos la funcion `st_transform()` para proyectar nuestros datos:  
+```{r}
+Iop <- Io %>%
+  st_transform(st_crs("+init=EPSG:26975"))
+Nodesp <- Nodes %>% 
+  st_transform(st_crs(Iop))
+```
+
+Si observamos nuestros dos mapas (proyectado y no proyectado), podemos ver una curvatura en las lineas rectas, por ejemplo en los bordes norte y sur son mas notorias.  
+```{r}
+par(mfrow = c(1,2), mar = c(0, 0, 0, 0))
+plot(Io$geometry)
+plot(Iop$geometry)
+```
+
+Ahora que nuestros datos tienen una proyeccion, podemos mejorar el aspecto visual de nuestro mapa.  
+  
+___________________________________________
+  
+  
+# 2. Visualizacion de los datos
+
+Podemos visualizar multiples objetos espaciales en un mismo mapa. En R, los mapas funcionan por capas, podemos agregar multiples capas en un mapa, usamos el argumento `add = T` en las capas que queramos agregar al mapa base.
+
+```{r}
+# Visualizar los datos:
+plot(Io$geometry) # Mapa base, primera capa
+plot(Nodes["Prevalence"], pch = 16, add = T) # segunda capa
+```
+
+
+Usando la informacion de la prevalencia aparente por predio podems asignar el tamaño de los puntos, y colorearlos conforme al tipo de granja. Usaremos la funcion `rescale()` del paquete `scales` para reescalar el tamaño de los puntos entre 0.5 a 1.5 de acuerdo a su prevalencia aparente.  
+Tambien podemos agregar una leyenda que nos describa los simbolos del mapa, para esto usamos la funcion `legend()`, la cual puede tomar varios argumentos, como la posicion, los nombres de los niveles, entre otros.  
+
+```{r}
+# Usaremos R color brewer para obtener una palera de colores
+colpal <- RColorBrewer::brewer.pal(n = length(levels(Nodes$farm_type)), # Numero de colores que necesitamos
+                                   name = "Dark2") # Paleta de la cual los obtendremos
+# Visualizar el mapa
+## mapa de fondo
+plot(Iop$geometry, col = "grey90", main = "Distribucion de las granjas y su prevalencia") 
+## Primera capa
+plot(Nodesp$geometry, # objeto que agregaremos
+     pch = 16, # tipo de punto 
+     cex = scales::rescale(Nodesp$Prevalence, to = c(0.5, 1.5)), # Tamaño de punto
+     col = colpal[Nodesp$farm_type], # Color para cada punto
+     add = T) # agregar el objeto a la figura anterior
+## Leyenda
+legend("topright", # Posicion de la leyenda
+       legend = levels(Nodesp$farm_type), # Las categorias de la leyenda
+       pch = 16, # Tipo de punto
+       col = colpal)  # Color de los puntoa
+```
+
+## 2.1 Mapa coroplético
+
+Podemos agregar la informacion de prevalencia a nivel de condado y representarla en un mapa coropletico. Primero uniremos la informacion de los puntos (Nodes) con el mapa de los condados (Io) usando la funcion `st_join()`. Esta funcion creara duplicados de los condados que tienen mas de una granja, entonces tendremos que sumar el numero de casos de esos duplicados usando la funcion `group_by()` y `summarise()`, y despues calcularemos a nivel condado.  
+
+```{r}
+Iop <- Iop %>%
+  st_join(Nodesp) %>% # the data we are joining with
+  group_by(NAME_2) %>% # group by county
+  summarise_at(vars(N, Cases), .funs = ~sum(.,na.rm = T)) %>% # apply the sum function to the variables sN and Cases
+  mutate(Prevalence = Cases/N) # get the apparent prevalence at county level
+```
+
+```{r}
+plot(Iop["Prevalence"])
+```
+  
+___________________________________________
+  
+  
+
+# 3. Otras librerias para mapas
+
+Existen otras librerias que facilitan la visualizacion de mapas en R, usando el lenguaje basico de R se pueden hacer mapas de manera muy flexible, pero requiere mas conocimiento de las funciones en R. Otras opciones como tmap y ggplot, ofrecen funciones mas intuitivas para crear mapas de maner mas rapida.  
+  
+  
+## 3.1 tmap
+
+La libreria [tmap](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) tiene varias opciones para mapas, la syntaxis es muy similar a ggplot, se pueden crear varios mapas y luego acomodarlos todos en un layout.  
+Por ejemplo, podemos especificar una paleta de colores para nuestro mapa 
+
+```{r message = F}
+library(tmap)
+```
+
+Primero crearemos un mapa de los predios y su prevalencia aparente. 
+
+```{r}
+# capa base
+tm_shape(Iop) + 
+  # color y otras opciones de la capa base
+  tm_polygons(col = "grey80") + 
+  # segunda capa
+  tm_shape(Nodesp) + 
+  # Opciones de la segunda capa
+  tm_symbols("Prevalence", # Nombre de la variable que se va a usar
+             size = 0.5, # Tamaño de los puntos
+             legend.hist = T) + # Aggregar un histograma  
+  # Opciones del layout
+  tm_layout(legend.outside = T, # leyendas afuera
+            frame = F, # quitaremos el marco
+            legend.hist.width = 3) # ancho del histograma
+```
+
+
+Podemos tambien crear un mapa coropletico como el que hicimos anteriormente 
+
+```{r}
+tm_shape(Iop) +
+  tm_polygons("Prevalence", palette = "-RdYlBu") +
+  tm_layout(legend.outside = T, frame = F)
+```
+
+## 3.2 ggplot2
+
+ggplot2 es una de las librerias mas populares para figuras en R, podemos agregar objetos sf usando la funcion `geom_sf()`
+
+```{r}
+library(ggplot2)
+
+ggplot() +
+  geom_sf(data = Iop, aes(fill = Prevalence)) +
+  theme_classic()
+```
+
+
+ggplot tiene muchas opciones de personalizacion pero en este tutorial no las cubriremos

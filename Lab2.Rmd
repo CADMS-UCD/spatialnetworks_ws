@@ -1,0 +1,356 @@
+---
+title: "Lab 2"
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(warninr = F, message = F)
+```
+
+# 1 Deteccion de comunidades
+
+```{r}
+# Si empezamos una nueva sesion tendremosque cargar las librerias y los datos de nuevo
+net <- readRDS("Data/Outputs/net.rds")
+# Cargar los datos
+node <- read.csv("Data/Outputs/node.csv")
+edge <- read.csv("Data/Outputs/edge.csv")
+library(igraph)
+library(dplyr)
+```
+
+Vamos a utilizar el algoritmo walktrap para detectar comunidades en la red observada usando la funcion `walktrap()`.   
+
+```{r}
+# Primero simplificamos la red
+c<-simplify(net)
+# Despues usamos 
+wc <- cluster_walktrap(c)
+# Identificar el numero de comunidad al que pertenece:
+membership(wc)
+# Graficar la red y las comunidades
+plot(wc, c, edge.arrow.size=.2,vertex.size=4,vertex.label=NA)
+```
+
+
+## 2 Representacion espacial de la red
+
+
+```{r}
+# cargar los paquetes
+library(sf) # para objetos espaciales
+library(ggplot2) # para graficar
+
+# Cargar el objeto espacial
+iowa <- st_read(system.file("data/Io.shp", package = "STNet"))
+
+# plot map using sf
+plot(iowa$geometry)
+```
+
+Transformamos los nodos a un objeto espacial:  
+
+```{r Transform nodes to spatial}
+NodeSp <- node %>% # Aqui va el data.frame
+  st_as_sf(coords = c("long", "lat"), # Nombre de las variables que indican las coordenadas
+           crs = st_crs(iowa)) # El sistema de coordenadas que usamos
+```
+
+
+## 2.1 Graficar el shapefile de Iowa
+
+
+```{r}
+map <- ggplot() +
+  geom_sf(data = iowa, color="gray",fill="white", size=0.2)
+```
+
+
+## 2.2 Graficar los nodos
+
+```{r}
+#plot nodes#
+# Agregamos los puntos solamente
+map+geom_sf(data = NodeSp, color = "red")
+
+# Agregamos los puntos con el tipo de granja
+map+
+  geom_sf(data = NodeSp, aes(color = farm_type))
+
+# ajustamos el tamaño
+map2 <- map+
+  geom_sf(data = NodeSp, aes(color = farm_type), size = 3)
+
+# Agregamos la leyenda 
+map +
+  geom_sf(data = NodeSp, 
+          aes(color = farm_type, size = outdegree), 
+          show.legend = "point") +
+  scale_colour_discrete(name="Node type", 
+                        breaks=c("boar stud","finisher","GDU","nursery","sow farm"), 
+                        labels=c("boar stud","finisher","GDU","nursery","sow farm"))
+```
+
+
+**Ejercicio:** Haz lo mismo pero con Outdegree.  
+
+
+
+## 2.3 Poner los cotnactos eucladianos
+
+```{r}
+# la funcion geom?segment agrega una linea recta entre dos coordenadasÑ
+map +
+  geom_segment(data=edge, aes(x=O_Long, y=O_Lat, xend=D_Long, yend=D_Lat))
+
+# Podemos usar colores para identificar el tipo de origen
+map +
+  geom_segment(data=edge, aes(x=O_Long, y=O_Lat, xend=D_Long, yend=D_Lat, color=type_orig))
+# Color basado en el destino y agregamos la leyenda
+map +
+  geom_segment(data=edge, aes(x=O_Long, y=O_Lat, xend=D_Long, yend=D_Lat, color=type_dest)) +
+  scale_colour_discrete(name="Origin type", breaks=c("boar stud","finisher","GDU","nursery","sow farm"), labels=c("boar stud","finisher","GDU","nursery","sow farm"))
+
+# Podemos usar tambien el numero de cerdos movidos 
+map +
+  geom_segment(data=edge, aes(x=O_Long, y=O_Lat, xend=D_Long, yend=D_Lat), size = scales::rescale(edge$pigs.moved, c(0.1, 1.2)))
+```
+
+
+## 2.4 poniendo todo junto:
+
+```{r}
+#plot nodes & edges - add both commands geom_segment and geom_point#
+map +
+  geom_segment(data=edge, aes(x=O_Long, y=O_Lat, xend=D_Long, yend=D_Lat), show.legend=F, size = scales::rescale(edge$pigs.moved, c(0.1, 1.2))) +
+  geom_sf(data = NodeSp, aes(color = farm_type), size = 3, show.legend = "point")
+```
+
+
+## 2.5 Creando subconjuntos de los datos
+
+```{r}
+# Graficar los movimientos de granjas de cerdas (sow)
+map +
+edge %>%
+  filter(type_orig == "sow farm") %>%
+  geom_segment(data = ., aes(x=O_Long, y=O_Lat, xend=D_Long, yend=D_Lat, color = type_orig), show.legend = F) +
+  geom_sf(data = NodeSp, aes(color = farm_type), size=3, show.legend = "point") +
+  scale_colour_discrete(name="Origin type", breaks=c("boar stud","finisher","GDU","nursery","sow farm"), labels=c("boar stud","finisher","GDU","nursery","sow farm"))
+```
+
+```{r}
+# graficar los movimientos de granja de cerda a granja de cerda unicamente 
+map +
+edge %>%
+  filter(type_orig == "sow farm" & type_dest == "sow farm") %>%
+  geom_segment(data = ., aes(x=O_Long, y=O_Lat, xend=D_Long, yend=D_Lat, color = type_orig), show.legend = F) +
+  geom_sf(data = NodeSp, aes(color = farm_type), size=3, show.legend = "point") +
+  scale_colour_discrete(name="Origin type", breaks=c("boar stud","finisher","GDU","nursery","sow farm"), labels=c("boar stud","finisher","GDU","nursery","sow farm"))
+```
+
+
+## 3 Mapa de kernel density
+
+```{r}
+library(KernSmooth)
+library(raster)
+# Obtenemos un estimado de kernel a 2 km
+est <- bkde2D(edge[,c("O_Long", "O_Lat")], bandwidth = c(2, 2), gridsize = c(4320, 2160), range.x = list(c(-180, 180), c(-90, 90)))
+# Ponemos los resultados en un raster
+est.raster <- raster(list(x = est$x1, y = est$x2, z = est$fhat))
+projection(est.raster) <- CRS("+init=epsg:4326")
+# Especificamos el extent del raster
+extent(est.raster) <- c(-180, 180, -90, 90)
+# Lo cortamos a la extension del mapa
+Erc <- crop(est.raster, iowa)
+# Lo cortamos a la forma del mapa
+Erc <- mask(Erc, iowa)
+# Graficamos el raster y el mapa
+plot(Erc)
+plot(iowa$geometry, col=NA, border = "grey80", add = T)
+
+# Usamos un bandwidth differente:
+est <- bkde2D(edge[,c("O_Long", "O_Lat")], bandwidth = c(0.1,0.1), gridsize = c(580,445),range.x = list(c(-97,-90), c(40,44)))
+# Ponemos los resultados en un raster
+est.raster <- raster(list(x = est$x1,y = est$x2,z = est$fhat))
+# Especificamos la proyeccion
+projection(est.raster) <- CRS("+init=epsg:4326")
+extent(est.raster) <- extent(iowa)
+# Cortamos el raster
+Erc <- crop(est.raster, iowa)
+Erc <- mask(Erc, iowa)
+# Plot the raster and the state map
+plot(Erc)
+plot(iowa$geometry, col=NA, border = "grey80", add = T)
+```
+
+
+# 4 Calculamos la ruta
+
+En la siguiente seccion usaremos un servicio para calcular rutas entre dos puntos para crear la red de caminos. Con esto podemos obtener mejores estimaciones de la distancia y tiempo del traslado.  
+Para instalar el paquete tenemos que usar github, usamos el comando `devtools::install_github("GIScience/openrouteservice-r")`.  
+
+```{r}
+library(openrouteservice)
+```
+
+
+Ahora crearemos una tabla con los traslados unicos, eliminamos duplicados.  
+
+```{r}
+edge.s <- edge %>% 
+  group_by(id_orig, id_dest, O_Long, O_Lat, D_Long, D_Lat, dist) %>%
+  summarise(N = n())
+```
+
+Ahora definiremos una funcion para obtener los movimientos observados en nuestros daots. Usamos la funcion `ors_directions()` del paquete `openrouteservice` 
+, which provides access to (openrouteservice) [https://openrouteservice.org/] API. You dont have to understand every aspect of the function, but if you have questions feel free to ask.   
+The ORS API key has a query limit of 2500 per day (each route is a query) here we provide an API key, but if you are using this for yur personal use we recomend to create your own API ey at the ORS website.  
+
+
+```{r}
+#Define th projection to use
+Proj <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+# Set the key:
+ors_api_key("5b3ce3597851110001cf6248b2ee08e67c8b4ffb91b2c64141171aa9")
+# ors_api_key("5b3ce3597851110001cf624805b9e2fd452d40c285d4ced4d0889cdd") # Secondary key
+# Function:
+Routes <- function(df, Proj, transport_type){
+  #create empty vectors and list:
+  Origin <- Destination <- Distance <- Time <- ID <- vector() # For each of the Ids, distance and time of the route
+  SL <- list() # for the lines
+  L <- list() # For the spatialLinesDataDfame
+  for(i in 1:nrow(df)){
+    ID_i <- i # ID of each iteration
+    #make a subset of the data:
+    data.s <- df[,1:2]
+    #Prepare the coordinates for ors_directions:
+    L[[1]] <- c(t(df[i, "O_Long"]), t(df[i, "O_Lat"]))
+    L[[2]] <- c(t(df[i, "O_Long"]), t(df[i, "D_Lat"]))
+    
+    r <- ors_directions(L, units = "km", profile = transport_type) # Use the ors_directions funtion
+    #Obtain the Distance and time of the trajectory:
+    Distance_i <- r$features[[1]]$properties$summary$distance
+    Time_i <- r$features[[1]]$properties$summary$duration
+    #Identify NAs
+    Distance_i <- ifelse(is.null(Distance_i), NA, Distance_i) 
+    Time_i <- ifelse(is.null(Time_i), NA, Time_i)
+    
+    # Add each ith observation to a vector:
+    Distance <- c(Distance, Distance_i)
+    Time <- c(Time, Time_i)
+    ID <- c(ID, ID_i)
+    
+    
+    # put the lines in an object
+    l <- r$features[[1]]$geometry
+    l[[1]] <- l[[1]][,c(1,2)]
+    
+    # If its NA, we will use and empty line
+    if(is.na(Time_i)){
+      l[[1]] <- rbind(l[[1]], l[[1]])
+    } else {
+      l[[1]] <- l[[1]]
+    }
+    # Add the lines to a list
+    SL[[length(SL)+1]] <- Lines(Line(l[[1]]), ID=i)
+  }
+  #Compile all the lines ad the data.frame in a SpatialLinesDF:  
+  DF <- data.frame(ID, Distance, Time)
+  # DF <- data.frame(DF[-1, ], row.names = DF[-1, ]$ID)
+  Lx <- SpatialLinesDataFrame(SpatialLines(SL,proj4string = Proj),data = DF)
+  return(Lx)
+}
+```
+
+```{r eval=FALSE}
+# Since the computation of the routes is time consuming and will waste queries for the API key, we will do it for the first 5 observations only:
+Rt <- Routes(edge.s[1:5,], Proj = Proj, transport_type = "driving-hgv")
+plot(Rt)
+```
+
+
+In the files provided (or in the github repo) you will find a folder on the data folder you will find the file "Data/Shapefiles/Outputs/Routes.shp", which contains all the computation of the routes. We will load this file into R and use it to visualize the results;  
+
+```{r}
+# Read the file.
+Rt <- st_read(system.file("data/Rt.shp", package = "STNet"), quiet = T)
+Io <- st_read(system.file("data/Io.shp", package = "STNet"), quiet = T)
+```
+
+
+
+
+```{r}
+# Create a summarised shapefile of the movements
+Rts <- Rt %>%
+  group_by(Origin, Destinatio, Distance, Time) %>%
+  summarise(N = n(), pigs_moved = sum(pigs_moved)) %>%
+  st_as_sf()
+```
+
+
+```{r}
+plot(Io$geometry, col = "grey90", border = "grey70", main = "Road Network")
+plot(Rts$geometry, lwd = scales::rescale(Rts$pigs_moved, to = c(1, 3)), add = T, col = "slateblue")
+```
+
+We can export the data and load it into other programs for a more dynamic visaluzation, Using the packages `spacetime` and `plotKML`, here we will export it to Google Maps to see the spatio temporal distribution of the movements. 
+Given the computation time for the whole data, for this tutorial we recomend to use the function with the subset data. You can find and load the full data converted into KML in `/Data/Shapefiles/Outputs`. You can load this data into google earth to visualize it and play with the timeslider.  
+First we need to transform our `Rt` object to spatialLinesDataFrame:
+```{r}
+Rtsp <- Rt %>% as("Spatial")
+crs(Rtsp) <- Proj
+```
+
+```{r}
+library(spacetime)
+library(plotKML)
+# Convert to Date class
+dates <- as.Date(Rt$date, "%m/%d/%y")
+#Convert to a spatiotemporal dataframe object:
+Rt_ST.s <- STIDF(sp = Rtsp[1], time = dates, data = data.frame(Date=Rtsp$date, Pigs.moved=Rtsp$pigs_moved))
+```
+
+
+**Note:** This will take a couple of minutes to run, you can run it at the end or other time.  
+
+```{r eval = F}
+#Plot to google Maps
+kml.Spatial(Rt_ST.s, colour = Pigs.moved, width = 2, file.name = "Rt1.kml")
+```
+
+The output from this will be a KML file tht can be opened in Google earth, where we can use the time slider feature to visualize the movements between farms. 
+
+
+<img src="Routes.gif" alt="Img01"/>
+
+
+Now that we have our road network we can create a raster to show the road use during the study period.  
+
+```{r}
+library(raster)
+```
+
+
+```{r}
+# Create an empty raster (increaseing the ncol and nrow will give us a better resolution, but will also increase the computation time)
+r <- raster(ncol = 50, nrow = 50)
+# Set the extent same as the Iowa shapefile
+extent(r) <- extent(iowa)
+# Use the function rasterize to sum the number of N over each pixel of our raster
+rt <- rasterize(Rts["N"], r, fun = "sum")
+
+plot(iowa$geometry, col = "grey90")
+plot(rt, col = rev(heat.colors(10)), add = T)
+```
+
+
+```{r}
+par(mar=c(2,6,2,2))
+boxplot(edge.s$dist/1000, Rts$Distance, col = "lightgreen", xlab = "Distance", horizontal =  T)
+axis(2, at = c(1,2), labels = c("Euclidean", "Road"), las=2, lty = 0)
+```
+
+
+

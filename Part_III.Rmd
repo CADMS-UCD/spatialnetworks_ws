@@ -1,0 +1,12 @@
+---
+title: "Part III: Dynamic Network Analysis"
+---
+
+
+<object data="PDFs/Part_III.pdf" width="750px" height="750px">
+    <embed src="PDFs/Part_III.pdf">
+    </embed>
+</object>
+
+
+[Inicio](index.html)

@@ -1,0 +1,201 @@
+---
+title: "Lab 5"
+---
+
+En el siguiente ejercicio usamos codigo para generar simulaciones de epidemias con diferentes parametros para la probabilidad de transmision.  
+
+Podemos usar diferentes funciones para la relacion entre la transmision de la enfermedad y l tasa de contactos en la red:  
+
+  - 0 funcion lineal
+  - -1 Funcion desacelerada
+  - 1 Funcion acelerada
+
+```{r}
+acc <- -1
+```
+
+Para este ejercicio usaremos datos de el paquete `asnipe`, primero cargamos las librerias y los datos:  
+
+```{r}
+# Librerias que usamos:
+library(sna)
+library(asnipe)
+library(scales)
+# Cargamos los datos
+data("group_by_individual")
+```
+
+Primero definiremos los parametros de la enfermedad y la poblacion. Podemos cambiar los parametros de tasa de transmision ($\beta$), el numero de dias de la simulacion.  
+
+```{r}
+# Usamos una semilla para poder reproducit los resultados
+set.seed(321)
+N <- ncol(gbi)
+beta <- 0.01 # probabilidad de transmision
+days <- 10 # ventana de tiempo
+each <- 5
+n.samples <- days*each
+window <- rep(1:days,each=each)
+# Probabilidad de que se cree un contacto:
+t.prob <- get_network(gbi)
+```
+
+Creamos una funcion que genere la probabilidad de acuerdoal tipo de funcion (Acelerada, descelerada o lineal)
+```{r}
+# Funcion para la Probabilidad de no generar la enfermedad:
+prob <- function(beta, x, acc) {
+	if (acc==1) { 
+	  # Funcion acelerada
+		prob <- (1/(1+exp(beta-5.5+x)))
+		prob <- prob+min(1-prob)
+	} else if (acc==-1) {
+	  # Funcion descerada
+		prob <- exp(-x*4)
+		prob <- 1-(1-prob)*beta*1.7
+	} else {
+	  # Funcion lineal
+		prob <- (1-(x*(beta)))
+	}
+	return(prob)
+}
+```
+
+Vamos a crear unas redes vacias que despues se van a llenar con informacion para una red dinamica y una estatica.  
+
+```{r}
+# Creamos una tabla vacia para llenar con infectados
+ids <- data.frame(id=1:N,infected.dynamic=0,infected.static=0)
+# generar redes aleatorias:
+samples <- rgraph(N,m=n.samples, # Numero de muestras
+                  tprob=t.prob, # probabilidada de contacto
+                  mode="graph")
+```
+
+
+```{r}
+# Generar la red dinamica vacia
+network.dynamic <- array(NA,c(days,N,N))
+# Llenar la red con la informacion
+for (i in 1:days) {
+	network.dynamic[i,,] <- apply(samples[which(window==i),,],c(2,3),sum)
+}
+```
+
+
+```{r}
+# Crear la red estatica:
+network.static <- apply(samples,c(2,3),sum)/days
+```
+
+
+```{r}
+# Introducir un infectado:
+ids$infected.dynamic[sample(1:N,1)] <- 1
+ids$infected.static <- ids$infected.dynamic
+
+# Creamos vectores vacios para guardar los resultados
+n.infected.dynamic <- rep(NA,days)
+n.infected.static <- rep(NA,days)
+```
+
+
+```{r}
+# Correr las simulaciones para cada dia:
+for (i in 1:days) {
+	# dinamica
+	network.temp <- network.dynamic[i,,] # red para el dia i
+	
+	probs <- prob(beta,
+	              network.temp[which(ids$infected.dynamic==0),
+	                           which(ids$infected.dynamic==1),drop=FALSE], acc)
+	
+	ids$infected.dynamic[which(ids$infected.dynamic==0)] <- apply(probs,1,function(x) { as.numeric(sum(sapply(x,function(y) { sample(c(0,1),1,prob=c(y,1-y))}))>0) })
+	
+	n.infected.dynamic[i] <- sum(ids$infected.dynamic)
+
+	# Estatica
+	probs <- prob(beta,network.static[which(ids$infected.static==0),which(ids$infected.static==1),drop=FALSE], acc)
+	ids$infected.static[which(ids$infected.static==0)] <- apply(probs,1,function(x) { as.numeric(sum(sapply(x,function(y) { sample(c(0,1),1,prob=c(y,1-y))}))>0) })
+	n.infected.static[i] <- sum(ids$infected.static)
+}
+```
+
+Ahora que ya tenemos los resultados podemos graficar la relacion entre la dinamica de transmision y la generacion de contactos
+
+En el primer grafico muestra la probabilidad de que suceda ese numero de contactos para una red dinamica (rojo) y la misma red en una representacion estatica (azul)
+
+```{r}
+colpal <- c(alpha("red", 0.3), alpha("blue", 0.3))
+a <- hist(network.dynamic[which(network.dynamic>0)],breaks = seq(-0.1, max(c(max(network.static), max(network.dynamic))) + 0.1, 0.2), plot=FALSE)
+# Calcular la proporcion
+a$counts <- a$counts/sum(a$counts)
+# Graficar la probabilidad con diferentes wieghts (numeros de contactos)
+plot(a, col=colpal[1], ylim=c(0,1), xlab="Edge weight", ylab="Probability",main=NA)
+
+a <- hist(network.static[which(network.static>0)],breaks=seq(-0.1,max(c(max(network.static),max(network.dynamic)))+0.1,0.2),plot=FALSE)
+
+a$counts <- a$counts/sum(a$counts)
+plot(a,add=TRUE,col = colpal[2])
+lines(seq(0,max(c(max(network.static),max(network.dynamic))),0.01),1-prob(beta,seq(0,max(c(max(network.static),max(network.dynamic))),0.01),acc),lwd=3)
+```
+
+En la segunda grafica podemos ver el cumulativo de individuos infectados en una poblacion de N = 50 en un periodo de 10 dias
+```{r}
+plot(1:days,n.infected.static,type='l',col=colpal[1],lwd=3,xlab="Day",ylab="Number infected",ylim=c(0,max(c(n.infected.dynamic,n.infected.static))))
+lines(1:days,n.infected.dynamic,col=colpal[2],lwd=3)
+```
+
+# Correr multiples simulaciones:
+
+```{r}
+# Numero de repeticiones
+n.reps <- 50
+
+# Vectores para guardar los resultados
+n.infected.dynamic <- matrix(NA,n.reps,days)
+n.infected.static <- matrix(NA,n.reps,days)
+```
+
+Ahora correremos la simulacion multoples veces y obtendremos la distribucion de infectados.
+
+
+```{r}
+for (z in 1:n.reps) {
+	ids <- data.frame(id=1:N,infected.dynamic=0,infected.static=0)
+	samples <- rgraph(N,m=n.samples,tprob=t.prob,mode="graph")
+	
+	network.dynamic <- array(NA,c(days,N,N))
+	
+	for (i in 1:days) {
+		network.dynamic[i,,] <- apply(samples[which(window==i),,],c(2,3),sum)
+	}	
+	
+	network.static <- apply(samples,c(2,3),sum)/days
+	
+	# Seed a diseased individual
+	ids$infected.dynamic[sample(1:N,1)] <- 1
+	ids$infected.static <- ids$infected.dynamic
+	
+	
+	# Correr los dias de la simulacion
+	for (i in 1:days) {
+		# dynamic
+		network.temp <- network.dynamic[i,,]
+		probs <- prob(beta,network.temp[which(ids$infected.dynamic==0),which(ids$infected.dynamic==1),drop=FALSE], acc)
+		ids$infected.dynamic[which(ids$infected.dynamic==0)] <- apply(probs,1,function(x) { as.numeric(sum(sapply(x,function(y) { sample(c(0,1),1,prob=c(y,1-y))}))>0) })
+		n.infected.dynamic[z,i] <- sum(ids$infected.dynamic)
+	
+		# static
+		probs <- prob(beta,network.static[which(ids$infected.static==0),which(ids$infected.static==1),drop=FALSE], acc)
+		ids$infected.static[which(ids$infected.static==0)] <- apply(probs,1,function(x) { as.numeric(sum(sapply(x,function(y) { sample(c(0,1),1,prob=c(y,1-y))}))>0) })
+		n.infected.static[z,i] <- sum(ids$infected.static)
+
+	}
+}
+```
+
+Podemos graficar la distribucion de la estimacion de los infectados comparando los resultados de una red dinamica y la misma, pero en representacion estatica
+```{r}
+boxplot(cbind(n.infected.dynamic[,days]/N, n.infected.static[,days]/N), col=c(colpal[1],colpal[2]),names=c("Dynamic","Static"), ylab="Proportion infected")
+```
+

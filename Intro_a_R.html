@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Jose Pablo Gomez-Vazquez" />
+
+
+<title>Introduction to R</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">CADMS</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Pre Workshop
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Intro_a_R.html">Intro to R</a>
+    </li>
+    <li>
+      <a href="Espacial_Intro.html">Intro to Spatial data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Contact
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://cadms.vetmed.ucdavis.edu">
+        <span class="fas fa-server"></span>
+         
+        CADMS Website
+      </a>
+    </li>
+    <li>
+      <a href="mailto:jpgo@ucdavis.edu">
+        <span class="fas fa-envelope"></span>
+         
+        Email
+      </a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Introduction to R</h1>
+<h4 class="author">Jose Pablo Gomez-Vazquez</h4>
+
+</div>
+
+
+<hr />
+<div id="basic-operations" class="section level1">
+<h1>1. Basic operations</h1>
+<p>R is like a calculator, we can make mathematical operations, for example:</p>
+<pre class="r"><code>2 + 2</code></pre>
+<pre><code>## [1] 4</code></pre>
+<p>R is a object-oriented programming language, this means that we create objects that contain information. In R you can achieve the same results using different approaches, for example, to create an object we just type a name for the object and assign it a value using the operators <code>=</code> or <code>&lt;-</code>. We can make operations with objects of the same type, for example:</p>
+<pre class="r"><code>x = 2 # create a new object with the = operator
+y &lt;- 2 # create a new object with the &lt;- operator
+x + y # make a operation with the objects</code></pre>
+<pre><code>## [1] 4</code></pre>
+<p>You can store more than one value using vectors, to create a vector of numbers we use <code>c()</code>. For example, we will store a sequence of numbers from 5 to 10 using 2 different approaches and then ask R if the objects are the same.<br />
+<strong>tip:</strong> using the keys “alt” + “-” will automatically add the operator <code>&lt;-</code>. Choosing which assign operator to use is a matter of preference, I personally think that reading code with the operator <code>&lt;-</code>, but a lot of people uses <code>=</code>.</p>
+<pre class="r"><code>x &lt;- c(5, 6, 7, 8, 9, 10) # craete a sequence form 5 to 10
+y = 5:10 # create the same sequence but with a different approach
+x == y # ask R if the objects have the same information</code></pre>
+<pre><code>## [1] TRUE TRUE TRUE TRUE TRUE TRUE</code></pre>
+<p>When we have a vector, we can ask R specific values inside an object.</p>
+<pre class="r"><code># Here we ask the 3rd value from our sequence
+x[3]</code></pre>
+<pre><code>## [1] 7</code></pre>
+<pre class="r"><code># MNow we multiply the 3rd value of the x sequence times the 5th value of the y sequence
+x[3] * y[5]</code></pre>
+<pre><code>## [1] 63</code></pre>
+<div id="functions-in-r" class="section level2">
+<h2>1.1 Functions in R</h2>
+<p>R has a lot of base functions, but we can define new functions. When using R studio, the key <em>Tab</em> will help us to auto complete, this can help us a lot when we don’t remember the exact name of the functions available. The best part of programming with R is that it has a very active community. Since its open source, anyone can create functions and compile them in a package (or library). we can download these packages and access new functions.<br />
+Functions in R require arguments, which we can see in the function documentation or if we press the key <em>Tab</em> when we are inside the function.</p>
+<pre class="r"><code># To get the sum of a vector of numbers inside an object we use sum()
+sum(x)</code></pre>
+<pre><code>## [1] 45</code></pre>
+<p>We can put functions inside function, for example, to get <span class="math inline">\(\sqrt{\sum_1^n x}\)</span> the square root of a sum of the numbers in x we can use:</p>
+<pre class="r"><code>sqrt(sum(x))</code></pre>
+<pre><code>## [1] 6.708204</code></pre>
+<p>Making functions in R is not as complicated as it sounds and can be very useful when we need to do repetitive work. To define a function we need to include the arguments that we want for the function and what are we doing with those areguments. For example, the following function has only one argument which is a name (string) and just pastes some text before and after:</p>
+<pre class="r"><code>F1 &lt;- function(name){
+  x &lt;- paste(&quot;Hola&quot;, name, &quot;! welcome to the R world!&quot;) # paste the name with some text
+  print(x)
+}
+# trying the function (Put your name)
+F1(name = &quot;Pablo&quot;)</code></pre>
+<pre><code>## [1] &quot;Hola Pablo ! welcome to the R world!&quot;</code></pre>
+<p>Besides storing numbers in the objects in R, we can store text, matrices, tables, spatial objects, images, and other types of objects. Next we will import our own data and do some manipulation in R.</p>
+<hr />
+</div>
+</div>
+<div id="importing-data-into-r" class="section level1">
+<h1>2. Importing data into R</h1>
+<p>R can import data in different formats. The most comon are excel files (<em>.csv</em>, <em>.xls</em> y <em>.xlsx</em>), text files <em>.txt</em> and spatial data <em>.shp</em>, which we will talk about more in detail later.<br />
+To read <em>.xls</em>, <em>.xlsx</em> and <em>.shp</em> files we will need to install some libraries. To install a new libreary you need to be connected to the internet and use the function <code>install.packages()</code> to install the library. Once it has been installed, you can load the library using the function <code>library()</code>.</p>
+<p><strong>Suggestion:</strong> Sometimes when we want to use only one function from a library, we can just write the name of the library followed by the operator <code>::</code> and the name of the function, for example: <code>paquete::funcion()</code>. This way we won’t have to load the whole library.</p>
+<pre class="r"><code># If we dont have the library installed, we use:
+# install.packages(&quot;readxl&quot;)
+library(readxl) # load the library
+
+# Import the excel file
+PRRS &lt;- readxl::read_xlsx(&quot;Data/PRRS.xlsx&quot;)</code></pre>
+<p>The most popular format for tables in R are called <code>data.frame</code>, when we import the data from a <em>.csv</em> o <em>.xlsx</em>. We can examine what kind of object it is using the function <code>class()</code>, an object can have more than one tpe of class.</p>
+<pre class="r"><code>class(PRRS)</code></pre>
+<pre><code>## [1] &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<hr />
+</div>
+<div id="creating-tables-in-r" class="section level1">
+<h1>3. Creating tables in R</h1>
+<p>We can use the base R functions to create basic tables. For example, we can create a table that shows the number of positive by sex:</p>
+<pre class="r"><code>TBL &lt;- table(PRRS$Sex, PRRS$Result)
+TBL</code></pre>
+<pre><code>##    
+##       0   1
+##   H 737 229
+##   M 249 138</code></pre>
+<p>When we have a tabe object we can ask for a specific column or row, where is represented as [row, column].</p>
+<pre class="r"><code>TBL[,2] # Get the second column</code></pre>
+<pre><code>##   H   M 
+## 229 138</code></pre>
+<div id="data-manipulation-with-dplyr" class="section level2">
+<h2>3.1 Data manipulation with dplyr</h2>
+<p>The library <code>dplyr</code> has several functions that can help to clean, create new variables, and modify our data in other ways.</p>
+<pre class="r"><code># if we dont have installed the library we will need to install it using:
+# install.packages(&quot;dplyr&quot;)
+# we load the library:
+library(dplyr)</code></pre>
+<p><code>dplyr</code> introduces a new operator called pipes <code>%&gt;%</code>, which can connect several functions to an object. This is an alternative to write several functions in a single “line of code” in a more organized way. For example:</p>
+<p><strong>F2(F1(x)) is the same as x %&gt;% F1() %&gt;% F2()</strong></p>
+<p><strong>Suggestion:</strong> we can use the keys <em>Ctrl</em> + <em>shift</em> + <em>m</em> to insert the <code>%&gt;%</code> operator.</p>
+<p>We will use this concepts to calculate the prevalence by county:</p>
+<pre class="r"><code>PRRS %&gt;% 
+  group_by(County) %&gt;% 
+  summarise(N = n(), positive = sum(Result)) %&gt;% 
+  mutate(Prev = positive/N) %&gt;% 
+  arrange(desc(Prev))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 28 x 4
+##    County            N positive  Prev
+##    &lt;chr&gt;         &lt;int&gt;    &lt;dbl&gt; &lt;dbl&gt;
+##  1 Story            37       30 0.811
+##  2 Pottawattamie    51       34 0.667
+##  3 Bremer           24       14 0.583
+##  4 Hardin          105       50 0.476
+##  5 Scott            57       22 0.386
+##  6 Audubon          19        7 0.368
+##  7 Grundy           34       11 0.324
+##  8 Johnson          89       27 0.303
+##  9 Wright          115       33 0.287
+## 10 Keokuk           18        5 0.278
+## # … with 18 more rows</code></pre>
+<p>Ok, so we used several functions connected to calculate the prevalence, so I will explain it by parts:</p>
+<ul>
+<li>First we put the name of our data.<br />
+</li>
+<li>The first function <code>group_by()</code> will group the observations by one or more variables that we indicate.<br />
+</li>
+<li>The function <code>summarise()</code> will execute a function we define for a variable from the defined grouping variable, e.g. when we write <code>n()</code> returns the number of observations per group and with <code>sum(resultado)</code> we are summing all the positive results by each county.<br />
+</li>
+<li>The function <code>mutate()</code> will create a new variable, we use the variables <em>N</em> and <em>positive</em> created wuth the previous functions and calculating the prevalence.</li>
+</ul>
+<p><strong>Exercise:</strong> Now try to calculate the prevalence by farm type (variable <em>farm_type</em>):</p>
+<pre class="r"><code># Answer</code></pre>
+<p>We can use any function with summarize, this is very useful because it allows to obtain quick statistics stratified by groups, for example, we can obtain the median, mean and variance by age and sex:</p>
+<pre class="r"><code>PRRS %&gt;% 
+  group_by(Sex) %&gt;% 
+  summarise(media_edad = mean(Age), mediana_edad = median(Age), SD_edad = sd(Age))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   Sex   media_edad mediana_edad SD_edad
+##   &lt;chr&gt;      &lt;dbl&gt;        &lt;dbl&gt;   &lt;dbl&gt;
+## 1 H           35.9           30    24.7
+## 2 M           19.8           17    15.1</code></pre>
+</div>
+<div id="joining-datasets" class="section level2">
+<h2>3.2 Joining datasets:</h2>
+<pre class="r"><code># Importing the farm dataseet
+nodes &lt;- read.csv(&quot;Data/node_attrib.csv&quot;)
+# Importing the movement dataset
+mov &lt;- read.csv(&quot;Data/network.csv&quot;)
+# Get the number of outgoing and incoming shipments 
+Out &lt;- mov %&gt;% 
+  group_by(id_orig) %&gt;%
+  summarise(Envios = n()) %&gt;%
+  rename(id = id_orig)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>In &lt;- mov %&gt;%
+  group_by(id_dest) %&gt;%
+  summarise(Arribos = n()) %&gt;% 
+  rename(id = id_dest)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code># Joining the two datasets
+nodes &lt;- nodes %&gt;% 
+  left_join(Out, by =&quot;id&quot;)
+nodes &lt;- nodes %&gt;%
+  left_join(In, by = &quot;id&quot;)</code></pre>
+<p>Now we will get the ones that had the higher number of movements:</p>
+<pre class="r"><code>mov %&gt;% 
+  group_by(id_orig) %&gt;% 
+  summarise(N = n(), NUm.Cerdos = sum(pigs.moved)) %&gt;%
+  arrange(desc(N)) %&gt;%
+  head()</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   id_orig     N NUm.Cerdos
+##     &lt;int&gt; &lt;int&gt;      &lt;int&gt;
+## 1      29   522      50565
+## 2      19   397      38686
+## 3      25   154      15653
+## 4      31   101      10711
+## 5       8    83       7620
+## 6      17    68       6633</code></pre>
+<hr />
+</div>
+</div>
+<div id="creating-figures-with-r" class="section level1">
+<h1>4. Creating figures with R</h1>
+<p>The base R package includes several tools to create different type of plots. There are packages that adds more specific functions (such as <code>ggplot2</code>).</p>
+<div id="scatterplot" class="section level2">
+<h2>Scatterplot</h2>
+<p>One of the most basic type of plots are the scatterplot, these are useful when we want to see the relationship between two continuous variables. To do this we can</p>
+<pre class="r"><code>plot(Envios~Arribos, data = nodes)</code></pre>
+<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>plot(nodes$Envios, nodes$Arribos)</code></pre>
+<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
+</div>
+<div id="grafico-de-pay" class="section level2">
+<h2>4.1 Grafico de pay</h2>
+<p>Los graficos de pay nos sirven para mostrar proporciones, por ejemplo a continuacion haremos un grafico que represente los porcentajes de animales positivos por tipo de granja.<br />
+Para seleccionar una variable dentro de una data.frame, utilizamos el caracter <code>$</code>, por ejemplo, si queremos accesar a la variable tipo de granja (farm_type) de la tabla PRRS, usamos <code>PRRS$farm_type</code></p>
+<pre class="r"><code># Primero creamos una tabla para el resultado por sexo del animal
+TM &lt;- table(PRRS$farm_type, PRRS$Result)
+# Despues usaremos la segunda columna de nuestra tabla, que contiene los positivos unicamente
+pie(TM[,2])</code></pre>
+<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+</div>
+<div id="boxplots" class="section level2">
+<h2>4.2 Boxplots</h2>
+<p>En mi opinion los boxplots son los graficos mas utiles para ver la distribucion de una variable continua. Como todas las funciones en R, la funcion <code>boxplot()</code> tiene varios argumentos que podemos proporcionar, pero si solo le proporcionamis el nombre de una variable continua, nos regresara un boxplot un poco aburrido de la variable</p>
+<pre class="r"><code>boxplot(x = PRRS$Age)</code></pre>
+<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>Podemos poporcionar differentes argumentos para mejorar nuestra grafica, asi como estratificar nuestra variable por otra variable categorica:</p>
+<pre class="r"><code>boxplot(Age~Sex, data = PRRS, col = &quot;lightgreen&quot;, 
+        main = &quot;Grafico de caja de la edad estratificado por sexo&quot;)</code></pre>
+<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>Las funciones de base para graficos de R son muy flexibles, mientras mas las utilices mas te daras cuenta de todos los argumentos que tienen para ayudarte a hacer graficos mas informativos y personalizables, la mayoria de los argumentos son intuitivos, pero puedes ver que hace cada uno en la documentacion de la funcion o en la opcion de autocompletar.</p>
+</div>
+<div id="graficos-de-barras" class="section level2">
+<h2>4.3 Graficos de barras</h2>
+<p>Para el siguiente grafico utilizaremos mas argumentos, vamos a estratificar el resultado por el sexo del animal:</p>
+<pre class="r"><code># Primero creamos una tabla de los resultados por tipo de granja
+TM &lt;- table(PRRS$Result, PRRS$Sex)
+# Despues usaremos la duncion par() para incrementar los margenes:
+par(mar = c(2, 6, 2, 2))
+barplot(TM[, order(colSums(TM), decreasing = T)], beside = T, horiz = T, 
+        las = 2, main = &quot;Resultados por tipo de granja&quot;, col = c(&quot;green&quot;, &quot;red&quot;), 
+        legend = rownames(TM))</code></pre>
+<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><strong>Ejercicio:</strong> Haz un grafico de barras estratificando el resultado por el tipo de granja:</p>
+<pre class="r"><code># Primero creamos una tabla de los resultados por tipo de granja
+TM &lt;- table(PRRS$Result, PRRS$farm_type)
+# Despues usaremos la duncion par() para incrementar los margenes:
+par(mar = c(2, 6, 2, 2))
+barplot(TM[, order(colSums(TM), decreasing = T)], beside = T, horiz = T, 
+        las = 2, main = &quot;Resultados por tipo de granja&quot;, col = c(&quot;green&quot;, &quot;red&quot;), 
+        legend = rownames(TM))</code></pre>
+<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+</div>
+<div id="graficos-temporales." class="section level2">
+<h2>4.4 Graficos temporales.</h2>
+<p>Para hacer un grafico temporal primero tenemos que manipular un poco las fechas para que R pueda reconocerlas y despues veremos el numero de movimientos por semana</p>
+<pre class="r"><code>mov$date &lt;- as.Date(mov$date, &quot;%m/%d/%y&quot;)
+# Creamos una variable para identificar la semana del año
+mov$week &lt;- format(mov$date, &quot;%V&quot;)</code></pre>
+<pre class="r"><code>mw &lt;- mov %&gt;% 
+  group_by(week) %&gt;% 
+  summarise(N = n())</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>plot(N~week, data = mw, type = &quot;l&quot;, col = &quot;darkgreen&quot;, main = &quot;Movimientos por semana&quot;, xlab = &quot;Semana del año&quot;, ylab = &quot;Numero de movimientos&quot;)</code></pre>
+<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><a href="Temario_WS02.html">Regresar</a></p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
