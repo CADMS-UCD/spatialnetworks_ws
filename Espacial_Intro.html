@@ -12,7 +12,7 @@
 <meta name="author" content="Pablo Gomez-Vazquez" />
 
 
-<title>Manipulacion de datos espaciales</title>
+<title>Spatial data maipulation</title>
 
 <script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -296,7 +296,7 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="Intro_a_R.html">Intro to R</a>
+      <a href="Intro_to_R.html">Intro to R</a>
     </li>
     <li>
       <a href="Espacial_Intro.html">Intro to Spatial data</a>
@@ -338,60 +338,64 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Manipulacion de datos espaciales</h1>
+<h1 class="title toc-ignore">Spatial data maipulation</h1>
 <h4 class="author">Pablo Gomez-Vazquez</h4>
 
 </div>
 
 
-<div id="introduccion." class="section level1">
-<h1>Introduccion.</h1>
-<p>La informacion espacial puede ser representada de dos maneras principalmente:<br />
-- <em>Vectores</em>: representan objetos en diferentes dimensiones.<br />
-- <em>Rasters</em>: Representan valores continuos en una cuadricula.</p>
-<div id="vectores" class="section level2">
-<h2>Vectores</h2>
-<p>Podemos representar objetos espaciales en diferentes dimensines:<br />
-- <em>Punto</em>, es el tio de objeto mas basico, contiene informacion sobre la localizacion geografica de un evento u objeto. Por ejemplo, ubicacion geografica de una granja, una captura, o un reporte de caso.<br />
-- <em>Linea</em>, contiene informacion sobre la ubicacion y direccion de un objeto. Por ejemplo una carretera, rio, o una ruta.<br />
-- <em>Poligono</em>, contiene ubicacion geografica y geometria de un objeto. Usamos poligonos para representar la forma de un territorio, un edificio, un lago.</p>
-<p>Ademas de tener la geometria de un objeto, podemos agregar informacion sobre el objeto, por ejemplo, el nombre, identificador, temperatura registrada en ese punto entre otros.</p>
-</div>
-<div id="rasters" class="section level2">
-<h2>Rasters:</h2>
-<p>Usamos rasters para representar valores continuos en un campo. Los rasters son una coleccion de valores en una cuadricula. La resolucion del es basicamente el tamaño de la celda en nuestra cuadricula. Usamos rasters para representar valores como tipo de suelo, temperatura altitud, entre otros.</p>
-</div>
-<div id="objetos-espaciales-en-r." class="section level2">
-<h2>Objetos espaciales en R.</h2>
-<p>En este tutorial introduciremos a manipulacion de datos espaciales en R.</p>
-<p>Existen dos formatos principales para manipular datos espaciales en R:</p>
+<div id="introduction." class="section level1">
+<h1>Introduction.</h1>
+<p>Spatial data is usually represented in two different ways:</p>
 <ul>
-<li><strong>SpatialDataFrame</strong> de la libreria <code>sp</code>: Este formato fue de los primeros introducidos para cargar datos en R, por lo tanto existen muchas librerias que dependen de este formato (i.e. <code>raster</code>, <code>spdep</code>, <code>spstat</code>).<br />
+<li><em>Vectors</em>: Represent objects in different dimensions.<br />
 </li>
-<li><strong>Simple features</strong> de la libreria <code>sf</code>: Esta libreria fue desarrollada mas recientemente, esta libreria fue creada para ser mas intuitiva con otros paquetes de tidyverse. este tipo de objetos tiene sopporte para el formato de pipelines (<code>%&gt;%</code>). El problema de esta libreria es que dado a ue es mas reciente, aldunas librerias no son compatibles con este formato.</li>
+<li><em>Raster</em>: Represent continuous values in a grid.</li>
 </ul>
-<p>Aprender a trabajar con los dos formatos tiene sus ventajas, para manipulacion de los datos <code>sf</code> es mas intuitivo y poderoso, pero para analisis espacial <code>sp</code> es mas robusto.</p>
-<p>En este curso usaremos <code>sf</code> principalmente, pero habra situaciones en las que tengamos que cambiar de un formato a otro.</p>
+<div id="vector-data" class="section level2">
+<h2>Vector data</h2>
+<p>We can represent spatial objects in different dimensions:</p>
+<ul>
+<li><em>Point</em>, is the most basic form of representing spatial data. It contains only the spatial coordinates of an even or object. For example, we use this to represent the sspatial location of a farm, a capture of an animal or a case report.<br />
+</li>
+<li><em>Line</em>, Includes the spatial location of an object and the direction. we can use lines to represent a road, a river or a route.<br />
+</li>
+<li><em>Polygon</em>, Includes the spatial location and geometry of an object. We use polygon data to represent the shape of a building, lake or a administrative area.</li>
+</ul>
+<p>Besides having the location of an object, we can include other characteristics such as the name, id, temperature recorded, number of animals in the farm, etc…</p>
+</div>
+<div id="raster-data" class="section level2">
+<h2>Raster data:</h2>
+<p>We use raster data to represent continuous values in a field. Raster are just a grid where each cell has a value and in a grid. The resolution of a raster just represent the size of the cells from the grid. We use raster data to represent values such as altitude, temperature, among other continuous values.</p>
+</div>
+<div id="spatial-objects-in-r." class="section level2">
+<h2>Spatial objects in R.</h2>
+<p>In this tutorial we will introduce to spatial data manipulation in R.<br />
+There are two main formats to manipulate spatial data in R:<br />
+- <strong>SpatialDataFrame</strong> from the <code>sp</code> package: This is was the first format introduced in R for spatial data manipulation, therefore, this package has a lot of dependencies (packages that uses this format to do other functions) i.e <code>raster</code>, <code>spdep</code>, <code>spstat</code>.<br />
+- <strong>Simple features</strong> from the package <code>sf</code>: THis is a more recently developed package, this package was developed to be more intuitive and friendly with other packages such as <code>dplyr</code>. The problem with this package is that since its more recent, some packages doesn’t support this format.</p>
+<p>Working with both formats has its advantages, for spatial data manipulation <code>sf</code> is more intuitive and powerful, but for spatial analysis <code>sp</code> is more robust.</p>
+<p>Here we will use mostly the <code>sf</code> package, but there will be times that we will need to switch between formats.</p>
 <hr />
-<p>Para este curso, se ha desarrollado el paquete en R <code>STNet</code> que incluye los datos y algunas funciones que usaremos.<br />
-Para instalar la libreria tenemos que usar el paquete <code>devtools</code>, si no esta instalado habra que instalarlo.</p>
-<pre class="r"><code># Instalamos devtools
+<p>The package <code>STNet</code> was developed specifically for this workshop. All the data and some functions we will use are contained in the package.<br />
+The installation of this package is done from github, so we will need to install the package<code>devtools</code> to acces the <code>STNet</code> package.</p>
+<pre class="r"><code># If devtools is not installed we need to install it
 install.packages(&quot;devtools&quot;)
-# Instalamos STNet desde github
+# once installed we can use the following funtion to install STNet
 devtools::install_github(&quot;jpablo91/STNet&quot;)</code></pre>
 <hr />
 </div>
 </div>
-<div id="cargar-los-datos" class="section level1">
-<h1>1. Cargar los datos</h1>
-<pre class="r"><code># Cargamos las librerias
+<div id="loading-th-data" class="section level1">
+<h1>1. Loading th data</h1>
+<pre class="r"><code># Loading the libraries
 library(STNet) 
 library(sf)
 library(dplyr)
-# cargamos los datos
+# Loading the data from the package
 data(&quot;PRRS&quot;) 
 data(&quot;SwinePrem&quot;)
-# Cargamos los datos espaciales
+# Loading the spatial data from the package
 Io &lt;- st_read(system.file(&quot;data/Io.shp&quot;, package = &quot;STNet&quot;))</code></pre>
 <pre><code>## Reading layer `Io&#39; from data source `/Library/Frameworks/R.framework/Versions/4.0/Resources/library/STNet/data/Io.shp&#39; using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 99 features and 2 fields
@@ -399,7 +403,7 @@ Io &lt;- st_read(system.file(&quot;data/Io.shp&quot;, package = &quot;STNet&quot
 ## dimension:      XY
 ## bbox:           xmin: -96.63567 ymin: 40.37454 xmax: -90.13931 ymax: 43.50465
 ## geographic CRS: WGS 84</code></pre>
-<p>La funcion <code>st_read()</code> automaticamente muestra algo de informacion sobre nuestro shapefile, pero podemos ver mas detalles cuando lo imprimimos desde la consola:</p>
+<p>The <code>st_read()</code> function automatically shows some information about our shapefile, but we can see more details when printing the object into the console.</p>
 <pre class="r"><code>Io</code></pre>
 <pre><code>## Simple feature collection with 99 features and 2 fields
 ## geometry type:  POLYGON
@@ -418,19 +422,18 @@ Io &lt;- st_read(system.file(&quot;data/Io.shp&quot;, package = &quot;STNet&quot
 ## 8    Iowa      Boone POLYGON ((-93.70088 42.2079...
 ## 9    Iowa     Bremer POLYGON ((-92.08252 42.9061...
 ## 10   Iowa   Buchanan POLYGON ((-91.60603 42.6437...</code></pre>
-<p>El resultado muestra:<br />
-- <code>geometry type</code>: El tipo de shapefiles (ya sea point, lines o polygons).<br />
-- <code>dimension</code> Dimensiones usadas en el shapefile.<br />
-- <code>bbox</code>: La extension de nuestros datos.<br />
-- <code>epsg (SRID)</code>: La proyeccion en formato <em>EPSG</em> (El cual es un codigo estandarizado para describir la proyeccion).<br />
-- <code>proj4string</code>: La proyeccion en formato proj4string.<br />
-- Los 10 primeros elementos.</p>
-<p>Los objetos <code>sf</code> son escencialmente un <code>data.frame</code> con informacion extra sobre la geometria y proyeccion. Podemos obtener la geometria unicamente usando el operador <code>$</code> o la funcion <code>st_geometry()</code> y despues mostrarla en una figura</p>
+<p>The output shows:<br />
+- <code>geometry type</code>: The type of shapefile (either point data, lines or polygons). - <code>dimension</code> Dimensions used in the data.<br />
+- <code>bbox</code>: The extent of our data.<br />
+- <code>epsg (SRID)</code>: The projection in the <em>EPSG</em> format (which is a standardized code to describe the projection).<br />
+- <code>proj4string</code>: The projection in proj4string format.<br />
+- And the first 10 features.</p>
+<p>The <code>sf</code> objects are basically a data.frame with extra information about geometry, preojection and CRS. We can ask for the geometry only using the <code>$</code> operator or the function <code>st_geometry()</code>and then show it in a plot.</p>
 <pre class="r"><code>plot(Io$geometry)</code></pre>
 <p><img src="Espacial_Intro_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>Asi mismo, podemos extraer unicamente los datos sin la geometria usando la funcion <code>data.frame()</code>:</p>
+<p>We can also extract only the data frame without geometry using the function <code>data.frame()</code>:</p>
 <pre class="r"><code>data.frame(Io) %&gt;%
-  head() # usamos la funcion head para ver unicamente los primeros 6</code></pre>
+  head() # We use this function to see the first 6 only</code></pre>
 <pre><code>##   NAME_1    NAME_2                       geometry
 ## 1   Iowa     Adair POLYGON ((-94.24274 41.5030...
 ## 2   Iowa     Adams POLYGON ((-94.4728 41.1566,...
@@ -438,41 +441,41 @@ Io &lt;- st_read(system.file(&quot;data/Io.shp&quot;, package = &quot;STNet&quot
 ## 4   Iowa Appanoose POLYGON ((-92.71506 40.5902...
 ## 5   Iowa   Audubon POLYGON ((-94.74762 41.8609...
 ## 6   Iowa    Benton POLYGON ((-91.83191 42.2986...</code></pre>
-<div id="convirtiendo-data.frames-a-sf" class="section level2">
-<h2>1.1 Convirtiendo data.frames a sf</h2>
-<p>Primero obtenemos la prevalencia por predio:</p>
+<div id="converting-from-data.frame-to-sf" class="section level2">
+<h2>1.1 Converting from data.frame to sf</h2>
+<p>First we obtain the prevalence per farm:</p>
 <pre class="r"><code>PRRS_S &lt;- PRRS %&gt;% 
-  group_by(id) %&gt;%  # Agrupamos por Id
-  summarise(N = n(), Cases = sum(Result)) %&gt;% # Obtenemos el numero de muestras y positivos
-  mutate(Prevalence = Cases/N) # Estimamos una prevalencia</code></pre>
+  group_by(id) %&gt;%
+  summarise(N = n(), Cases = sum(Result)) %&gt;% # Get the number of samples and positives
+  mutate(Prevalence = Cases/N) # Estmate an apparent prevalence.</code></pre>
 <pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<p>Despues vamos a unir esta nueva tabla con las ubicaciones de los predios (SwinePrem):</p>
+<p>Now we join this new values with the locations of the farms (<em>SwinePrem</em>):</p>
 <pre class="r"><code>SwinePrem &lt;- SwinePrem %&gt;% 
   left_join(PRRS_S, by = &quot;id&quot;)</code></pre>
-<p>Ahora usatemos la funcion <code>st_as_sf()</code> para convertir la <code>data.frame</code> a <code>sf</code>. Necesitamos especificar la base de datos, coordinadas y CRS.</p>
+<p>We can use the function <code>st_as_sf()</code> to transform the <code>data.frame</code> to <code>sf</code>. For this we will need to specify the data frame, coordinates and CRS.</p>
 <pre class="r"><code>Nodes &lt;- SwinePrem %&gt;%
-  st_as_sf(coords = c(&quot;long&quot;, &quot;lat&quot;), # Los nombres en nuestra base de datos para coordenadas
-           crs = st_crs(Io)) # el sistema de coordenadas que usaremos</code></pre>
+  st_as_sf(coords = c(&quot;long&quot;, &quot;lat&quot;), # The names of the coordinates in our data
+           crs = st_crs(Io)) # The CRS we will use.</code></pre>
 </div>
-<div id="proyeccion-de-los-datos." class="section level2">
-<h2>1.2 Proyeccion de los datos.</h2>
-<p>Nuestro objeto espacial no esta proyectado, lo que significa que estamos representando los datos en un plano sin considerar la curvatura de la tierra, algo que solo un terraplanista haria. El impacto de la proyeccion en nuestros datos, estara asociado con el tamaño de nuestra area de estudio. En areas pequeñas no habra mucho impacto, pero en areas grandes podemos ver mayor impacto.</p>
-<p>Usaremos la funcion <code>st_transform()</code> para proyectar nuestros datos:</p>
+<div id="projecting-the-data." class="section level2">
+<h2>1.2 Projecting the data.</h2>
+<p>Our spatial objects are not projected, which means that are we are representing the data in a planar scale without considering the earth curvature, something only a flat earther will do. The impact of the projection in our data will be associated with the size of our studyy area. In smaller areas the projection wont have a big impact, but as our study are increases the projection will have a bigger impact when calculating distances.<br />
+We can use the function <code>st_transform()</code> to set a projection to our data.</p>
 <pre class="r"><code>Iop &lt;- Io %&gt;%
   st_transform(st_crs(&quot;+init=EPSG:26975&quot;))
 Nodesp &lt;- Nodes %&gt;% 
   st_transform(st_crs(Iop))</code></pre>
-<p>Si observamos nuestros dos mapas (proyectado y no proyectado), podemos ver una curvatura en las lineas rectas, por ejemplo en los bordes norte y sur son mas notorias.</p>
+<p>If we observe our mos (projected and not projected) side by side, we can notice that there is a slight curvature on the straight lines such as the north and south borders.</p>
 <pre class="r"><code>par(mfrow = c(1,2), mar = c(0, 0, 0, 0))
 plot(Io$geometry)
 plot(Iop$geometry)</code></pre>
 <p><img src="Espacial_Intro_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p>Ahora que nuestros datos tienen una proyeccion, podemos mejorar el aspecto visual de nuestro mapa.</p>
+<p>Now that we have our data correctly projected, we can improve the visual aspect of our map.</p>
 <hr />
 </div>
 </div>
-<div id="visualizacion-de-los-datos" class="section level1">
-<h1>2. Visualizacion de los datos</h1>
+<div id="data-visualization" class="section level1">
+<h1>2. Data visualization</h1>
 <p>Podemos visualizar multiples objetos espaciales en un mismo mapa. En R, los mapas funcionan por capas, podemos agregar multiples capas en un mapa, usamos el argumento <code>add = T</code> en las capas que queramos agregar al mapa base.</p>
 <pre class="r"><code># Visualizar los datos:
 plot(Io$geometry) # Mapa base, primera capa

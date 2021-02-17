@@ -1,133 +1,124 @@
 ---
-title: "Manipulacion de datos espaciales"
+title: "Spatial data maipulation"
 author: Pablo Gomez-Vazquez
 ---
-# Introduccion.  
+# Introduction.  
 
-La informacion espacial puede ser representada de dos maneras principalmente:  
-  - *Vectores*: representan objetos en diferentes dimensiones.  
-  - *Rasters*: Representan valores continuos en una cuadricula.
+Spatial data is usually represented in two different ways:  
 
-## Vectores
-
-Podemos representar objetos espaciales en diferentes dimensines:  
-  - *Punto*, es el tio de objeto mas basico, contiene informacion sobre la localizacion geografica de un evento u objeto. Por ejemplo, ubicacion geografica de una granja, una captura, o un reporte de caso.  
-  - *Linea*, contiene informacion sobre la ubicacion y direccion de un objeto. Por ejemplo una carretera, rio, o una ruta.  
-  - *Poligono*, contiene ubicacion geografica y geometria de un objeto. Usamos poligonos para representar la forma de un territorio, un edificio, un lago.  
+  - *Vectors*: Represent objects in different dimensions.  
+  - *Raster*: Represent continuous values in a grid.  
   
-Ademas de tener la geometria de un objeto, podemos agregar informacion sobre el objeto, por ejemplo, el nombre, identificador, temperatura registrada en ese punto entre otros.  
+## Vector data
 
-## Rasters:
+We can represent spatial objects in different dimensions:  
 
-Usamos rasters para representar valores continuos en un campo. Los rasters son una coleccion de valores en una cuadricula. La resolucion del es basicamente el tamaño de la celda  en nuestra cuadricula. Usamos rasters para representar valores como tipo de suelo, temperatura altitud, entre otros.
-
-
-## Objetos espaciales en R.  
-
-
-En este tutorial introduciremos a manipulacion de datos espaciales en R.  
-
-
-Existen dos formatos principales para manipular datos espaciales en R:  
+  - *Point*, is the most basic form of representing spatial data. It contains only the spatial coordinates of an even or object. For example, we use this to represent the sspatial location of a farm, a capture of an animal or a case report.  
+  - *Line*, Includes the spatial location of an object and the direction. we can use lines to represent a road, a river or a route.  
+  - *Polygon*, Includes the spatial location and geometry of an object. We use polygon data to represent the shape of a building, lake or a administrative area.  
   
-  - **SpatialDataFrame** de la libreria `sp`: Este formato fue de los primeros introducidos para cargar datos en R, por lo tanto existen muchas librerias que dependen de este formato (i.e. `raster`, `spdep`, `spstat`).  
-  - **Simple features** de la libreria `sf`: Esta libreria fue desarrollada mas recientemente, esta libreria fue creada para ser mas intuitiva con otros paquetes de tidyverse. este tipo de objetos tiene sopporte para el formato de pipelines (`%>%`). El problema de esta libreria es que dado a ue es mas reciente, aldunas librerias no son compatibles con este formato.  
-  
-   
+Besides having the location of an object, we can include other characteristics such as the name, id, temperature recorded, number of animals in the farm, etc...  
 
-Aprender a trabajar con los dos formatos tiene sus ventajas, para manipulacion de los datos `sf` es mas intuitivo y poderoso, pero para analisis espacial `sp` es mas robusto.  
-    
+## Raster data:
+
+We use raster data to represent continuous values in a field. Raster are just a grid where each cell has a value and in a grid. The resolution of a raster just represent the size of the cells from the grid. We use raster data to represent values such as altitude, temperature, among other continuous values.  
+
+## Spatial objects in R.  
+
+In this tutorial we will introduce to spatial data manipulation in R.  
+There are two main formats to manipulate spatial data in R:  
+  - **SpatialDataFrame** from the `sp` package: This is was the first format introduced in R for spatial data manipulation, therefore, this package has a lot of dependencies (packages that uses this format to do other functions) i.e `raster`, `spdep`, `spstat`.  
+  - **Simple features** from the package `sf`: THis is a more recently developed package, this package was developed to be more intuitive and friendly with other packages such as `dplyr`. The problem with this package is that since its more recent, some packages doesn't support this format.  
   
-En este curso usaremos `sf` principalmente, pero habra situaciones en las que tengamos que cambiar de un formato a otro.    
+Working with both formats has its advantages, for spatial data manipulation `sf` is more intuitive and powerful, but for spatial analysis `sp` is more robust.  
+
+Here we will use mostly the `sf` package, but there will be times that we will need to switch between formats.  
   
   
 ___________________________________________
   
-  
-Para este curso, se ha desarrollado el paquete en R `STNet` que incluye los datos y algunas funciones que usaremos.  
-Para instalar la libreria tenemos que usar el paquete `devtools`, si no esta instalado habra que instalarlo.  
+The package `STNet` was developed specifically for this workshop. All the data and some functions we will use are contained in the package.  
+The installation of this package is done from github, so we will need to install the package`devtools` to acces the `STNet` package.
 
 ```{r eval=FALSE}
-# Instalamos devtools
+# If devtools is not installed we need to install it
 install.packages("devtools")
-# Instalamos STNet desde github
+# once installed we can use the following funtion to install STNet
 devtools::install_github("jpablo91/STNet")
 ```
   
 ________________________________________
   
   
-# 1. Cargar los datos
-
+# 1. Loading th data
 
 ```{r message = F}
-# Cargamos las librerias
+# Loading the libraries
 library(STNet) 
 library(sf)
 library(dplyr)
-# cargamos los datos
+# Loading the data from the package
 data("PRRS") 
 data("SwinePrem")
-# Cargamos los datos espaciales
+# Loading the spatial data from the package
 Io <- st_read(system.file("data/Io.shp", package = "STNet"))
 ```
 
-La funcion `st_read()` automaticamente muestra algo de informacion sobre nuestro shapefile, pero podemos ver mas detalles cuando lo imprimimos desde la consola:
+The `st_read()` function automatically shows some information about our shapefile, but we can see more details when printing the object into the console.  
 
 ```{r}
 Io
 ```
 
+The output shows:  
+  - `geometry type`: The type of shapefile (either point data, lines or polygons).
+  - `dimension` Dimensions used in the data.  
+  - `bbox`: The extent of our data.  
+  - `epsg (SRID)`: The projection in the *EPSG* format (which is a standardized code to describe the projection).  
+  - `proj4string`: The projection in proj4string format.  
+  - And the first 10 features.  
 
-El resultado muestra:  
-  - `geometry type`: El tipo de shapefiles (ya sea point, lines o polygons).  
-  - `dimension` Dimensiones usadas en el shapefile.  
-  - `bbox`: La extension de nuestros datos.  
-  - `epsg (SRID)`: La proyeccion en formato *EPSG* (El cual es un codigo estandarizado para describir la proyeccion).  
-  - `proj4string`: La proyeccion en formato proj4string.  
-  - Los 10 primeros elementos.  
+The `sf` objects are basically a data.frame with extra information about geometry, preojection and CRS. We can ask for the geometry only using the `$` operator or the function `st_geometry()`and then show it in a plot.  
   
-Los objetos `sf` son escencialmente un `data.frame` con informacion extra sobre la geometria y proyeccion. Podemos obtener la geometria unicamente usando el operador `$` o la funcion `st_geometry()` y despues mostrarla en una figura
-
 ```{r}
 plot(Io$geometry)
 ```
 
-Asi mismo, podemos extraer unicamente los datos sin la geometria usando la funcion `data.frame()`:  
+We can also extract only the data frame without geometry using the function `data.frame()`:  
 ```{r}
 data.frame(Io) %>%
-  head() # usamos la funcion head para ver unicamente los primeros 6
+  head() # We use this function to see the first 6 only
 ```
 
-## 1.1 Convirtiendo data.frames a sf
+## 1.1 Converting from data.frame to sf
 
-Primero obtenemos la prevalencia por predio: 
+First we obtain the prevalence per farm: 
 
 ```{r}
 PRRS_S <- PRRS %>% 
-  group_by(id) %>%  # Agrupamos por Id
-  summarise(N = n(), Cases = sum(Result)) %>% # Obtenemos el numero de muestras y positivos
-  mutate(Prevalence = Cases/N) # Estimamos una prevalencia
+  group_by(id) %>%
+  summarise(N = n(), Cases = sum(Result)) %>% # Get the number of samples and positives
+  mutate(Prevalence = Cases/N) # Estmate an apparent prevalence.
 ```
 
-Despues vamos a unir esta nueva tabla con las ubicaciones de los predios (SwinePrem):
+Now we join this new values with the locations of the farms (*SwinePrem*):  
+
 ```{r}
 SwinePrem <- SwinePrem %>% 
   left_join(PRRS_S, by = "id")
 ```
 
-Ahora usatemos la funcion `st_as_sf()` para convertir la `data.frame` a `sf`. Necesitamos especificar la base de datos, coordinadas y CRS.  
+We can use the function `st_as_sf()` to transform the `data.frame` to `sf`. For this we will need to specify the data frame, coordinates and CRS.  
 ```{r}
 Nodes <- SwinePrem %>%
-  st_as_sf(coords = c("long", "lat"), # Los nombres en nuestra base de datos para coordenadas
-           crs = st_crs(Io)) # el sistema de coordenadas que usaremos
+  st_as_sf(coords = c("long", "lat"), # The names of the coordinates in our data
+           crs = st_crs(Io)) # The CRS we will use.
 ```
 
-## 1.2 Proyeccion de los datos.
+## 1.2 Projecting the data.
 
-Nuestro objeto espacial no esta proyectado, lo que significa que estamos representando los datos en un plano sin considerar la curvatura de la tierra, algo que solo un terraplanista haria. El impacto de la proyeccion en nuestros datos, estara asociado con el tamaño de nuestra area de estudio. En areas pequeñas no habra mucho impacto, pero en areas grandes podemos ver mayor impacto.  
-
-Usaremos la funcion `st_transform()` para proyectar nuestros datos:  
+Our spatial objects are not projected, which means that are we are representing the data in a planar scale without considering the earth curvature, something only a flat earther will do. The impact of the projection in our data will be associated with the size of our studyy area. In smaller areas the projection wont have a big impact, but as our study are increases the projection will have a bigger impact when calculating distances.  
+We can use the function `st_transform()` to set a projection to our data.  
 ```{r}
 Iop <- Io %>%
   st_transform(st_crs("+init=EPSG:26975"))
@@ -135,19 +126,20 @@ Nodesp <- Nodes %>%
   st_transform(st_crs(Iop))
 ```
 
-Si observamos nuestros dos mapas (proyectado y no proyectado), podemos ver una curvatura en las lineas rectas, por ejemplo en los bordes norte y sur son mas notorias.  
+If we observe our mos (projected and not projected) side by side, we can notice that there is a slight curvature on the straight lines such as the north and south borders.  
+
 ```{r}
 par(mfrow = c(1,2), mar = c(0, 0, 0, 0))
 plot(Io$geometry)
 plot(Iop$geometry)
 ```
 
-Ahora que nuestros datos tienen una proyeccion, podemos mejorar el aspecto visual de nuestro mapa.  
+Now that we have our data correctly projected, we can improve the visual aspect of our map.  
   
 ___________________________________________
   
   
-# 2. Visualizacion de los datos
+# 2. Data visualization
 
 Podemos visualizar multiples objetos espaciales en un mismo mapa. En R, los mapas funcionan por capas, podemos agregar multiples capas en un mapa, usamos el argumento `add = T` en las capas que queramos agregar al mapa base.
 

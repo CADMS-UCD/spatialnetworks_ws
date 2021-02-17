@@ -1,0 +1,115 @@
+---
+title: "Spatial Data Manipulation"
+output: github_document
+---
+
+In this tutorial we will introduce to spatial data manipulation in R.  
+There are two main formats to manipulate spatial data in R:  
+  - **SpatialDataFrame** from the `sp` package: This is was the first format introduced in R for spatial data manipulation, therefore, this package has a lot of dependencies (packages that uses this format to do other functions) i.e `raster`, `spdep`, `spstat`.  
+  - **Simple features** from the package `sf`: THis is a more recently developed package, this package was developed to be more intuitive and friendly with other packages such as `dplyr`. The problem with this package is that since its more recent, some packages doesn't support this format.  
+  
+Working with both formats has its advantages, for spatial data manipulation `sf` is more intuitive and powerful, but for spatial analysis `sp` is more robust.  
+
+Here we will use mostly the `sf` package, but there will be times that we will need to switch between formats.  
+
+```{r message = F, warning = F}
+# We load our non spatial data first:
+library(sf)
+library(dplyr)
+# Read the cases file:
+PRRS <- readxl::read_xlsx("../Data/PRRS.xlsx")
+# Read the nodes file
+nodes <- read.csv("../Data/node_attrib.csv")
+```
+
+Now we will import a shp file using the `st_read()` function:
+
+```{r}
+Io <- st_read("../Data/Shapefiles/State/Io.shp")
+```
+
+`sf` automatically shows some information about our shapefile, but we can see more details when printing the object into the console.  
+
+```{r}
+Io
+```
+
+The output shows:  
+  - `geometry type`: The type of shapefile (either point data, lines or polygons).  
+  - `dimension` Dimensions used in the data.  
+  - `bbox`: The extent of our data.  
+  - `epsg (SRID)`: The projection in the epsg format (which is a standardized code to describe the projection).  
+  - `proj4string`: The projection in proj4string format.  
+  - And the first 10 features.  
+
+
+The `sf` objects are basically a data.frame with extra information about geometry, preojection and CRS. We can ask for the geometry only using the `$` operator and then show it in a plot.  
+```{r}
+plot(Io$geometry)
+```
+
+We can also transform a data.frame object to sf using a set of coordinates and a CRS. First we will add the number of cases and tested.    
+```{r}
+PRRS.s <- PRRS %>% 
+  group_by(id) %>% 
+  summarise(N = n(), Cases = sum(Result)) %>%
+  mutate(Prevalence = Cases/N)
+
+PRRS.s %>% 
+  arrange(desc(Cases))
+
+# We will use the function left_join to join the cases information with the farm information 
+nodes <- nodes %>% left_join(PRRS.s, by = "id")
+```
+
+Now that we have number of cases and location in the same dataset, we can transform it to a spatial object with the function `st_as_sf()`. We need to specify the data, the coordinates and the CRS.  
+
+```{r}
+nodesSf <- nodes %>% 
+  st_as_sf(coords = c("long", "lat"), # name of the coordinates in our dataset
+           crs = st_crs(Io)) # CRS, we will use the same as out Io map
+
+# Visualize the data:
+plot(Io$geometry)
+plot(nodesSf$geometry, add = T)
+```
+
+Our spatial objects are not projected, which means that are we are representing the data in a planar scale without considering the earth curvature, something only a flat earther will do. We can use the function `st_transform()` to set a projection to our data.  
+```{r}
+Io <- Io %>% st_transform(st_crs("+init=EPSG:26975"))
+nodesSf <- nodesSf %>% st_transform(st_crs("+init=EPSG:26975"))
+```
+
+Now that we have our data projected we can create a better looking map.   
+We can will the information of the aparent prevalence per farm for the size of our points, and then we will color the point according to the type of farm. Note that we are using the function `rescale()` from the package `scales()` to rescale our values from 1 to 2 according to the prevalence.    
+```{r}
+# We will set a color palette for the number of levels in our farm type variable
+colpal <- RColorBrewer::brewer.pal(length(levels(nodesSf$farm_type)), "Dark2")
+# Plot the map
+plot(Io$geometry, col = "grey80", main=  "Distribution of the farms and the prevalence") # the background we will use
+plot(nodesSf$geometry, # Our point data
+     pch = 16, # the type of shape four our point
+     cex = scales::rescale(nodesSf$Prevalence, to = c(0.5,2)), # rescale our variables for the size
+     col = colpal[nodesSf$farm_type], # use the color palette
+     add = T) # add the pints to the abckground
+legend("topright", legend = levels(nodesSf$farm_type), pch = 16, col = colpal) # add a legend
+```
+
+We can aggregate the data at county level to create a choropleth map.  First we will join the farm information with the county using a spatial joint with the function `st_join()`. This function will create duplicates of our conuties since we have multiple farms per county, so then we will sum all the cases and number of observations using `group_by()` and `summarise()`, and calculate the prevalence at county level (instead of farm level).    
+
+```{r}
+Io <- Io %>% # Our spatial object
+  st_join(nodesSf) %>% # the data we are joining with
+  group_by(NAME_2) %>% # group by county
+  summarise_at(vars(N, Cases), funs(sum(.,na.rm = T))) %>% # apply the sum function to the variables sN and Cases
+  mutate(Prevalence = Cases/N) # get the apparent prevalence at county level
+```
+
+Finally we will use the library `tmap()` to plot the prevalence at county level.  
+there are multiple libraries for plotting maps, but tmap its very intuitive.  
+
+```{r}
+library(tmap)
+tm_shape(Io) +
+  tm_polygons("Prevalence", palette = "-RdYlBu")
+```

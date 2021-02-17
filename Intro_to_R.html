@@ -523,10 +523,10 @@ nodes &lt;- nodes %&gt;%
 We can achieve the same result in different ways. The first one is better when we have our variables in the same dataset, and the second one when we have data from diferent objects. (the length of the two vectors has to be the same).</p>
 <pre class="r"><code># When variables are from the same dataset
 plot(Outgoing~Incoming, data = nodes)</code></pre>
-<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="Intro_to_R_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <pre class="r"><code># When variables from different dataset
 plot(nodes$Outgoing, nodes$Incoming)</code></pre>
-<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
+<p><img src="Intro_to_R_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
 </div>
 <div id="pie-charts" class="section level2">
 <h2>Pie charts</h2>
@@ -536,18 +536,18 @@ To select a variables from a data.frame we use <code>$</code>. For exmaple if we
 TM &lt;- table(PRRS$farm_type, PRRS$Result)
 # Then we use the second column which contains the positive onyl
 pie(TM[,2])</code></pre>
-<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="Intro_to_R_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 </div>
 <div id="boxplots" class="section level2">
 <h2>Boxplots</h2>
 <p>Boxplots are great to show the distribution of a continous variable. we can use it to show only one variable, or multiple variables.</p>
 <pre class="r"><code># Only one variable
 boxplot(x = PRRS$Age)</code></pre>
-<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="Intro_to_R_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <pre class="r"><code># Same variable, but stratified by another
 boxplot(Age~Sex, data = PRRS, col = &quot;lightgreen&quot;, 
         main = &quot;Boxplot of age stratified by sex&quot;)</code></pre>
-<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="Intro_to_R_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <p>The plot function has a lot of arguments to customize your plots, you dont need to use them all, but the more you use, the more you can create more informative and visually appealing plots.</p>
 </div>
 <div id="bar-plot" class="section level2">
@@ -571,7 +571,7 @@ barplot(TM[, order(colSums(TM), decreasing = T)], # Order the results in decreas
         main = &quot;Test results stratified by sex&quot;, # Main title 
         col = colpal[1:2], # we want only the first two colors of our palette
         legend = rownames(TM)) # include the row names as legend</code></pre>
-<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="Intro_to_R_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 <p><strong>Excercise:</strong> Create a bar plot of the results stratified by the farm type:</p>
 <pre class="r"><code># Answer</code></pre>
 </div>
@@ -597,7 +597,7 @@ plot(N~week, # Our variables
      main = &quot;Movements per week&quot;, # Main title
      xlab = &quot;Week of the year&quot;, # label for x axis
      ylab = &quot;Number of movements&quot;) # label for y axis</code></pre>
-<p><img src="Intro_a_R_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p><img src="Intro_to_R_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 <p><a href="Temario_WS02.html">Go Back</a></p>
 </div>
 </div>
