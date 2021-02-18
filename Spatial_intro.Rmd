@@ -1,5 +1,5 @@
 ---
-title: "Spatial data maipulation"
+title: "Spatial data manipulation"
 author: Pablo Gomez-Vazquez
 output:
   html_document:
@@ -17,7 +17,7 @@ Spatial data is usually represented in two different ways:
 
 We can represent spatial objects in different dimensions:  
 
-  - *Point*, is the most basic form of representing spatial data. It contains only the spatial coordinates of an even or object. For example, we use this to represent the sspatial location of a farm, a capture of an animal or a case report.  
+  - *Point*, is the most basic form of representing spatial data. It contains only the spatial coordinates of an even or object. For example, we use this to represent the spatial location of a farm, a capture of an animal or a case report.  
   - *Line*, Includes the spatial location of an object and the direction. we can use lines to represent a road, a river or a route.  
   - *Polygon*, Includes the spatial location and geometry of an object. We use polygon data to represent the shape of a building, lake or a administrative area.  
   
@@ -42,12 +42,12 @@ Here we will use mostly the `sf` package, but there will be times that we will n
 ___________________________________________
   
 The package `STNet` was developed specifically for this workshop. All the data and some functions we will use are contained in the package.  
-The installation of this package is done from github, so we will need to install the package`devtools` to acces the `STNet` package.
+The installation of this package is done from github, so we will need to install the package`devtools` to access the `STNet` package.
 
 ```{r eval=FALSE}
 # If devtools is not installed we need to install it
 install.packages("devtools")
-# once installed we can use the following funtion to install STNet
+# once installed we can use the following function to install STNet
 devtools::install_github("jpablo91/STNet")
 ```
   
@@ -82,7 +82,7 @@ The output shows:
   - `proj4string`: The projection in proj4string format.  
   - And the first 10 features.  
 
-The `sf` objects are basically a data.frame with extra information about geometry, preojection and CRS. We can ask for the geometry only using the `$` operator or the function `st_geometry()`and then show it in a plot.  
+The `sf` objects are basically a data.frame with extra information about geometry, projection and CRS. We can ask for the geometry only using the `$` operator or the function `st_geometry()`and then show it in a plot.  
   
 ```{r}
 plot(Io$geometry)
@@ -102,7 +102,7 @@ First we obtain the prevalence per farm:
 PRRS_S <- PRRS %>% 
   group_by(id) %>%
   summarise(N = n(), Cases = sum(Result)) %>% # Get the number of samples and positives
-  mutate(Prevalence = Cases/N) # Estmate an apparent prevalence.
+  mutate(Prevalence = Cases/N) # Estimate an apparent prevalence.
 ```
 
 Now we join this new values with the locations of the farms (*SwinePrem*):  
@@ -121,7 +121,7 @@ Nodes <- SwinePrem %>%
 
 ## 1.2 Projecting the data.
 
-Our spatial objects are not projected, which means that are we are representing the data in a planar scale without considering the earth curvature, something only a flat earther will do. The impact of the projection in our data will be associated with the size of our studyy area. In smaller areas the projection wont have a big impact, but as our study are increases the projection will have a bigger impact when calculating distances.  
+Our spatial objects are not projected, which means that are we are representing the data in a planar scale without considering the earth curvature, something only a flat earther will do. The impact of the projection in our data will be associated with the size of our study area. In smaller areas the projection wont have a big impact, but as our study are increases the projection will have a bigger impact when calculating distances.  
 We can use the function `st_transform()` to set a projection to our data.  
 ```{r}
 Iop <- Io %>%
@@ -155,10 +155,10 @@ plot(Nodes["Prevalence"], pch = 16, add = T) # Second layer
 ```
 
 Using the information of the apparent prevalence by farm we can change the size of the point and color them by type of farm. We use the function `rescale()` from the `scales` package to rescale the points between 0.5 - 1.5 according to their apparent prevalence.  
-We can also add a legend that shows what they symbology means in our map. For this we use the function `legend()`, which will take multiple arguments such as the location, names to display, among others.  
+We can also add a legend that shows what they simbology means in our map. For this we use the function `legend()`, which will take multiple arguments such as the location, names to display, among others.  
 
 ```{r}
-# UWe use the function rainbow to obtain a palette
+# We use the function rainbow to obtain a palette
 colpal <- rainbow(length(levels(Nodes$farm_type)), # Number of colors needed
                   s = 0.6) # saturation for the colors
 
@@ -180,7 +180,7 @@ legend("topright", # Position of the legend
 
 ## 2.1 Choropleth Maps
 
-We can aggregate the data at county level to create a choropleth map.  First we will join the farm information with the county using a spatial joint with the function `st_join()`. This function will create duplicates of our conuties since we have multiple farms per county, so then we will sum all the cases and number of observations using `group_by()` and `summarise()`, and calculate the prevalence at county level (instead of farm level).    
+We can aggregate the data at county level to create a choropleth map.  First we will join the farm information with the county using a spatial joint with the function `st_join()`. This function will create duplicates of our counties since we have multiple farms per county, so then we will sum all the cases and number of observations using `group_by()` and `summarise()`, and calculate the prevalence at county level (instead of farm level).    
 
 ```{r}
 Iop <- Iop %>%
@@ -204,7 +204,7 @@ There are other libraries that can be used to create maps in R, the base R funct
   
 ## 3.1 tmap
 
-[`tmap`](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) has several options for mapping and with very similar syntax to the tydiverse packages (`dplyr`, `ggplot2`). We can create several maps and arrange them into a layout. For example, we can specify a predefined color palette for our map without the need of telling R how many colors we need.  
+[`tmap`](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) has several options for mapping and with very similar syntax to the tidyverse packages (`dplyr`, `ggplot2`). We can create several maps and arrange them into a layout. For example, we can specify a predefined color palette for our map without the need of telling R how many colors we need.  
 
 ```{r message = F}
 library(tmap)
@@ -223,11 +223,11 @@ tm_shape(Iop) +  # base layer
   # Layout options
   tm_layout(legend.outside = T, # We want the legend outside the box
             frame = F, # remove frame
-            legend.hist.width = 3) # wisth of histogram
+            legend.hist.width = 3) # with of histogram
 ```
 ### 3.1.1 Interactive maps
 
-One of the nice things about tmap is that we can ver easy convert our static map into something interactive. We use the function `tmap_mode()` to switch between the interctive mode ('view') to the static mode ('plot'). Now we will create a choropleth map like the one we did before, but add it as an interactive map laer.  
+One of the nice things about tmap is that we can ver easy convert our static map into something interactive. We use the function `tmap_mode()` to switch between the interactive mode ('view') to the static mode ('plot'). Now we will create a choropleth map like the one we did before, but add it as an interactive map layer.  
 
 ```{r}
 tmap_mode('view')

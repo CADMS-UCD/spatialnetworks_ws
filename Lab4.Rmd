@@ -1,14 +1,18 @@
 ---
 title: "Lab 4"
+output: html_document
 ---
 
-
-```{r echo = F}
-knitr::opts_chunk$set(message = F, warning = F)
+```{r echo=F}
+knitr::opts_chunk$set(message=F, warning =F)
 ```
 
-Librerias que usaremos:
-```{r}
+
+
+These are the libraries that we will use in this lab:
+
+
+```{r }
 # install.packages("igraph")
 # install.packages("maps")
 # install.packages("raster")
@@ -22,96 +26,95 @@ Librerias que usaremos:
 # install.packages("scatterplot3d")
 ```
 
-Vamos a empezar importando los datos de los edges, atributos de los nodos y el shapefile del area.   
+Let's start by importing the data for edges, node attributes, and the shapefile of the area of study.
 
-```{r}
+```{r  echo=FALSE}
 colpal <- RColorBrewer::brewer.pal(4, "Dark2")
 library(dplyr)
 library(sf)
-# Cargar los datos de movimientos y nodos
+# Load data of movements and nodes 
 net <- STNet::SwineMov
 node_attrib <- STNet::SwinePrem
-# Vamos a formatear como caracter para usarlo posteriormente
+# Format id as character to use it later
 node_attrib$idch <- as.character(node_attrib$id)
-# Cargar el objeto espacial
+# Load the spatial object
 IO <- st_read(system.file("data/Io.shp", package = "STNet"), quiet = T)
 ```
 
-Ahora usaremos la funcion `graph.data.frame` para crear la red direccionada.  
+We will now use the `graph.data.frame` function to create a directed network.
+
 ```{r}
 library(igraph)
 g1 <- graph.data.frame(net, directed = T)
 ```
 
-Como vimos anteriormente, podemos agregar atributos de la red ya sea para los vertices `V()` o edges `E()`. En la siguiente seccion agregaremos algunos atributos de la ubicacion y tipo de granja.  
+As we have seen earlier, we can add network attributes for both vertices `V ()` or edges `E ()`. In the next section we will add some attributes related with the location of farms and farm type.
 
 ```{r}
-# hacemos match de los identificadores en la red y en la tabla de datos:
+# We match the identifiers in the network with the data table 
 poss<-match(V(g1)$name,node_attrib$idch)
-# Agregamos los atributos a la red
+# Add the attributes to the network
 V(g1)$lat <- node_attrib$lat[poss]
 V(g1)$long <- node_attrib$long[poss]
 V(g1)$type <- as.character(node_attrib$farm_type[poss])
 V(g1)$fullname <- as.character(node_attrib$name[poss])
-# checamos que los atributos esten en el summary del objeto
+# check the correct assignation of the attributes in the object
+
 summary(g1)
 ```
+## 1 Introduction to dynamic networks
 
+The `networkDynamic` package has functions that allow to analyze and visualize a network and incorporate temporality to it.
+To incorporate a temporal window, we need to specify the start time (onset) and end time (termini). For the purposes of this example we will assume that the contact time is one week.
 
-# 1 Introduccion a redes dinamicas:
-
-El paquete `networkDynamic` tiene funciones para analizar y visualizar una red incorporando temporalidad.  
-Necesitamos especificar el tiempo de inicion(onset) y el final (termini). en este caso asumiremos que el tiempo del contacto es de una semana.  
-
-```{r}
-# Cargamos las librerias
-## Para redes dinamicas
+```{r echo=FALSE}
+# Load libraries
+## For dynamic networks
 library(networkDynamic)
-# Para visualizacion y obtener estadisticas de la red
+# To visualize and get network statistics
 library(ndtv)
 library(tsna)
-# Formateamos la variable como fecha:
+# Format the variable as date:
 net$date <- as.Date(net$date, format = '%m/%d/%y')
-# Creamos una variable para el año
+# Create a new variable for year from the date
 net$year<-as.numeric(strftime(net$date,format = "%Y"))
-# Creamos una variable para la semana del año
+# Create a new variable to show the week of the year
 net$w<-as.numeric(strftime(net$date,format = "%V"))
 ```
 
-Usaremos una resulocuion de una semana para nuestro analisis. Dado a que no tenemos informacion sobre la duracion del contacto, asumiremos que la duracion fue una semana.  
-Como tenemos multiples años, tenemos que calcular la semana en numero desde que empieza nuestros datos hast que terminan. Para esto usaremos un offset que agregara 53 semanas o 106 dependiendo del año.    
+In this analysis we will use a one week resolution. Since we have no information on the duration of the contact, we will assume that the duration is one week. As we have multiple years, we need to number the weeks from the first week in which we have data to the last week with data. For this, we will use an offset that will add 53 weeks or 106 depending on the year.
 
 ```{r}
-# creamos el onset empezando desde el 2015, 
-# usamos un ifelse dentro de otro para determinar el offset
-net$w_onset<-as.numeric(ifelse(net$year==2015 #Primera condicion
-                               ,net$w # Si la condicion es verdad solo el numero de semana, si no hace el otro ifelse
-                               ,ifelse(net$year==2016 # Segunda condicion
-                                       ,net$w+53 # Si la condicion es verdadera agrega un offset de 53 semanas, si no 106
+# Create the onset starting from 2015, 
+# Use ifelse inside another ifelse to determinate the offset
+net$w_onset<-as.numeric(ifelse(net$year==2015 #First condition
+                               ,net$w # If the condition is true, only the number of week, if not, we use other ifelse 
+                               ,ifelse(net$year==2016 # Second condition
+                                       ,net$w+53 # If the condition is true, an offset of 53 weeks is added, 106 weeks otherwise
                                        ,net$w+106)))
 
-# Ahora asumimos que la duracion del contacto es de una semana
+# Now we state that the duration of the contact is one week 
 net$w_termini<-net$w_onset+1
 ```
 
-Ahora crearemos una red dinamica con la informacion que formateamos.  
-La funcion `networkDynamic` toma los datos en differentes formatos, aqui los ponemos en formato de `data.frame` y la funcion espera la lista de variables ordenada como `onset`, `termini`, `tail`, `head`, donde:  
-`head` = Origen.  
-`tail` = Destino.  
-`onset` = Inicio del contacto.  
-`termini` = Find el contacto.  
-  
+Now we will create a dynamic network with this information.
+The `networkDynamic` function is able to reproduce the data in different formats. Here we will use a `data.frame` format. The function will read the data and will expect a list of variables following this order: `head`, `tail`, `onset` and `termini`, where:
+`head` = Origins.
+`tail` = Destination.
+`onset` = Start of contact.
+`termini` = End of contact.
 
 ```{r}
 n1 <- networkDynamic(edge.spells = net[c("w_onset", "w_termini", "id_dest", "id_orig")])
 ```
 
-Podemos agregar atributos a los datos. Los atributos pueden ser estaticos o cambiantes durante el periodo. **Nota** las funciones `set.edge.attribute()` y `set.vertex.attribute()` pueden ser enmascaradas por otros paquetes como igraph, si lo tenemos cargado en la sesion lo tendremos que descargar o especificar de cual paquete queremos la funcion (i.e. `network::set.edge.attribute()`).  
+Now we can add attributes to the data. These attributes can be static or change during the period. 
+**Note:**  the functions `set.edge.attribute()` and `set.vertex.attribute()` from the package network can be masked by other functions with the same name that are present in other packages, such as the `igraph` package. If we have already loaded these other packages with functions in conflict, we will need to specify which package contains the function that we want to use to prevent wrong calls (i.e. by typing `network::set.edge.attribute()`).
 
 ```{r}
-set.edge.attribute(n1, #name of the network
+set.edge.attribute(n1, #Name of the network
                    "pigs.moved",  # Name of the attribute
-                   net$pigs.moved) # values
+                   net$pigs.moved) # Values
 ```
 
 We can then just add the unchanging vertex attribute data
@@ -123,92 +126,100 @@ set.vertex.attribute(n1,"long",node_attrib$long)
 set.vertex.attribute(n1,"type",as.character(node_attrib$farm_type))
 ```
 
-Una vez que tenemos los atributos del nodo los podemos visualizar imprimiendo el objeto `networkDynamic`
+Once we have the node attributes, we can print them by calling the `networkDynamic` object that we have just created 
+
 ```{r}
 n1
 ```
 
-El objeto  `networkDynamic` contiene un resumen de la red incluyendo el periodo, numero de vertices y edges.   
+This object summarizes the network including the period and number of vertices and edges
 
-
-Tambien podemos investigar los nombres de los atributos usando:
 ```{r}
 list.edge.attributes(n1)
+```
+
+```{r}
 list.vertex.attributes(n1)
 ```
 
-Si queremos accesar a los valores de los atributos usamos la funcion`get.vertex.attribute()`: 
+If we want to see the values of these attributes, we can use  `get.vertex.attribute()`:
+
 ```{r}
 get.vertex.attribute(n1,"vertex.names")
+```
+
+```{r}
 get.vertex.attribute(n1,"type")
 ```
 
-
-Podemos tambien acceder a mas informacion de la red como la actividad usando `get.vertex.activity()` or `get.edge.activity()`  
+We can also obtain more information of the network, such as the activity by using `get.vertex.activity()` or `get.edge.activity()`
 
 ```{r}
 summary(get.vertex.activity(n1, as.spellList=TRUE))
+```
+
+```{r}
 summary(get.edge.activity(n1, as.spellList=TRUE))
 ```
 
+## 2 Temporal statistics
 
+We can evaluate several measures at the graph level, vertex level or traces of the period of study of our network using the function `tSnaStats()`.
 
-## Estadisticas temporales. 
-
-Podemos evaluar varias medidas a nivel de grafica o a nivel de vertice a traces del periodo de estudio de nuestra red usando la funcion `tSnaStats()`.  
-Esta funcion recive argumentos de el nombre de la red y la funcion que aplicaremos. Por ejemplo, podemos calcular la densida de la red en diferentes periodos.  
+This function uses arguments to include the `networkDynamic` object that we have created and to specify the function with the desired statistic that we want to apply (through the argument "snafun="). For example, if we want to calculate the density of the network in different periods, we will do this:
 
 ```{r}
-tSnaStats(n1, snafun = "gden") %>% 
+tSnaStats(n1, snafun = "gden") %>% # "gden" to show graph density
   plot(col = colpal[2], lwd = 2, main = "Network density during the study period")
 ```
 
-Podemos ver que la actividad de movimientos es mucho mas al principio y despues va decresiendo poco a poco hasta que se acerca a 0.  
+In the previous plot we can see that the activity of movements is bigger at the beginning of the time series and slowly decreases  over time until reaching approximately zero.
 
-La funcion `tSnaStats()` tambien recive argumentos de periodos especifios de tiempo.  
+The function `tSnaStats()` also allows us to use arguments to define specific periods of time from which we want to calculate the statistics
 
 ```{r}
 tSnaStats(n1, snafun = "grecip", start = 30, end = 60) %>% 
   plot(main = "Network Reciprocity during the interval 30-60", col = colpal[3], lwd = 2)
 ```
 
-Usando esta funcion accedemos a estaditicas de nivel de nodo.  
+We can also see node-level statistics (e.g. betweenness) using the next function.
 
 ```{r}
 apply(tSnaStats(n1, snafun = "betweenness"), 1, mean) %>% plot(type = "l", lwd = 2, col = colpal[4])
 ```
 
+## 3 Plotting the network
 
+We can use the function `plot()` to see the network object, but we can only see the static network because we are not defining any time interval
 
-## Graficando la red:
-
-Si usamos la funcion `plot()` directamente en la red, podremos observar la red estatica solamente por que no estamos especificando ningun intervalo de tiempo.  
 ```{r}
 plot(n1,mode="kamadakawai") 
 ```
 
-Para especiicar un periodo de tiempo podemos usar la funcion `network.extract()`, y obtendremos una red para el periodo de tiempo especificado.  
+If we want to see a specific period of time, we need to define it. For this, we can use the function `network.extract()` to extract a specific period in the network and then use `plot()` to show this extract. 
 
 ```{r}
 # Plot an interval of time
 n1 %>% 
   network.extract(onset = 1, terminus = 60) %>%
   plot()
-# plot a specific timepoint and remove isolates
+```
+
+```{r}
+# Plot a specific timepoint and remove isolates
 n1 %>% 
   network.extract(at = 35) %>%
   plot(displayisolates = F)
 ```
 
-
-Ahora crearemos un grafico en multiples periodos de tiempo.  
+Now we are going to create a plot with multiple periods of time
 
 ```{r}
 # First we create a function to plot the network extract we want:
 plot.extract <- function(n, onset, terminus){
-  n %>% # the input network
-    network.extract(onset = onset, terminus = terminus) %>% #extract the time interval
-    plot(vertex.cex = 1.5, main = paste0("t", onset, "-", "t", terminus)) #plot the network
+  n %>% # The input network
+    network.extract(onset = onset, terminus = terminus) %>% #Extract the time interval
+    plot(vertex.cex = 1.5, main = paste0("t", onset, "-", "t", terminus)) #Plot the network
 }
 
 # Then we define out time intervals
@@ -221,19 +232,20 @@ for(i in O){
 }
 ```
 
-Podemos usar diferentes layouts para graficar los extractos de la red.  A continuacion vamos a graficar los nodos en su ubicacion espacial. tendremos que modificar un poco la funcion para agregar las coordenadas.  
+We can use different layouts to plot the extracts of the network.
+Now, we are going to plot the nodes in their spatial location. For this, we will have to make a little modification of our previous function so we can add the coordinates.
 
 ```{r}
-# we set fixed coordinates from the longitude and latitude
+# We set fixed coordinates from the longitude and latitude
 a <- as.matrix(node_attrib[, c("long", "lat")])
 
 
 # Modify the function:
 plot.extract <- function(n, onset, terminus, Bg){
   plot(Bg, col = "grey80", main = paste0("t", onset, "-", "t", terminus))
-  n %>% # the input network
-    network.extract(onset = onset, terminus = terminus) %>% #extract the time interval
-    plot(vertex.cex = 1, coord=as.matrix(a), new = F) #plot the network
+  n %>% # The input network
+    network.extract(onset = onset, terminus = terminus) %>% #Extract the time interval
+    plot(vertex.cex = 1, coord=as.matrix(a), new = F) #Plot the network
   
   # plot(network.extract(n1,onset=onset,terminus=terminus),vertex.cex = 1, coord=as.matrix(a), main = paste0("t", onset, "-", "t", terminus))
 }
@@ -245,19 +257,14 @@ par(mfrow = c(2,4), mar = c(0,0,1,0))
 for(i in O){
   plot.extract(n1, onset = i, terminus = i + 10, Bg = IO$geometry)
 }
-
-
-
 ```
 
-## Sets temporalmente lcanzables:
+## 4 Temporally reachable sets
 
-El alcance de una granja nos ayuda a identificar nodos importantes en la red, los culaes pueden ser criticos para la diseminacion de enfermedades. El alcance fwd se refiere a todos los nodos alcanzables por un nodo $v_i$. Tambien se puede calcular el alcance "bkwd" que representa los nodos que alcanzan al nodo $v_i$ en el periodo de estudio.    
+The reachability of a farm help us to identify important nodes in the network that may have a key role in the disease spread. Forward reachability ("fwd") refers to all the nodes than can be reached from a given node $v_i$ and backward reachability ("bkwd") refers to those nodes that reach a given node $v_i$.
+We can visualize the distribution of the forward and backward reachability using boxplots
 
-
-Podemos visualizar la distribucion de los valores para fwd y bkwd usando graficos de cajas.  
-
-```{r fig.height=2, fig.width=7}
+```{r}
 fwd <- tReach(n1, "fwd")
 bwd <- tReach(n1, "bkwd")
 par(mar=c(2,4,2,2))
@@ -265,46 +272,50 @@ boxplot(fwd, bwd, col = "lightgreen", horizontal = T, yaxt = 'n', main = "Reacha
 axis(2, at = c(1,2), labels = c("Fwd", "Bwd"), las=2, lty = 0)
 ```
 
-Tambien podemos explorar mediante un grafico de puntos si existe alguna relacion entre ellos.  
+We can also use a dot plot to explore whether any interesting relationship between both types of reachability exists.
+
 ```{r}
 plot(fwd, bwd, xlab = "Fwd", ylab = "Bwd", pch = 16, col = rgb(0, 155, 50, max=255, alpha=100))
 ```
 
-Ahora veamos las granjas con mayor alcance:  
+Now, let's have a look at the farms with the highest forward reachability:
+
 ```{r}
 data.frame(id = 1:length(fwd), fwd, bwd) %>% 
   arrange(desc(fwd)) %>% 
   head(10)
 ```
 
-Looks like the node 7 has the highest number of reachable farms among the farms. We can visualize he reachable st using the functions `tpath` and `transmissionTimeline`, both provide the noode id and time when the contact happened. The first function allow us to visualize the nodes spatially and the second in a nice timeline.  
+It looks like node ("id") 7 presents the highest number of reachable farms. 
+
+We can visualize the reachable st using the functions `tpath` and `transmissionTimeline`. Both of them provide the node id and the time when the contact happened. The first function allow us to visualize the nodes spatially and the second one shows them in a nice timeline. Let's start with the first one.
 
 ```{r}
 P17 <- tPath(n1, 17, direction = "fwd")
 plot(P17)
 ```
 
-We can also visualize the paths in the full network.  
+We can also visualize the paths in the full network.
 
 ```{r}
 plotPaths(n1, P17, vertex.col = colpal[1], label.cex = 0.5, vertex.cex = 2)
 ```
 
-A better way to visualize the paths trought the time period is using the function `transmissionTimeline()`, the x axis represents the time when the event happened and the y axis represent the generation or steps that happened to reach that node 
+A better way to visualize the paths trought the time period is using the function `transmissionTimeline()`. In this visualization, the x axis represents the time when the event happened and the y axis represents the generation or steps that happened to reach that node
 
 ```{r}
 transmissionTimeline(P17,jitter=T,
           main='Earliest forward path from vertex 137')
 ```
 
-We can also see the backwards reachability, which represent the set of nodes that reach a specific ode over a time period.  
+We can also see the backward reachability, which represents the set of nodes that reach a specific node over a time period.
 
 ```{r}
 P17 <- tPath(n1, 17, direction = "bkwd", type = "latest.depart")
 plot(P17, edge.col = colpal[3])
 ```
 
-Now we will create a function to show the paths in a spatial plot and non spatial.
+Now we will create a function to show the paths in a spatial and non-spatial plot.
 
 ```{r}
 MaPaths <- function(Net, v, direction, Pts, coords, BG){
@@ -319,30 +330,29 @@ MaPaths <- function(Net, v, direction, Pts, coords, BG){
 }
 
 MaPaths(Net = n1, v = 17, direction = "fwd", Pts = node_attrib, coords = a, BG = IO$geometry)
-```` 
+```
 
-Another way to visualize the network activity is showing at which time points each of the node was active. the unpper part of the plot represent the presence of the node in the network and the lower part represent the activity of the node in the network.  
+Another way to visualize the network activity is to show the time points when each of the nodes was active. In the following plot, the upper part represents the presence of the node in the network and the lower part represents the activity of the node in the network.
 
 ```{r}
 timeline(n1)
 ```
 
+# 5 Animations
 
-# Animations:
+We can also create animations to show the evolution of the contact patterns over time using the function `render.d3movie()`. First we will use the function `compute.animation()` to set the layout and time frame for the animation.
 
-We can also create animations to show the evolution of the contact patterns over time using the function `render.d3movie()`. First we will use the function `compute.animation()` to set the layout and time frame of the animation.  
-
-```{r message=FALSE, warning=FALSE, eval = F}
+```{r message=FALSE, warning=FALSE,eval=F}
 render.d3movie(n1,
                displaylabels=F, 
                launchBrowser = T, 
                vertex.cex = scales::rescale(degree(n1), to = c(1, 5)), filename = "Animation01.html") 
 ```
 
-If we would like to take specific frames for the animation we can show them stacked in a plot using the function `timePrism()`.  
-This visualization method works better for small networks. 
+If we would like to take specific frames for the animation, we can show them stacked in a plot using the function `timePrism()`.
+This visualization method works better for small networks.
 
-```{r}
+```{r message=FALSE}
 # Define the intervals
 compute.animation(n1, animation.mode = "kamadakawai",
                   slice.par=list(start=30, end=100, interval=1, 
@@ -350,3 +360,4 @@ compute.animation(n1, animation.mode = "kamadakawai",
 
 timePrism(n1, at = c(30, 40, 50, 60), planes = T)
 ```
+

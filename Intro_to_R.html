@@ -432,8 +432,8 @@ y &lt;- 2 # create a new object with the &lt;- operator
 x + y # make a operation with the objects</code></pre>
 <pre><code>## [1] 4</code></pre>
 <p>You can store more than one value using vectors, to create a vector of numbers we use <code>c()</code>. For example, we will store a sequence of numbers from 5 to 10 using 2 different approaches and then ask R if the objects are the same.<br />
-<strong>tip:</strong> using the keys “alt” + “-” will automatically add the operator <code>&lt;-</code>. Choosing which assign operator to use is a matter of preference, I personally think that reading code with the operator <code>&lt;-</code>, but a lot of people uses <code>=</code>.</p>
-<pre class="r"><code>x &lt;- c(5, 6, 7, 8, 9, 10) # craete a sequence form 5 to 10
+<strong>tip:</strong> using the keys “alt” + “-” will automatically add the operator <code>&lt;-</code>. Choosing which assign operator to use is a matter of preference, I personally think that is easier reading code with the operator <code>&lt;-</code>, but a lot of people uses <code>=</code>.</p>
+<pre class="r"><code>x &lt;- c(5, 6, 7, 8, 9, 10) # create a sequence form 5 to 10
 y = 5:10 # create the same sequence but with a different approach
 x == y # ask R if the objects have the same information</code></pre>
 <pre><code>## [1] TRUE TRUE TRUE TRUE TRUE TRUE</code></pre>
@@ -454,7 +454,7 @@ sum(x)</code></pre>
 <p>We can put functions inside function, for example, to get <span class="math inline">\(\sqrt{\sum_1^n x}\)</span> the square root of a sum of the numbers in x we can use:</p>
 <pre class="r"><code>sqrt(sum(x))</code></pre>
 <pre><code>## [1] 6.708204</code></pre>
-<p>Making functions in R is not as complicated as it sounds and can be very useful when we need to do repetitive work. To define a function we need to include the arguments that we want for the function and what are we doing with those areguments. For example, the following function has only one argument which is a name (string) and just pastes some text before and after:</p>
+<p>Making functions in R is not as complicated as it sounds and can be very useful when we need to do repetitive work. To define a function we need to include the arguments that we want for the function and what are we doing with those arguments. For example, the following function has only one argument which is a name (string) and just pastes some text before and after:</p>
 <pre class="r"><code>F1 &lt;- function(name){
   x &lt;- paste(&quot;Hola&quot;, name, &quot;! welcome to the R world!&quot;) # paste the name with some text
   print(x)
@@ -468,16 +468,16 @@ F1(name = &quot;Pablo&quot;)</code></pre>
 </div>
 <div id="importing-data-into-r" class="section level1">
 <h1>2. Importing data into R</h1>
-<p>R can import data in different formats. The most comon are excel files (<em>.csv</em>, <em>.xls</em> y <em>.xlsx</em>), text files <em>.txt</em> and spatial data <em>.shp</em>, which we will talk about more in detail later.<br />
-To read <em>.xls</em>, <em>.xlsx</em> and <em>.shp</em> files we will need to install some libraries. To install a new libreary you need to be connected to the internet and use the function <code>install.packages()</code> to install the library. Once it has been installed, you can load the library using the function <code>library()</code>.</p>
-<p><strong>Suggestion:</strong> Sometimes when we want to use only one function from a library, we can just write the name of the library followed by the operator <code>::</code> and the name of the function, for example: <code>paquete::funcion()</code>. This way we won’t have to load the whole library.</p>
+<p>R can import data in different formats. The most common are excel files (<em>.csv</em>, <em>.xls</em> y <em>.xlsx</em>), text files <em>.txt</em> and spatial data <em>.shp</em>, which we will talk about more in detail later.<br />
+To read <em>.xls</em>, <em>.xlsx</em> and <em>.shp</em> files we will need to install some libraries. To install a new library you need to be connected to the internet and use the function <code>install.packages()</code> to install the library. Once it has been installed, you can load the library using the function <code>library()</code>.</p>
+<p><strong>Suggestion:</strong> Sometimes when we want to use only one function from a library, we can just write the name of the library followed by the operator <code>::</code> and the name of the function, for example: <code>package::function()</code>. This way we won’t have to load the whole library.</p>
 <pre class="r"><code># If we dont have the library installed, we use:
 # install.packages(&quot;readxl&quot;)
 library(readxl) # load the library
 
 # Import the excel file
 PRRS &lt;- readxl::read_xlsx(&quot;Data/PRRS.xlsx&quot;)</code></pre>
-<p>The most popular format for tables in R are called <code>data.frame</code>, when we import the data from a <em>.csv</em> o <em>.xlsx</em>. We can examine what kind of object it is using the function <code>class()</code>, an object can have more than one tpe of class.</p>
+<p>The most popular format for tables in R are called <code>data.frame</code>, when we import the data from a <em>.csv</em> o <em>.xlsx</em>. We can examine what kind of object it is using the function <code>class()</code>, an object can have more than one type of class.</p>
 <pre class="r"><code>class(PRRS)</code></pre>
 <pre><code>## [1] &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
 <hr />
@@ -491,7 +491,7 @@ TBL</code></pre>
 ##       0   1
 ##   H 737 229
 ##   M 249 138</code></pre>
-<p>When we have a tabe object we can ask for a specific column or row, where is represented as [row, column].</p>
+<p>When we have a table object we can ask for a specific column or row, where is represented as [row, column].</p>
 <pre class="r"><code>TBL[,2] # Get the second column</code></pre>
 <pre><code>##   H   M 
 ## 229 138</code></pre>
@@ -505,7 +505,7 @@ library(dplyr)</code></pre>
 <p><code>dplyr</code> introduces a new operator called pipes <code>%&gt;%</code>, which can connect several functions to an object. This is an alternative to write several functions in a single “line of code” in a more organized way. For example:</p>
 <p><strong>F2(F1(x)) is the same as x %&gt;% F1() %&gt;% F2()</strong></p>
 <p><strong>Suggestion:</strong> we can use the keys <em>Ctrl</em> + <em>shift</em> + <em>m</em> to insert the <code>%&gt;%</code> operator.</p>
-<p>We will use this concepts to calculate the prevalence by county:</p>
+<p>We will use this to calculate the prevalence by county:</p>
 <pre class="r"><code>PRRS %&gt;% 
   group_by(County) %&gt;% 
   summarise(N = n(), positive = sum(Result)) %&gt;% 
@@ -534,7 +534,7 @@ library(dplyr)</code></pre>
 </li>
 <li>The function <code>summarise()</code> will execute a function we define for a variable from the defined grouping variable, e.g. when we write <code>n()</code> returns the number of observations per group and with <code>sum(resultado)</code> we are summing all the positive results by each county.<br />
 </li>
-<li>The function <code>mutate()</code> will create a new variable, we use the variables <em>N</em> and <em>positive</em> created wuth the previous functions and calculating the prevalence.</li>
+<li>The function <code>mutate()</code> will create a new variable, we use the variables <em>N</em> and <em>positive</em> created with the previous functions and calculating the prevalence.</li>
 </ul>
 <p><strong>Exercise:</strong> Now try to calculate the prevalence by farm type (variable <em>farm_type</em>):</p>
 <pre class="r"><code># Answer</code></pre>
@@ -595,8 +595,8 @@ nodes &lt;- nodes %&gt;%
 <p>The base plot in R includes several tools any kind of plots, some will be more straight forward than others. There are other libraries that has different functions (<code>ggplot2</code> is a very popular one), but you can achieve the same with base plots.</p>
 <div id="scatterplot." class="section level2">
 <h2>Scatterplot.</h2>
-<p>This is one of the most popular kind of plots, it is useful to represent relationship between two continous variables.<br />
-We can achieve the same result in different ways. The first one is better when we have our variables in the same dataset, and the second one when we have data from diferent objects. (the length of the two vectors has to be the same).</p>
+<p>This is one of the most popular kind of plots, it is useful to represent relationship between two continuous variables.<br />
+We can achieve the same result in different ways. The first one is better when we have our variables in the same dataset, and the second one when we have data from different objects. (the length of the two vectors has to be the same).</p>
 <pre class="r"><code># When variables are from the same dataset
 plot(Outgoing~Incoming, data = nodes)</code></pre>
 <p><img src="Intro_to_R_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
@@ -607,7 +607,7 @@ plot(nodes$Outgoing, nodes$Incoming)</code></pre>
 <div id="pie-charts" class="section level2">
 <h2>Pie charts</h2>
 <p>Pie charts are useful to show proportions, for example, next we will create a plot representing the proportion of positive animals for each type of farm.<br />
-To select a variables from a data.frame we use <code>$</code>. For exmaple if we want to see the variable farm type from our PRRS dataset, we use <code>PRRS$farm_type</code>.</p>
+To select a variables from a data.frame we use <code>$</code>. For example if we want to see the variable farm type from our PRRS dataset, we use <code>PRRS$farm_type</code>.</p>
 <pre class="r"><code># First we create a table for the result by farm type
 TM &lt;- table(PRRS$farm_type, PRRS$Result)
 # Then we use the second column which contains the positive onyl
@@ -616,7 +616,7 @@ pie(TM[,2])</code></pre>
 </div>
 <div id="boxplots" class="section level2">
 <h2>Boxplots</h2>
-<p>Boxplots are great to show the distribution of a continous variable. we can use it to show only one variable, or multiple variables.</p>
+<p>Boxplots are great to show the distribution of a continuous variable. We can use it to show only one variable, or multiple variables.</p>
 <pre class="r"><code># Only one variable
 boxplot(x = PRRS$Age)</code></pre>
 <p><img src="Intro_to_R_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
@@ -635,7 +635,7 @@ We will also use the package <code>RColorBrewer</code> to get some nice looking 
 # Get 4 colors from the palette.
 colpal &lt;- RColorBrewer::brewer.pal(n = 4, # Number of colors we want 
                          name = &quot;Paired&quot;) # Name of the palette
-# Fisrt we will get a table with the results stratified by sex
+# First we will get a table with the results stratified by sex
 TM &lt;- table(PRRS$Result, PRRS$Sex)
 # The we use the par() function to increase the margins:
 par(mar = c(2, 6, 2, 2))
@@ -648,12 +648,12 @@ barplot(TM[, order(colSums(TM), decreasing = T)], # Order the results in decreas
         col = colpal[1:2], # we want only the first two colors of our palette
         legend = rownames(TM)) # include the row names as legend</code></pre>
 <p><img src="Intro_to_R_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
-<p><strong>Excercise:</strong> Create a bar plot of the results stratified by the farm type:</p>
+<p><strong>Exercise:</strong> Create a bar plot of the results stratified by the farm type:</p>
 <pre class="r"><code># Answer</code></pre>
 </div>
 <div id="time-series-plots." class="section level2">
 <h2>Time series plots.</h2>
-<p>To create a time series we will need to reformat the data a little bit so R can do wht we want.</p>
+<p>To create a time series we will need to reformat the data a little bit so R can do what we want.</p>
 <pre class="r"><code># First we will format the date:
 mov$date &lt;- as.Date(mov$date, &quot;%m/%d/%y&quot;)
 # The we create a variable formatting the date as week of the year:

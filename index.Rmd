@@ -10,10 +10,10 @@ output:
 
 # Introduction
 
-Most of infectious disease are transmitted via direct contacts, therefore, animal trade and other contacts between animals play an escential role in the disease spread.  
-Social network analysis (SNA) is a powerful tool to explore the interactions between agents in a contact network and obtain additional information regarding the structure and dynamic on a community. The agents or nodes could be defined as the farms that belng to a trade network, wildlife animals followed by gps collars, or animals observed in a group. Using these methodologies we can identify individuals that could have a bigger role in disease spread when a disease is introduced to the community.  
+Most of infectious diseases are transmitted via direct contacts, therefore, animal trade and other contacts between animals play an essential role in the disease spread.  
+Social network analysis (SNA) is a powerful tool to explore the interactions between agents in a contact network and obtain additional information regarding the structure and dynamic of a community. The agents or nodes could be defined as the farms that belong to a trade network, wildlife animals tracked by GPS collars, or animals observed in a group. Using SNA methodologies we can identify individuals that could have a bigger role in disease spread when a disease is introduced into the community.  
 
-In this workshop we will use data regarding movement of production animals in a contact network to demonstrate the applications of spatio-temporal network analysis. These methodologies can be applied to other settings such as wildlife monitoring, exploring hierarchical relationships between animal groups, among others. The first part of the workshop will focus on the description of static networks and the second part will be using dynamic network analysis, which includes temporal dynamics of the movements. Both parts also will include the spatial component.  
+In this workshop we will use data regarding the movement of production animals in a contact network to demonstrate the applications of spatio-temporal network analysis. These methodologies can be applied to other settings such as wildlife monitoring, or to explore hierarchical relationships between animal groups, among others. The first part of the workshop will focus on the description of static networks and the second part will be using dynamic network analysis, which includes temporal dynamics of the movements. Both parts will also include the spatial component.  
 
 This workshop is aimed for students, researchers and other people interested in disease transmission and population dynamics.
 
@@ -61,6 +61,7 @@ An introduction to R and spatial data can be found in the following links:
   - Enright J, Kao RR. Epidemics on dynamic networks. Epidemics. 2018 Sep;24:88-97. doi: 10.1016/j.epidem.2018.04.003. Epub 2018 Apr 28. PMID: 29907403.
   - Silk, M.J., Croft, D.P., Delahay, R.J., Hodgson, D.J., Weber, N., Boots, M. and McDonald, R.A. (2017), The application of statistical network models in disease research. Methods Ecol Evol, 8: 1026-1041. https://doi.org/10.1111/2041-210X.12770
 
+[I](Interactive.html)
 
   
 ____________________________________________________________________________________________________________

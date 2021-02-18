@@ -27,10 +27,10 @@ x + y # make a operation with the objects
 
 You can store more than one value using vectors, to create a vector of numbers we use `c()`.
 For example, we will store a sequence of numbers from 5 to 10 using 2 different approaches and then ask R if the objects are the same.  
-**tip:** using the keys "alt" + "-" will automatically add the operator `<-`. Choosing which assign operator to use is a matter of preference, I personally think that reading code with the operator `<-`, but a lot of people uses `=`.  
+**tip:** using the keys "alt" + "-" will automatically add the operator `<-`. Choosing which assign operator to use is a matter of preference, I personally think that is easier reading code with the operator `<-`, but a lot of people uses `=`.  
 
 ```{r}
-x <- c(5, 6, 7, 8, 9, 10) # craete a sequence form 5 to 10
+x <- c(5, 6, 7, 8, 9, 10) # create a sequence form 5 to 10
 y = 5:10 # create the same sequence but with a different approach
 x == y # ask R if the objects have the same information
 ```
@@ -61,7 +61,7 @@ We can put functions inside function, for example, to get $\sqrt{\sum_1^n x}$ th
 sqrt(sum(x))
 ```
 
-Making functions in R is not as complicated as it sounds and can be very useful when we need to do repetitive work. To define a function we need to include the arguments that we want for the function and what are we doing with those areguments. For example, the following function has only one argument which is a name (string) and just pastes some text before and after:
+Making functions in R is not as complicated as it sounds and can be very useful when we need to do repetitive work. To define a function we need to include the arguments that we want for the function and what are we doing with those arguments. For example, the following function has only one argument which is a name (string) and just pastes some text before and after:
 
 ```{r}
 F1 <- function(name){
@@ -80,10 +80,10 @@ ____________________________________________________________________
 
 # 2. Importing data into R
 
-R can import data in different formats. The most comon are excel files (*.csv*, *.xls* y *.xlsx*), text files *.txt* and spatial data *.shp*, which we will talk about more in detail later.  
-To read *.xls*, *.xlsx* and *.shp* files we will need to install some libraries. To install a new libreary you need to be connected to the internet and use the function `install.packages()` to install the library. Once it has been installed, you can load the library using the function `library()`.  
+R can import data in different formats. The most common are excel files (*.csv*, *.xls* y *.xlsx*), text files *.txt* and spatial data *.shp*, which we will talk about more in detail later.  
+To read *.xls*, *.xlsx* and *.shp* files we will need to install some libraries. To install a new library you need to be connected to the internet and use the function `install.packages()` to install the library. Once it has been installed, you can load the library using the function `library()`.  
 
-**Suggestion:** Sometimes when we want to use only one function from a library, we can just write the name of the library followed by the operator `::` and the name of the function, for example: `paquete::funcion()`. This way we won't have to load the whole library.  
+**Suggestion:** Sometimes when we want to use only one function from a library, we can just write the name of the library followed by the operator `::` and the name of the function, for example: `package::function()`. This way we won't have to load the whole library.  
 
 ```{r}
 # If we dont have the library installed, we use:
@@ -94,7 +94,7 @@ library(readxl) # load the library
 PRRS <- readxl::read_xlsx("Data/PRRS.xlsx")
 ```
 
-The most popular format for tables in R are called `data.frame`, when we import the data from a *.csv* o *.xlsx*. We can examine what kind of object it is using the function `class()`, an object can have more than one tpe of class.  
+The most popular format for tables in R are called `data.frame`, when we import the data from a *.csv* o *.xlsx*. We can examine what kind of object it is using the function `class()`, an object can have more than one type of class.  
 
 ```{r}
 class(PRRS)
@@ -111,7 +111,7 @@ TBL <- table(PRRS$Sex, PRRS$Result)
 TBL
 ```
 
-When we have a tabe object we can ask for a specific column or row, where is represented as [row, column].  
+When we have a table object we can ask for a specific column or row, where is represented as [row, column].  
 
 ```{r}
 TBL[,2] # Get the second column
@@ -134,7 +134,7 @@ library(dplyr)
 
 **Suggestion:** we can use the keys *Ctrl* + *shift* + *m* to insert the `%>%` operator.  
 
-We will use this concepts to calculate the prevalence by county:  
+We will use this to calculate the prevalence by county:  
 
 ```{r}
 PRRS %>% 
@@ -149,7 +149,7 @@ Ok, so we used several functions connected to calculate the prevalence, so I wil
   - First we put the name of our data.  
   - The first function `group_by()` will group the observations by one or more variables that we indicate.   
   - The function `summarise()` will execute a function we define for a variable from the defined grouping variable, e.g. when we write `n()` returns the number of observations per group and with `sum(resultado)` we are summing all the positive results by each county.    
-  - The function `mutate()` will create a new variable, we use the variables *N* and *positive* created wuth the previous functions  and calculating the prevalence.  
+  - The function `mutate()` will create a new variable, we use the variables *N* and *positive* created with the previous functions  and calculating the prevalence.  
 
 
 **Exercise:** Now try to calculate the prevalence by farm type (variable *farm_type*):
@@ -210,8 +210,8 @@ ____________________________________________________________________
 The base plot in R includes several tools any kind of plots, some will be more straight forward than others. There are other libraries that has different functions (`ggplot2` is a very popular one), but you can achieve the same with base plots.
 
 ## Scatterplot.  
-This is one of the most popular kind of plots, it is useful to represent relationship between two continous variables.  
-We can achieve the same result in different ways. The first one is better when we have our variables in the same dataset, and the second one when we have data from diferent objects. (the length of the two vectors has to be the same).  
+This is one of the most popular kind of plots, it is useful to represent relationship between two continuous variables.  
+We can achieve the same result in different ways. The first one is better when we have our variables in the same dataset, and the second one when we have data from different objects. (the length of the two vectors has to be the same).  
 
 ```{r}
 # When variables are from the same dataset
@@ -224,7 +224,7 @@ plot(nodes$Outgoing, nodes$Incoming)
 ## Pie charts
 
 Pie charts are useful to show proportions, for example, next we will create a plot representing the proportion of positive animals for each type of farm.  
-To select a variables from a data.frame we use `$`. For exmaple if we want to see the variable farm type from our PRRS dataset, we use `PRRS$farm_type`.  
+To select a variables from a data.frame we use `$`. For example if we want to see the variable farm type from our PRRS dataset, we use `PRRS$farm_type`.  
 
 ```{r}
 # First we create a table for the result by farm type
@@ -234,7 +234,7 @@ pie(TM[,2])
 ```
 
 ## Boxplots  
-Boxplots are great to show the distribution of a continous variable. we can use it to show only one variable, or multiple variables.  
+Boxplots are great to show the distribution of a continuous variable. We can use it to show only one variable, or multiple variables.  
 ```{r}
 # Only one variable
 boxplot(x = PRRS$Age)
@@ -257,7 +257,7 @@ We will also use the package `RColorBrewer` to get some nice looking color palet
 # Get 4 colors from the palette.
 colpal <- RColorBrewer::brewer.pal(n = 4, # Number of colors we want 
                          name = "Paired") # Name of the palette
-# Fisrt we will get a table with the results stratified by sex
+# First we will get a table with the results stratified by sex
 TM <- table(PRRS$Result, PRRS$Sex)
 # The we use the par() function to increase the margins:
 par(mar = c(2, 6, 2, 2))
@@ -271,7 +271,7 @@ barplot(TM[, order(colSums(TM), decreasing = T)], # Order the results in decreas
         legend = rownames(TM)) # include the row names as legend
 ```
 
-**Excercise:** Create a bar plot of the results stratified by the farm type:  
+**Exercise:** Create a bar plot of the results stratified by the farm type:  
 
 ```{r}
 # Answer
@@ -290,7 +290,7 @@ barplot(TM[, order(colSums(TM), decreasing = T)], beside = T, horiz = T,
 
 ## Time series plots.
 
-To create a time series we will need to reformat the data a little bit so R can do wht we want.  
+To create a time series we will need to reformat the data a little bit so R can do what we want.  
 ```{r}
 # First we will format the date:
 mov$date <- as.Date(mov$date, "%m/%d/%y")
