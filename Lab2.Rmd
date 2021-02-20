@@ -2,6 +2,36 @@
 title: "Lab 2"
 ---
 
+#3 Calculando la distancia euclediana
+
+```{r}
+library(raster)
+# Primero necesitamos incluir la informacion de la localizacion de origen y destino
+edge <- edge %>% 
+  left_join(node[c("id", "lat", "long")], by = c("id_orig" = "id")) %>%
+  rename(O_Lat = lat, O_Long = long) %>%
+  left_join(node[c("id", "lat", "long")], by = c("id_dest" = "id")) %>%
+  rename(D_Lat = lat, D_Long = long)
+# Calculamos la distancia
+edge$dist <- pointDistance(p1 = edge[c("O_Long", "O_Lat")], # Primer set de coordenadas
+                           p2 = edge[c("D_Long", "D_Lat")], # Segundo set de coordenadas
+                           lonlat = T) # Especificamos que usamos LatLong
+
+# dividimos por 1000 para obtener la distancia en KM
+summary(edge$dist/1000)
+# Obtenemos los quantiles:
+quantile(edge$dist/1000, c(0.05,0.95))
+# Podemos usar graficos para demostrar la distribucion de las distancias
+hist(edge$dist/1000, # EL valo que vamos a graficar
+     xlim=range(0,500),  # los limites de la grafica
+     breaks=20,  # numero de grupos
+     main = "Distribution of euclidean distance (Km)", xlab="distance (km)")
+
+boxplot(edge$dist/1000, 
+        ylim=c(0,500), 
+        main = "Boxlot of euclidean distance (Km)", ylab="distance (km)")
+```
+
 ```{r include=FALSE}
 knitr::opts_chunk$set(warninr = F, message = F)
 ```

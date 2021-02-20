@@ -6,7 +6,7 @@ output:
     toc_float: true
 ---
 
-Libraries we will use (install if necesary):  
+Libraries we will use (install if necessary):  
 
 ```{r eval = F}
 install.packages("readr")
@@ -77,12 +77,13 @@ plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.label=NA)
 ## 1.2 Node color
 
 We can get specific attributes from the `igraph` object using `V()` for nodes, and `E()` for edges.  
-The same way we do for a `data.frame`, we can create new attributes of the network using the `$` operator and assigning a name to a new variables. Now we will craete a new variable for the node color.  
+The same way we do for a `data.frame`, we can create new attributes of the network using the `$` operator and assigning a name to a new variables. Now we will create a new variable for the node color.  
 
 ```{r}
 # Create a color palette
 colpal <- RColorBrewer::brewer.pal(length(levels(node$farm_type)), 
                                    "Dark2")
+colpal <- rainbow(length(levels(node$farm_type)), s = 0.6)
 # Assign a new variable for the color:
 V(net)$color <- colpal[factor(V(net)$farm_type)]
 #plot with colors
@@ -116,39 +117,36 @@ plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.
 
 
 
-## 1.4 Tamaño del edge
-
+## 1.4 Size of the edge
 
 ```{r}
-# Tamaño del edges
-# Le daremos al edge la anchura basado en el numero de animales movidos
+# We will change the edge size based on the number of aimals moved
 E(net)$width <- E(net)$pigs.moved
 plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)
-# Dado que el tamaño del edge es muy ancho, usamos la funcion recale para re escalar los valores entre 0.2 y 5
-E(net)$width <- scales::rescale(E(net)$pigs.moved, c(0.2, 4))
+# Since the edgge sizes are very large, we will constrain the edge size based on a scale using the package scales
+E(net)$width <- scales::rescale(E(net)$pigs.moved, c(0.2, 3))
 plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)
 ```
   
   
-## 1.5 Tamaño del nodo
+## 1.5 Node size
 
-
-Usaremos el valor de indegree para asignar el tamaño del nodo.  
-Primero calculamos el indegree usando la funcion `degree()` con el argumento `mode = "in"`, Y eliminaremos los loops.  
+We will use the indegree value to assign the node size. First we will calculate indegree using the function `degree()` with the argument `mode = "in"`, and we will also get rid of the loops.  
 
 ```{r}
-#calculate the indegree by calling to net and V(net)
+#Calculate the indegree
 #mode lets you choose between "in", "out" and "all" for the type of degree
 #loops=FALSE removes internal farm shipments
 V(net)$indegree <- degree(net,v=V(net),mode=c("in"), loops=FALSE)
-#plot the network by adding the vertex.size command#
+#plot the network by adding the vertex.size argument
 plot(net, edge.arrow.size=0.2, vertex.size=V(net)$indegree, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)
 ```
 
-Como podemos ver, hay un nodo que recibe muchos movimientos y oculta la red.  
-**Ejercicio:** Como el tamaño del nodo es muy grande, reescala los valores a algo que sea mas informativo.  
+As you can see, there is one node that receives a lot of movements and you cant really see the edges of the network.  
 
-Tambien podemos obtener el outdegree usando el argumento `mode = "out"` en la funcion `degree()`.  
+**Excercise:** since the node size is too large, rescale the values of the node size so you can see the eddges of the network.  
+
+We can also obtain the outdegree using the argument `mode = "out"` side the function `degree()`.  
 
 ```{r}
 #give weight to node: outdegree#
@@ -156,39 +154,42 @@ Tambien podemos obtener el outdegree usando el argumento `mode = "out"` en la fu
 V(net)$outdegree <- degree(net,v=V(net),mode=c("out"), loops=FALSE)
 ```
 
-**Ejercico:** Ahora cambia el tamaño del nodo usando el valor de outdegree.  
+**Excercise:** Now change the node size using the outdegree value.  
 
 ```{r}
-# Le damos un valor al nodo respecto a su betwenness
-# usamos directed=T para considerar la direccion del movimiento
+# Now we will calculate the betweeness and use the network to visualize it
+# We use the argument directed=T to consider the directionality of the movement
 bet <- betweenness(net, v=V(net), directed=TRUE)
-# LO reescalamos para que se vean los edges
+# We make sure that we reascale it so we can see the edges
 V(net)$size <- scales::rescale(bet, c(5, 15))
 plot(net, edge.arrow.size=0.2, vertex.size=V(net)$size, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)
 ```
 
-# 2 Usando otros paquetes para graficar la red
+# 2 Using other packages to plot the network
 
-Ademas de `igraph` existe otro paquete muy popular para manipular redes en R. el paquete `network()` provee de casi las mismas funciones que igraph para mapear, pero `igraph` tiene mas funciones para estadisticas de la red. para cambiar entre formatos existe un paquete llamado `intergraph` el cual provee funciones para cambiar de un formato a otro.  
+Besides `igraph`, there are other packages to plot the network in R. The package `network()` provides almost the same functions that igraph for plotting, but igraph has more functions for network statistics. To switch between the formats, there is a package calls `intergraph()` which provides functions to going from an igraph object to a network object and the other way.    
 
-A continuacion usamos el paquete `network`para graficar los nombres de acuerdo al numero de vecinos.  
+## 2.1 network package 
+Here we will use the package `network()` to plot a network with the names scaled to the number of neighbors.  
 
 ```{r fig.height=10, fig.width=10}
-# Primero obtenemos el numero de vecinos de cada nodo
+# First we obtain the number of neighbors for each node
 V(net)$nb <- neighborhood.size(net)
-# Luego cambiamos de igraph a network
+# then we switch the format to the network package
 G <- intergraph::asNetwork(net)
-# Y ahora graficamos la red
+# Now we plot the network
 plot(G, # The name of the network
-     displaylabels = T, # Queremos que muestren las etiquetas
-     label.cex = rescale(V(net)$nb, to = c(0.001, 1.5)),# Usamos el numero de vecinos para el tamaño del texto
-     vertex.cex = 0.001, # Reducimos el tamaño del nodo
-     arrowhead.cex = 0.001, # Reducimos el tamaño de la flecha
-     label.pos = 5, # la posicion del nombe 5 = centro
-     edge.col = "lightgreen") # color de los edges
+     displaylabels = T, # We want to show labels
+     label.cex = rescale(V(net)$nb, to = c(0.001, 1.5)),# We use the number of neighbors to scale the size
+     vertex.cex = 0.001, # Reduce the node size so we dont see it
+     arrowhead.cex = 0.001, # reduce the arrowhead size
+     label.pos = 5, # the position of label (5 = center)
+     edge.col = "lightgreen") # Edge color
 ```
 
-## ggraph
+## 2.2 ggraph
+
+Other option for plotting is the package `ggraph` which uses the same syntax than `ggplot`.  
 
 ```{r}
 net %>%
@@ -198,47 +199,15 @@ net %>%
   geom_node_point(aes(col = farm_type, size = indegree))
 ```
 
-
-#3 Calculando la distancia euclediana
-
-```{r}
-library(raster)
-# Primero necesitamos incluir la informacion de la localizacion de origen y destino
-edge <- edge %>% 
-  left_join(node[c("id", "lat", "long")], by = c("id_orig" = "id")) %>%
-  rename(O_Lat = lat, O_Long = long) %>%
-  left_join(node[c("id", "lat", "long")], by = c("id_dest" = "id")) %>%
-  rename(D_Lat = lat, D_Long = long)
-# Calculamos la distancia
-edge$dist <- pointDistance(p1 = edge[c("O_Long", "O_Lat")], # Primer set de coordenadas
-                           p2 = edge[c("D_Long", "D_Lat")], # Segundo set de coordenadas
-                           lonlat = T) # Especificamos que usamos LatLong
-
-# dividimos por 1000 para obtener la distancia en KM
-summary(edge$dist/1000)
-# Obtenemos los quantiles:
-quantile(edge$dist/1000, c(0.05,0.95))
-# Podemos usar graficos para demostrar la distribucion de las distancias
-hist(edge$dist/1000, # EL valo que vamos a graficar
-     xlim=range(0,500),  # los limites de la grafica
-     breaks=20,  # numero de grupos
-     main = "Distribution of euclidean distance (Km)", xlab="distance (km)")
-
-boxplot(edge$dist/1000, 
-        ylim=c(0,500), 
-        main = "Boxlot of euclidean distance (Km)", ylab="distance (km)")
-```
-
-Ahora agregaremos las estadisticas calculadas para usarlas despues.  
+Now we will add the network statistics to the data.frame so we can use them later.  
 
 ```{r}
-# Agregamos las variables a nuestra data.frame
 node <- node %>%
   mutate(indegree = V(net)$indegree, outdegree = V(net)$outdegree, nb = V(net)$nb, Bet = bet)
 ```
 
 
-Exportamos nuestras tablas para usarlas despues.   
+Finally we will export the network as a RDS file so we can load it in another session.  
 
 ```{r eval = F}
 # we can export the network as a RDS object using the package readr
