@@ -435,10 +435,10 @@ install.packages(&quot;intergraph&quot;)
 install.packages(&quot;network&quot;)
 install.packages(&quot;RColorBrewer&quot;)
 install.packages(&quot;tidygraph&quot;)</code></pre>
-<div id="network-visualization" class="section level1">
-<h1>1. Network visualization</h1>
-<div id="loading-the-data-and-visualizing-the-network" class="section level2">
-<h2>1.1 Loading the data and visualizing the network</h2>
+<div id="network-visualization" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> Network visualization</h1>
+<div id="loading-the-data-and-visualizing-the-network" class="section level2" number="1.1">
+<h2 number="1.1"><span class="header-section-number">1.1</span> Loading the data and visualizing the network</h2>
 <pre class="r"><code>library(dplyr)
 library(scales)
 library(ggplot2)
@@ -454,7 +454,7 @@ edge &lt;- STNet::SwineMov</code></pre>
 net &lt;- graph_from_data_frame(d=edge, vertices=node, directed=T)
 # We can examine the contents of the network using the function summary()
 summary(net)</code></pre>
-<pre><code>## IGRAPH 33b0d86 DN-- 40 1611 -- 
+<pre><code>## IGRAPH 99e864d DN-- 40 1611 -- 
 ## + attr: name (v/c), lat (v/n), long (v/n), farm_type (v/c), date (e/c),
 ## | pigs.moved (e/n), type_orig (e/c), type_dest (e/c)</code></pre>
 <p>The result will show a summary of the network. The first line shows that is an object class <code>igraph</code> with 40 nodes and 1611 contacts (edges). Then we have a list of all the attributes of the network. The network attributes can be node attributes (n) or edge attributes (e).<br />
@@ -471,10 +471,10 @@ plot(net)</code></pre>
 <pre class="r"><code>#make it clearer: adjust size, remove labels#
 plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.label=NA)</code></pre>
 <p><img src="Lab1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p><strong>Excercise:</strong> Change the size of the nodes and the arrows to make a different graph.</p>
+<p><strong>Exercise:</strong> Change the size of the nodes and the arrows to make a different graph.</p>
 </div>
-<div id="node-color" class="section level2">
-<h2>1.2 Node color</h2>
+<div id="node-color" class="section level2" number="1.2">
+<h2 number="1.2"><span class="header-section-number">1.2</span> Node color</h2>
 <p>We can get specific attributes from the <code>igraph</code> object using <code>V()</code> for nodes, and <code>E()</code> for edges.<br />
 The same way we do for a <code>data.frame</code>, we can create new attributes of the network using the <code>$</code> operator and assigning a name to a new variables. Now we will create a new variable for the node color.</p>
 <pre class="r"><code># Create a color palette
@@ -490,8 +490,8 @@ plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.
 legend(&quot;bottomleft&quot;, legend = levels(factor(V(net)$farm_type)), col = colpal, pch = 16, bty = &quot;n&quot;)</code></pre>
 <p><img src="Lab1_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
-<div id="layouts" class="section level2">
-<h2>1.3 Layouts</h2>
+<div id="layouts" class="section level2" number="1.3">
+<h2 number="1.3"><span class="header-section-number">1.3</span> Layouts</h2>
 <p>We can change the position of the nodes using the argument <code>layout</code>. Now we will use different layouts to see how the network changes.</p>
 <pre class="r"><code>#layout_randomly uses a random location
 plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA, layout=layout_randomly)
@@ -505,8 +505,8 @@ plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.
 <p><img src="Lab1_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p><strong>Excercise:</strong> Try different layouts: <code>layout_nicely</code>, <code>layout_with_graphopt</code>, <code>layout_as_star</code>, <code>layout_with_fr</code>, <code>layout_on_grid</code>.</p>
 </div>
-<div id="size-of-the-edge" class="section level2">
-<h2>1.4 Size of the edge</h2>
+<div id="size-of-the-edge" class="section level2" number="1.4">
+<h2 number="1.4"><span class="header-section-number">1.4</span> Size of the edge</h2>
 <pre class="r"><code># We will change the edge size based on the number of aimals moved
 E(net)$width &lt;- E(net)$pigs.moved
 plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)</code></pre>
@@ -516,8 +516,8 @@ E(net)$width &lt;- scales::rescale(E(net)$pigs.moved, c(0.2, 3))
 plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)</code></pre>
 <p><img src="Lab1_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
 </div>
-<div id="node-size" class="section level2">
-<h2>1.5 Node size</h2>
+<div id="node-size" class="section level2" number="1.5">
+<h2 number="1.5"><span class="header-section-number">1.5</span> Node size</h2>
 <p>We will use the indegree value to assign the node size. First we will calculate indegree using the function <code>degree()</code> with the argument <code>mode = "in"</code>, and we will also get rid of the loops.</p>
 <pre class="r"><code>#Calculate the indegree
 #mode lets you choose between &quot;in&quot;, &quot;out&quot; and &quot;all&quot; for the type of degree
@@ -542,11 +542,11 @@ plot(net, edge.arrow.size=0.2, vertex.size=V(net)$size, vertex.color=V(net)$colo
 <p><img src="Lab1_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 </div>
-<div id="using-other-packages-to-plot-the-network" class="section level1">
-<h1>2 Using other packages to plot the network</h1>
+<div id="using-other-packages-to-plot-the-network" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> Using other packages to plot the network</h1>
 <p>Besides <code>igraph</code>, there are other packages to plot the network in R. The package <code>network()</code> provides almost the same functions that igraph for plotting, but igraph has more functions for network statistics. To switch between the formats, there is a package calls <code>intergraph()</code> which provides functions to going from an igraph object to a network object and the other way.</p>
-<div id="network-package" class="section level2">
-<h2>2.1 network package</h2>
+<div id="network-package" class="section level2" number="2.1">
+<h2 number="2.1"><span class="header-section-number">2.1</span> network package</h2>
 <p>Here we will use the package <code>network()</code> to plot a network with the names scaled to the number of neighbors.</p>
 <pre class="r"><code># First we obtain the number of neighbors for each node
 V(net)$nb &lt;- neighborhood.size(net)
@@ -562,15 +562,66 @@ plot(G, # The name of the network
      edge.col = &quot;lightgreen&quot;) # Edge color</code></pre>
 <p><img src="Lab1_files/figure-html/unnamed-chunk-13-1.png" width="960" /></p>
 </div>
-<div id="ggraph" class="section level2">
-<h2>2.2 ggraph</h2>
+<div id="ggraph" class="section level2" number="2.2">
+<h2 number="2.2"><span class="header-section-number">2.2</span> ggraph</h2>
 <p>Other option for plotting is the package <code>ggraph</code> which uses the same syntax than <code>ggplot</code>.</p>
 <pre class="r"><code>net %&gt;%
   as_tbl_graph() %&gt;%
   ggraph(layout = &#39;kk&#39;) +
-  geom_edge_link(aes(alpha = pigs.moved)) +
-  geom_node_point(aes(col = farm_type, size = indegree))</code></pre>
+  geom_edge_link(aes(alpha = pigs.moved)) + # change the transparency based on number of animals moved
+  geom_node_point(aes(col = farm_type, size = indegree)) + # size based on indegree
+  theme_void()</code></pre>
 <p><img src="Lab1_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+</div>
+<div id="calculating-euclidean-distance" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Calculating euclidean distance</h1>
+<p>We can also use the spatial location of the nodes to calculate the distance between a movement. To represent this distance we use euclidean distance, which is the distance using a straight line between two locations.<br />
+We will use the package <code>raster</code> for this part, so make sure its installed.</p>
+<pre class="r"><code>library(raster)</code></pre>
+<pre><code>## Loading required package: sp</code></pre>
+<pre><code>## 
+## Attaching package: &#39;sp&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggraph&#39;:
+## 
+##     geometry</code></pre>
+<pre><code>## 
+## Attaching package: &#39;raster&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidygraph&#39;:
+## 
+##     select</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     select</code></pre>
+<pre class="r"><code># First we need to include the information of origins and destination
+edge &lt;- edge %&gt;%
+  left_join(node[c(&quot;id&quot;, &quot;lat&quot;, &quot;long&quot;)], by = c(&quot;id_orig&quot; = &quot;id&quot;)) %&gt;%
+  rename(O_Lat = lat, O_Long = long) %&gt;%
+  left_join(node[c(&quot;id&quot;, &quot;lat&quot;, &quot;long&quot;)], by = c(&quot;id_dest&quot; = &quot;id&quot;)) %&gt;%
+  rename(D_Lat = lat, D_Long = long)
+# Now we calculate the distance
+edge$dist &lt;- pointDistance(p1 = edge[c(&quot;O_Long&quot;, &quot;O_Lat&quot;)], # Origin coordinates
+                           p2 = edge[c(&quot;D_Long&quot;, &quot;D_Lat&quot;)], # Destination coordinates
+                           lonlat = T)
+
+# We convert from m to km
+summary(edge$dist/1000)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   24.55  178.00  229.16  223.15  247.91  472.95</code></pre>
+<pre class="r"><code># We can see the quantiles:
+quantile(edge$dist/1000, c(0.05,0.95))</code></pre>
+<pre><code>##       5%      95% 
+## 104.6104 472.9462</code></pre>
+<pre class="r"><code># Lets look the distribution of distances
+hist(edge$dist/1000, 
+     xlim=range(0,500),
+     breaks=20,  
+     main = &quot;Distribution of euclidean distance (Km)&quot;, xlab=&quot;distance (km)&quot;)</code></pre>
+<p><img src="Lab1_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code>boxplot(edge$dist/1000,
+        ylim=c(0,500),
+        main = &quot;Boxlot of euclidean distance (Km)&quot;, ylab=&quot;distance (km)&quot;)</code></pre>
+<p><img src="Lab1_files/figure-html/unnamed-chunk-15-2.png" width="672" /></p>
 <p>Now we will add the network statistics to the data.frame so we can use them later.</p>
 <pre class="r"><code>node &lt;- node %&gt;%
   mutate(indegree = V(net)$indegree, outdegree = V(net)$outdegree, nb = V(net)$nb, Bet = bet)</code></pre>
@@ -580,7 +631,7 @@ readr::write_rds(net, &quot;Data/Outputs/net.rds&quot;)
 # We will also export the edges with the distance and coordinates
 write.csv(edge, &quot;Data/Outputs/edge.csv&quot;, row.names = F)
 write.csv(node, &quot;Data/Outputs/node.csv&quot;, row.names = F)</code></pre>
-</div>
+<hr />
 </div>
 
 

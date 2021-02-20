@@ -1,6 +1,10 @@
 ---
 title: "Lab 5"
-
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}

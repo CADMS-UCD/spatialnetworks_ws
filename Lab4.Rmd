@@ -1,6 +1,10 @@
 ---
 title: "Lab 4"
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
 ---
 
 ```{r echo=F}
@@ -62,7 +66,8 @@ V(g1)$fullname <- as.character(node_attrib$name[poss])
 
 summary(g1)
 ```
-## 1 Introduction to dynamic networks
+
+# Introduction to dynamic networks
 
 The `networkDynamic` package has functions that allow to analyze and visualize a network and incorporate temporality to it.
 To incorporate a temporal window, we need to specify the start time (onset) and end time (termini). For the purposes of this example we will assume that the contact time is one week.
@@ -162,7 +167,7 @@ summary(get.vertex.activity(n1, as.spellList=TRUE))
 summary(get.edge.activity(n1, as.spellList=TRUE))
 ```
 
-## 2 Temporal statistics
+# Temporal statistics
 
 We can evaluate several measures at the graph level, vertex level or traces of the period of study of our network using the function `tSnaStats()`.
 
@@ -188,7 +193,7 @@ We can also see node-level statistics (e.g. betweenness) using the next function
 apply(tSnaStats(n1, snafun = "betweenness"), 1, mean) %>% plot(type = "l", lwd = 2, col = colpal[4])
 ```
 
-## 3 Plotting the network
+# Plotting the network
 
 We can use the function `plot()` to see the network object, but we can only see the static network because we are not defining any time interval
 
@@ -259,7 +264,7 @@ for(i in O){
 }
 ```
 
-## 4 Temporally reachable sets
+# Temporally reachable sets
 
 The reachability of a farm help us to identify important nodes in the network that may have a key role in the disease spread. Forward reachability ("fwd") refers to all the nodes than can be reached from a given node $v_i$ and backward reachability ("bkwd") refers to those nodes that reach a given node $v_i$.
 We can visualize the distribution of the forward and backward reachability using boxplots
@@ -338,7 +343,7 @@ Another way to visualize the network activity is to show the time points when ea
 timeline(n1)
 ```
 
-# 5 Animations
+# Animations
 
 We can also create animations to show the evolution of the contact patterns over time using the function `render.d3movie()`. First we will use the function `compute.animation()` to set the layout and time frame for the animation.
 
@@ -361,3 +366,4 @@ compute.animation(n1, animation.mode = "kamadakawai",
 timePrism(n1, at = c(30, 40, 50, 60), planes = T)
 ```
 
+________________________________

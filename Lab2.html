@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Lab 2</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">CADMS</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Pre Workshop
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Intro_to_R.html">Intro to R</a>
+    </li>
+    <li>
+      <a href="Spatial_intro.html">Intro to Spatial data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Contact
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Instructors.html">
+        <span class="fas fa-users"></span>
+         
+        Instructors
+      </a>
+    </li>
+    <li>
+      <a href="https://cadms.vetmed.ucdavis.edu">
+        <span class="fas fa-server"></span>
+         
+        CADMS Website
+      </a>
+    </li>
+    <li>
+      <a href="mailto:jpgo@ucdavis.edu">
+        <span class="fas fa-envelope"></span>
+         
+        Email
+      </a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Lab 2</h1>
+
+</div>
+
+
+<div id="community-detection" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> Community detection</h1>
+<pre class="r"><code># If you are starting a new sesion, load the files and libraries again 
+net &lt;- readRDS(&quot;Data/Outputs/net.rds&quot;)
+# Cargar los datos
+node &lt;- read.csv(&quot;Data/Outputs/node.csv&quot;)
+edge &lt;- read.csv(&quot;Data/Outputs/edge.csv&quot;)
+library(igraph)
+library(dplyr)
+library(sf)</code></pre>
+<p>Now we will use the walktrap algorithm for community detection in the observed network. For this we use the function <code>cluster_walktrap()</code>.</p>
+<pre class="r"><code># First we need to simplify the network
+c&lt;-simplify(net)
+# Then we can use the function
+wc &lt;- cluster_walktrap(c)
+# To identify the communities we use:
+membership(wc)</code></pre>
+<pre><code>##                               Iowa Select Farms Inc 
+##                                                   2 
+##                     Stanley Martins Fleckvieh Farms 
+##                                                   3 
+##                                Centrum Valley Farms 
+##                                                   1 
+##                         Hilltop Farms fresh produce 
+##                                                   2 
+##                                       Hog Slat Inc. 
+##                                                   1 
+##                           Safari Iowa Hunting Farms 
+##                                                   1 
+##                                         Kloubec Koi 
+##                                                   2 
+##                                Johnson Farms Supply 
+##                                                   4 
+##                                         Kroul Farms 
+##                                                   2 
+##                            Steve Robinson Farm Shop 
+##                                                   2 
+##                           Loess Hills Lavender Farm 
+##                                                   2 
+##                                   Uncle Bill&#39;s Farm 
+##                                                   2 
+##                                     Wild Woods Farm 
+##                                                   1 
+##                              Western Iowa Farms LLC 
+##                                                   2 
+##                                      Mushroom Mills 
+##                                                   3 
+##                                        Kruger Farms 
+##                                                   2 
+##                                       US Farm Lease 
+##                                                   4 
+##                                   Dawn Golden Farms 
+##                                                   1 
+##                          Kris Del Farms Corporation 
+##                                                   2 
+##           Lapp‰ö_å©&#39;s Bee Supply and Honey Farm LLC 
+##                                                   1 
+##                        Nelson Pioneer Farm &amp; Museum 
+##                                                   4 
+##                                        WinMor Farms 
+##                                                   2 
+##                             Armstrong Research Farm 
+##                                                   3 
+##                                Cinnamon Ridge Farms 
+##                                                   3 
+##                                Rustik Rooster Farms 
+##                                                   3 
+##                               Picket Fence Creamery 
+##                                                   2 
+##                        Doe&#39;s and Diva&#39;s Dairy, Inc. 
+##                                                   3 
+##                            Bushman Family Farms Inc 
+##                                                   2 
+##                                   Johnson Farms Inc 
+##                                                   4 
+##                                       Premier Grain 
+##                                                   4 
+##                                        Bethany Farm 
+##                                                   2 
+##             Farm Sweet Farm at Rosmann Family Farms 
+##                                                   2 
+##                                    Iowa Farm Family 
+##                                                   4 
+## Iowa State University Horticulture Research Station 
+##                                                   4 
+##                                       RJM Farms Inc 
+##                                                   4 
+##                           Practical Farmers of Iowa 
+##                                                   4 
+##                                          Bass Farms 
+##                                                   4 
+##                                     A &amp; D Farms Inc 
+##                                                   4 
+##                                         Geno Source 
+##                                                   4 
+##                                        Tatonka Farm 
+##                                                   4</code></pre>
+<pre class="r"><code># We can plot the network and the comunities.
+plot(wc, c, edge.arrow.size=.2,vertex.size=4,vertex.label=NA)</code></pre>
+<p><img src="Lab2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="spatial-representation-of-the-network" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> Spatial representation of the network</h1>
+<pre class="r"><code># Loading the packages
+library(sf) # Package for spatial objects
+library(ggplot2) # package for plots
+
+# We load the spatial object from the package STNet
+iowa &lt;- st_read(system.file(&quot;data/Io.shp&quot;, package = &quot;STNet&quot;))</code></pre>
+<pre><code>## Reading layer `Io&#39; from data source `/Library/Frameworks/R.framework/Versions/4.0/Resources/library/STNet/data/Io.shp&#39; using driver `ESRI Shapefile&#39;
+## Simple feature collection with 99 features and 2 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -96.63567 ymin: 40.37454 xmax: -90.13931 ymax: 43.50465
+## geographic CRS: WGS 84</code></pre>
+<pre class="r"><code># plot map using sf
+plot(iowa$geometry)</code></pre>
+<p><img src="Lab2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Now we can transform the nodes as a spatial points object:</p>
+<pre class="r"><code>NodeSp &lt;- node %&gt;% # This is our node data.frame
+  st_as_sf(coords = c(&quot;long&quot;, &quot;lat&quot;), # Variables for the coordinates
+           crs = st_crs(iowa)) # This is the CRS we are using</code></pre>
+<div id="plotting-our-map" class="section level2" number="2.1">
+<h2 number="2.1"><span class="header-section-number">2.1</span> Plotting our map</h2>
+<p>One of the nice things of ggplot is that we can create a map and store it in an object and later we can keep adding layers to this map.</p>
+<pre class="r"><code>map &lt;- ggplot() +
+  geom_sf(data = iowa, # name of the spatial dataset
+          color=&quot;grey20&quot;, # color of the shape border
+          fill=&quot;white&quot;, # fill of the shape
+          size=0.4) + # width of the border
+  theme_void() # This is a theme form ggplot</code></pre>
+</div>
+<div id="plot-the-nodes" class="section level2" number="2.2">
+<h2 number="2.2"><span class="header-section-number">2.2</span> Plot the nodes</h2>
+<p>Now we will add the nodes to our map</p>
+<pre class="r"><code>map + geom_sf(data = NodeSp, # name of our data
+              aes(color = farm_type, # we color the nodes by farm type
+                  size = indegree)) +
+  ggtitle(&quot;Farms and their indegree&quot;) # the title of our plot</code></pre>
+<p><img src="Lab2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><strong>Excercise:</strong> Make the same plot, but make the size of the nodes relative to outdegree</p>
+</div>
+<div id="adding-the-euclidean-contacts" class="section level2" number="2.3">
+<h2 number="2.3"><span class="header-section-number">2.3</span> Adding the euclidean contacts</h2>
+<pre class="r"><code># The function geom_segment adds a straigth line between two coordinates:
+map +
+  geom_segment(data=edge, 
+               aes(x=O_Long, y=O_Lat, # this is where the line starts
+                   xend=D_Long, yend=D_Lat)) # this is where it ends</code></pre>
+<p><img src="Lab2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code># We can add the information of the type of movement to change the color of the line and the number of animals for the transparency
+map +
+  geom_segment(data=edge, 
+               aes(x=O_Long, y=O_Lat,
+                   xend=D_Long, yend=D_Lat, 
+                   color=type_orig,
+                   alpha = pigs.moved))</code></pre>
+<p><img src="Lab2_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+</div>
+<div id="putting-everything-together" class="section level2" number="2.4">
+<h2 number="2.4"><span class="header-section-number">2.4</span> Putting everything together</h2>
+<pre class="r"><code>#plot nodes &amp; edges - add both commands geom_segment and geom_point#
+map +
+  geom_segment(data=edge, 
+               aes(x=O_Long, y=O_Lat,
+                   xend=D_Long, yend=D_Lat,
+                   alpha = pigs.moved), 
+               show.legend=F) +
+  geom_sf(data = NodeSp, 
+          aes(color = farm_type, 
+              size = indegree), show.legend = &quot;point&quot;)</code></pre>
+<p><img src="Lab2_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="subsetting-the-data" class="section level2" number="2.5">
+<h2 number="2.5"><span class="header-section-number">2.5</span> Subsetting the data</h2>
+<pre class="r"><code># plot movements from sow farms only
+map +
+  edge %&gt;%
+  filter(type_orig == &quot;sow farm&quot;) %&gt;%
+  geom_segment(data = ., 
+               aes(x=O_Long, y=O_Lat, 
+                   xend=D_Long, yend=D_Lat, 
+                   color = type_orig), show.legend = F) +
+  geom_sf(data = NodeSp, 
+          aes(color = farm_type), size=3, show.legend = &quot;point&quot;)</code></pre>
+<p><img src="Lab2_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code># plot only movements between GDU to sow farm
+map +
+  edge %&gt;%
+  # filter(type_orig == &quot;sow farm&quot; &amp; type_dest == &quot;sow farm&quot;) %&gt;%
+  filter(type_orig == &#39;GDU&#39;, type_dest == &quot;sow farm&quot;) %&gt;%
+  geom_segment(data = ., aes(x=O_Long, y=O_Lat,
+                             xend=D_Long, yend=D_Lat, 
+                             color = type_orig), show.legend = F) +
+  geom_sf(data = NodeSp, 
+          aes(color = farm_type),
+          size=3, show.legend = &quot;point&quot;) +
+  ggtitle(&quot;GDU to Sow farm Movments&quot;)</code></pre>
+<p><img src="Lab2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+</div>
+<div id="kernel-density-map" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Kernel density map</h1>
+<p>Like we just saw, visualizing the movements can be challenging, one approach to do this is using a kernel density map. The idea behind this is to extrapolate values in a continuous surface, but here we are just interested in the visualization of the values, not so much in the interpolation of our values.<br />
+We will use the package <code>KernSmooth</code> for this, so make sure you ahve it installed.<br />
+First we will define a function to automate the process:</p>
+<pre class="r"><code>library(KernSmooth)
+library(raster)
+# we will create a function to create a density raster:
+processRaster &lt;- function(x, b, shp, res = c(200, 200)) {
+  est &lt;- bkde2D( # we use the function bkde2D to obtain our values
+    x, # This will be our dataset
+    bandwidth = c(b, b), # The bandwidth we define
+    gridsize = res, # the resolution level we want
+    range.x = list(extent(shp)[c(1, 2)], extent(shp)[c(3:4)])
+  )
+  
+  # Add the results to a raster
+  r &lt;- raster(list(
+    x = est$x1,
+    y = est$x2,
+    z = est$fhat
+  )) %&gt;%
+    `projection&lt;-`(st_crs(iowa)) %&gt;% # set the CRS
+    `extent&lt;-`(extent(iowa)) %&gt;% # set the extent
+    crop(., iowa) %&gt;% # crop the raster to the area
+    mask(., iowa) # crop the raster to the stat shape
+  
+  return(r)
+}</code></pre>
+<p>Now lets use our function for the data.</p>
+<pre class="r"><code># Obtain the estimated kernel with bandwidth 2km
+Erc &lt;- processRaster(x = edge[,c(&quot;O_Long&quot;, &quot;O_Lat&quot;)], # we want the outgoing only
+                     b = 2, # we choose a bandwidth of 2
+                     shp = iowa) # we set our extent 
+
+# plot the raster and the map
+plot(Erc)
+plot(iowa$geometry, col=NA, border = &quot;grey80&quot;, add = T)</code></pre>
+<p><img src="Lab2_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>We might have used a very large bandwidth in the previous plot, lets try with a smaller size.</p>
+<pre class="r"><code># Using a different bandwidth
+Erc &lt;- processRaster(x = edge[,c(&quot;O_Long&quot;, &quot;O_Lat&quot;)],
+                     b = 0.1,
+                     shp = iowa)
+
+# plot the raster and the map
+plot(Erc)
+plot(iowa$geometry, col=NA, border = &quot;grey80&quot;, add = T)</code></pre>
+<p><img src="Lab2_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><strong>Excercise:</strong> Create a kernel density map for the incoming movements.</p>
+<hr />
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

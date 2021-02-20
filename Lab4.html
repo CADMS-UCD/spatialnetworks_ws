@@ -20,6 +20,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -261,6 +264,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -268,6 +334,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -309,6 +385,13 @@ $(document).ready(function () {
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Instructors.html">
+        <span class="fas fa-users"></span>
+         
+        Instructors
+      </a>
+    </li>
     <li>
       <a href="https://cadms.vetmed.ucdavis.edu">
         <span class="fas fa-server"></span>
@@ -369,11 +452,11 @@ V(g1)$fullname &lt;- as.character(node_attrib$name[poss])
 # check the correct assignation of the attributes in the object
 
 summary(g1)</code></pre>
-<pre><code>## IGRAPH 4adc20e DN-B 40 1611 -- 
+<pre><code>## IGRAPH 8abf8df DN-B 40 1611 -- 
 ## + attr: name (v/c), lat (v/n), long (v/n), type (v/c), fullname (v/c),
 ## | date (e/c), pigs.moved (e/n), type_orig (e/c), type_dest (e/c)</code></pre>
-<div id="introduction-to-dynamic-networks" class="section level2">
-<h2>1 Introduction to dynamic networks</h2>
+<div id="introduction-to-dynamic-networks" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> Introduction to dynamic networks</h1>
 <p>The <code>networkDynamic</code> package has functions that allow to analyze and visualize a network and incorporate temporality to it. To incorporate a temporal window, we need to specify the start time (onset) and end time (termini). For the purposes of this example we will assume that the contact time is one week.</p>
 <p>In this analysis we will use a one week resolution. Since we have no information on the duration of the contact, we will assume that the duration is one week. As we have multiple years, we need to number the weeks from the first week in which we have data to the last week with data. For this, we will use an offset that will add 53 weeks or 106 depending on the year.</p>
 <pre class="r"><code># Create the onset starting from 2015, 
@@ -486,8 +569,8 @@ set.vertex.attribute(n1,&quot;type&quot;,as.character(node_attrib$farm_type))</c
 ##                                    3rd Qu.:2.00   3rd Qu.:60.25  
 ##                                    Max.   :9.00   Max.   :86.00</code></pre>
 </div>
-<div id="temporal-statistics" class="section level2">
-<h2>2 Temporal statistics</h2>
+<div id="temporal-statistics" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> Temporal statistics</h1>
 <p>We can evaluate several measures at the graph level, vertex level or traces of the period of study of our network using the function <code>tSnaStats()</code>.</p>
 <p>This function uses arguments to include the <code>networkDynamic</code> object that we have created and to specify the function with the desired statistic that we want to apply (through the argument “snafun=”). For example, if we want to calculate the density of the network in different periods, we will do this:</p>
 <pre class="r"><code>tSnaStats(n1, snafun = &quot;gden&quot;) %&gt;% # &quot;gden&quot; to show graph density
@@ -502,8 +585,8 @@ set.vertex.attribute(n1,&quot;type&quot;,as.character(node_attrib$farm_type))</c
 <pre class="r"><code>apply(tSnaStats(n1, snafun = &quot;betweenness&quot;), 1, mean) %&gt;% plot(type = &quot;l&quot;, lwd = 2, col = colpal[4])</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 </div>
-<div id="plotting-the-network" class="section level2">
-<h2>3 Plotting the network</h2>
+<div id="plotting-the-network" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Plotting the network</h1>
 <p>We can use the function <code>plot()</code> to see the network object, but we can only see the static network because we are not defining any time interval</p>
 <pre class="r"><code>plot(n1,mode=&quot;kamadakawai&quot;) </code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
@@ -559,8 +642,8 @@ for(i in O){
 }</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 </div>
-<div id="temporally-reachable-sets" class="section level2">
-<h2>4 Temporally reachable sets</h2>
+<div id="temporally-reachable-sets" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> Temporally reachable sets</h1>
 <p>The reachability of a farm help us to identify important nodes in the network that may have a key role in the disease spread. Forward reachability (“fwd”) refers to all the nodes than can be reached from a given node <span class="math inline">\(v_i\)</span> and backward reachability (“bkwd”) refers to those nodes that reach a given node <span class="math inline">\(v_i\)</span>. We can visualize the distribution of the forward and backward reachability using boxplots</p>
 <pre class="r"><code>fwd &lt;- tReach(n1, &quot;fwd&quot;)
 bwd &lt;- tReach(n1, &quot;bkwd&quot;)
@@ -620,8 +703,8 @@ MaPaths(Net = n1, v = 17, direction = &quot;fwd&quot;, Pts = node_attrib, coords
 <pre class="r"><code>timeline(n1)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
 </div>
-<div id="animations" class="section level1">
-<h1>5 Animations</h1>
+<div id="animations" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> Animations</h1>
 <p>We can also create animations to show the evolution of the contact patterns over time using the function <code>render.d3movie()</code>. First we will use the function <code>compute.animation()</code> to set the layout and time frame for the animation.</p>
 <pre class="r"><code>render.d3movie(n1,
                displaylabels=F, 
@@ -639,6 +722,8 @@ timePrism(n1, at = c(30, 40, 50, 60), planes = T)</code></pre>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -671,6 +756,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

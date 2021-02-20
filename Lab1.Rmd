@@ -4,6 +4,7 @@ output:
   html_document:
     toc: true
     toc_float: true
+    number_sections: true
 ---
 
 Libraries we will use (install if necessary):  
@@ -22,9 +23,9 @@ install.packages("tidygraph")
 
 
 
-# 1. Network visualization
+# Network visualization
 
-## 1.1 Loading the data and visualizing the network
+## Loading the data and visualizing the network
 
 ```{r message = F, warning = F}
 library(dplyr)
@@ -71,10 +72,10 @@ This figure looks a bit messy, to make it more informative we can visualize dome
 plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.label=NA)
 ```
 
-**Excercise:** Change the size of the nodes and the arrows to make a different graph.  
+**Exercise:** Change the size of the nodes and the arrows to make a different graph.  
 
 
-## 1.2 Node color
+## Node color
 
 We can get specific attributes from the `igraph` object using `V()` for nodes, and `E()` for edges.  
 The same way we do for a `data.frame`, we can create new attributes of the network using the `$` operator and assigning a name to a new variables. Now we will create a new variable for the node color.  
@@ -94,7 +95,7 @@ legend("bottomleft", legend = levels(factor(V(net)$farm_type)), col = colpal, pc
 ```
 
 
-## 1.3 Layouts
+## Layouts
 
 We can change the position of the nodes using the argument `layout`. Now we will use different layouts to see how the network changes.  
 
@@ -117,7 +118,7 @@ plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.
 
 
 
-## 1.4 Size of the edge
+## Size of the edge
 
 ```{r}
 # We will change the edge size based on the number of aimals moved
@@ -129,7 +130,7 @@ plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.
 ```
   
   
-## 1.5 Node size
+## Node size
 
 We will use the indegree value to assign the node size. First we will calculate indegree using the function `degree()` with the argument `mode = "in"`, and we will also get rid of the loops.  
 
@@ -165,11 +166,11 @@ V(net)$size <- scales::rescale(bet, c(5, 15))
 plot(net, edge.arrow.size=0.2, vertex.size=V(net)$size, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)
 ```
 
-# 2 Using other packages to plot the network
+# Using other packages to plot the network
 
 Besides `igraph`, there are other packages to plot the network in R. The package `network()` provides almost the same functions that igraph for plotting, but igraph has more functions for network statistics. To switch between the formats, there is a package calls `intergraph()` which provides functions to going from an igraph object to a network object and the other way.    
 
-## 2.1 network package 
+## network package 
 Here we will use the package `network()` to plot a network with the names scaled to the number of neighbors.  
 
 ```{r fig.height=10, fig.width=10}
@@ -187,7 +188,7 @@ plot(G, # The name of the network
      edge.col = "lightgreen") # Edge color
 ```
 
-## 2.2 ggraph
+## ggraph
 
 Other option for plotting is the package `ggraph` which uses the same syntax than `ggplot`.  
 
@@ -198,6 +199,40 @@ net %>%
   geom_edge_link(aes(alpha = pigs.moved)) + # change the transparency based on number of animals moved
   geom_node_point(aes(col = farm_type, size = indegree)) + # size based on indegree
   theme_void()
+```
+  
+  
+# Calculating euclidean distance
+
+We can also use the spatial location of the nodes to calculate the distance between a movement. To represent this distance we use euclidean distance, which is the distance using a straight line between two locations.  
+We will use the package `raster` for this part, so make sure its installed.  
+
+```{r}
+library(raster)
+# First we need to include the information of origins and destination
+edge <- edge %>%
+  left_join(node[c("id", "lat", "long")], by = c("id_orig" = "id")) %>%
+  rename(O_Lat = lat, O_Long = long) %>%
+  left_join(node[c("id", "lat", "long")], by = c("id_dest" = "id")) %>%
+  rename(D_Lat = lat, D_Long = long)
+# Now we calculate the distance
+edge$dist <- pointDistance(p1 = edge[c("O_Long", "O_Lat")], # Origin coordinates
+                           p2 = edge[c("D_Long", "D_Lat")], # Destination coordinates
+                           lonlat = T)
+
+# We convert from m to km
+summary(edge$dist/1000)
+# We can see the quantiles:
+quantile(edge$dist/1000, c(0.05,0.95))
+# Lets look the distribution of distances
+hist(edge$dist/1000, 
+     xlim=range(0,500),
+     breaks=20,  
+     main = "Distribution of euclidean distance (Km)", xlab="distance (km)")
+
+boxplot(edge$dist/1000,
+        ylim=c(0,500),
+        main = "Boxlot of euclidean distance (Km)", ylab="distance (km)")
 ```
 
 Now we will add the network statistics to the data.frame so we can use them later.  
@@ -217,3 +252,6 @@ readr::write_rds(net, "Data/Outputs/net.rds")
 write.csv(edge, "Data/Outputs/edge.csv", row.names = F)
 write.csv(node, "Data/Outputs/node.csv", row.names = F)
 ```
+  
+
+____________________________________________________________________

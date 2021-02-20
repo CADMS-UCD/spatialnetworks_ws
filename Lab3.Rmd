@@ -1,27 +1,32 @@
 ---
 title: "Lab 3"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
 ---
 
-En este Laboratorio vamos a trabajar datos de posicionamiento de GPS de 36 animales de 3 especies distintas.
-Vamos a definir nuestra red de contactos basada en geolocalizaciones obtenidas de un sistema de GPS. Los datos cuentan con informacion proveniente de collares puestos en 3 especies: vacas, cerdos y venados.  
+In this section we will use a different dataset which consist on GPS locations of 3 different species.  
+We will define our contact network based on proximity between two animals from the GPS location records. 
   
-# 1. Exploracion inicial de los datos 
+# Exploratory analysis
 ```{r include=FALSE}
 knitr::opts_chunk$set(message = F)
 ```
 
 
 ```{r message = F}
-# Cargamos las librerias que usaremos:
+# libraries we will use
 library(dplyr)
 library(sf)
 library(sp)
 library(ggplot2)
-# Cargamos los datos:
+# We get the data from the STNet package
 GPSc <- STNet::GPSc
 ```
 
-Primero veamos cuantos registros hubieron durante el periodo de observacion por especie:  
+First we will see how many locations were recorded during the observation period by species:  
 
 ```{r}
 GPSc %>%
@@ -29,76 +34,77 @@ GPSc %>%
   summarise(N = n())
 ```
 
-Ahora crearemos una base de datos que incluya la informacion de los nodos
+Now lets create a dataset for the nodes.  
+
 ```{r}
-# Crear los nodos
 Nodes <- GPSc %>%
   distinct(CollarID, species_type)
 ```
 
-## 1.1 Visualizacion temporal de los registros.
+## Temporal visualization
 
-Ahora veamos como se ve la cantidad de reportes a traves del periodo de estudio:
+Now lets see how does the GPS records varies during the observation period:  
 
 ```{r}
 Daily <- GPSc %>%
-  group_by(Date, species_type) %>%
-  summarise(N = n())
+  count(Date, species_type)
 
 ggplot() +
-  geom_line(data = Daily, aes(x = Date, y = N, color = species_type), size = 1) +
-  theme_classic()
+  geom_line(data = Daily, aes(x = Date, y = n, color = species_type), size = 1) +
+  theme_minimal()
 ```
 
 
+## Spatial distribution of the records
 
-## 1.2 Visualizacion espacial de los registros
-
-Primero transformamos la tabla de GPSc a un objeto espacial.  
+First we will tronsform our data into a spatial points object.  
 ```{r}
 GPScSP <- GPSc %>%
-  st_as_sf(coords = c("X", "Y"), crs = st_crs("+init=EPSG:4326")) %>%
-  st_transform(st_crs("+init=EPSG:32615"))
+  st_as_sf(coords = c("X", "Y"), crs = st_crs(4326)) %>%
+  st_transform(st_crs(32615))
 ```
 
-Ahora usamos `geom_sf()` para visualizar las ubicaciones.
+Now we use `geom_sf()` to see the locations on a map.
 
 ```{r}
 ggplot() +
-  geom_sf(data = GPScSP, aes(color = species_type), show.legend = "point")
+  geom_sf(data = GPScSP, aes(color = species_type), show.legend = "point") +
+  theme_minimal()
 ```
 
-Parece ser que las tres especies animales tienen rangos de habitat en los que coinciden. Para identificar la areas en donde hay mas registros de cada especie podemos usar una approximacion con una cuadricula hexagonal.  
+It looks like the 3 different species have movement ranges where they coincide. To identify where are the species coinciding more often we will use a hexagonal grid.  
 
 
-# 2 Figuras de rango de cada especie.  
+# Species range maps
 
-El paquete `STNet` incluye la funcion `HexGrid` la cual recibe como argumento el area de cada hexagono y un objeto `sf` para delimitar el area y la proyeccion.  
-En este caso vamos a usar el la extension de nuestros puntos para crear un cuadro que represente el area de estudio y despues crearemos nuestra cuadricula hexagonal con eso.  
+The `STNet` package includes a function called `HexGrid`, which creates a hexagonal grid on a spatial field. Here we will use the extent of our points to create the grid.  
 
 ```{r}
-# Creamos un cuadro que representa el area de estudio:
+# First we create a field that represents the study area:
 Border <- as(raster::extent(GPScSP), "SpatialPolygons") %>%
   st_as_sf()
-# Definimos el sistema de coordenadas
+# We define the CRS
 st_crs(Border) <- st_crs(GPScSP)
 ```
 
 ```{r}
-# Cargamos la libreria STNet:
+# Load the STNet library:
 library(STNet)
-# Usamos la funcion HexGrid:
+# We use the HexGrid function:
 BorderHex <- HexGrid(cellsize = 500, Shp = Border)
-# Graficamos el resultado:
+# Plot the grid:
 plot(BorderHex$geometry)
 ```
 
-Despues usaremos otra funcion que cuenta el numero de puntos por hexagono. La funcion `HexMap()` recibe los argumentos de `Hex` que es la cuadricula hexagonal que creamos, y `Points` que son las ubicaciones que queremos contar por hexagono. Para usar esta funcion es necesario tener instalado y cargar el paquete `sp`, al cargar STNet este paquete no se carga por default.  
+Next we wull use another function from the `STNet` package that counts the number of points per hexagonal cell. The arguments we need are:  
   
-A continuacion graficaremos los rangos de cada especie en el periodo observado:
+  - `Hex`, the hexagonal grid we created.   
+  - `Points` The locations that we want to count. for this function is also necesary to have installed the package `sp`, so make sure its installed and loaded.  
+  
+Now lets plot the movement ranges for the species on the observed period:
 
 ```{r}
-# Para las vacas:
+# For cattle:
 GPScSP %>%
   filter(species_type == "cattle") %>%
   HexMap(Hex = BorderHex, .) %>%
@@ -109,7 +115,7 @@ GPScSP %>%
   theme_void()
 ```
 
-**Ejercicio:** Crea los mapas de rango de las otras dos especies (deer y pig) usando diferentes colores.  
+**Exercise:** Create the range maps for the other 2 species (deer y pig) and use different colors.  
 
 ```{r eval=FALSE, include=FALSE}
 GPScSP %>%
@@ -135,45 +141,53 @@ GPScSP %>%
   
   
 
-# 3. Crear la red:
+# Defining the network:
 
-## 3.1 Definir los contactos:
+## Defining the contacts:
 
-Ahora definiremos nuestra red. Estamos interesados en todos los contactos que sucedieron entre animales a una distancia menor a 1 metro.  
+Now we will define our network. We are interested in all the contacts that happened between animals at a distance of < 1 m.  
 
-Esta funcion puede tomar un poco de tiempo, si quieres omitir este paso, los datos estan disponibles dentro del paquete `STNet`.  
+This function might take some time, if you want to skip this part, the data is available inside the `STNet` package.  
+
 ```{r eval = F}
-# Cambiaremos los nombres para probar la funcion:
+# Lets change the names to test the function:
 colnames(GPSc)[c(1, 4, 6, 7)] <- c("id", "date", "Longitude", "Latitude")
-# Corremos la funcion
-Edges <- CreateNetwork(DF = GPSc[,], # Nuesta data.frame
-                       DTh = 1, # The distance treshold
-                       DateTime = "date", # Nombre de la variable que indica date time
-                       ID = "id", # Nombre de la variable para el ID
-                       coords = c("Longitude", "Latitude") # Nombre de la variable para las coordenadas
+# Run the function
+Edges <- CreateNetwork(DF = GPSc[,], # This is our data
+                       DTh = 1, # TTthe distance threshold
+                       DateTime = "date", # Name of the variable that indicates the date and time
+                       ID = "id", # name of variable for id
+                       coords = c("Longitude", "Latitude") # Name of variable for coordinated
                        ) # 14,869
 ```
 
-Para cargar los datos directamente del paquete `STNet` podemos accesar a ellos usando:
+To load the data directly from the `STNet` package we can use the function:  
+
 ```{r}
 Edges <- STNet::.
 ```
+This dataset includes:  
   
+  - *Distance*: distance between the recorded contact.  
+  - *DateTime*: The time when the contact happened.  
+  - *Var1* and *Var2*: nodes involved in the contact. Remember that since these contacts are registerd from the location of the animals, we don't know who started the contact, so it is not directed.  
+  - *X.x*, *Y.x*, *X.y*, *Y.y*: the spatial location of the nodes at that time.  
   
-### 3.1.1 Contactos entre especies:
+### Contacts between species:
 
-Podemos tambien detectar las areas en donde los contactos entre especie estan sucediendo.  
-Para esto haremos un subconjunto que solo incluya los contactos entre especies diferentes.
+We can also detect areas where the contacts between species are happening.  
+For this we will create a subset of the data that includes only contacts between different species.  
+
 ```{r}
-# Agregar variables de especies
+# Add variable for species
 Edges <- Edges %>%
-  left_join(Nodes, by = c("Var1" = "CollarID")) %>%
+  left_join(Nodes, by = c("Var1" = "CollarID")) %>% #Var1 one of the nodes
   rename(Sp1 = species_type) %>%
-  left_join(Nodes, by = c("Var2" = "CollarID")) %>%
+  left_join(Nodes, by = c("Var2" = "CollarID")) %>% # Var 2 is the other node
   rename(Sp2 = species_type)
 
 InterSp <- Edges %>% 
-  filter(Sp1 != Sp2) %>%
+  filter(Sp1 != Sp2) %>% # select contacts where the species are different
   data.frame()
 ```
 
@@ -182,7 +196,7 @@ InterSp <- Edges %>%
 InterSp_sp <- InterSp %>%
   dplyr::select(DateTime, Var1, Var2, Sp1, Sp2, X.x, Y.x) %>%
   st_as_sf(coords = c("X.x", "Y.x"), crs = st_crs("+init=EPSG:4326")) %>%
-  st_transform(st_crs("+init=EPSG:32615"))
+  st_transform(st_crs(32615))
   
 IspH <- HexMap(BorderHex, Points = InterSp_sp)
 
@@ -194,45 +208,46 @@ ggplot(IspH, aes(fill = N)) +
 ```
 
 
-## 3.2 Definir los nodos:
+## Define the nodes:
+
+We previously defined the nodes, we can see that there are 36 animals in our network.
 
 ```{r}
 Nodes %>%
-  group_by(species_type) %>%
-  summarise(N = n())
+  count(species_type)
 ```
 
   
   
-## 3.3 Crear la red:
+## Creating the network:
 
 ```{r}
-# Librerias que usamos:
+# Libraries we will use:
 library(igraph)
 library(scales)
-# Crear la red:
+# Create the network:
 G1 <- graph_from_data_frame(Edges[c("Var1", "Var2")], vertices = Nodes, directed = F)
-# Crear variable para contar el numero de movimientos:
+# Create a variable to count the number of contact:
 E(G1)$w <- 1
-# Simplificar la red:
-G1s <- simplify(G1, # Nombre de la red
-                remove.multiple = T, # remover multiples contactos
-                edge.attr.comb = list(w = "sum")) # funcion a realizar para el atributo que se va a combinar
+# Simplifying the network:
+G1s <- simplify(G1, # Name of the network
+                remove.multiple = T, # Remove multiple contacts
+                edge.attr.comb = list(w = "sum")) # Function to do with the multiple contacts
 
-# Crear valores para degree
+# calculate the degree (since its not directed we can not define indegree or outdegree)
 V(G1)$degree <- degree(G1, mode = "all")
 
 plot(G1s, 
-     edge.color = alpha("black", rescale(E(G1s)$w, c(0.01, 1))), # crear transparencia conforme al numero de veces contactado
+     edge.color = alpha("black", rescale(E(G1s)$w, c(0.01, 1))), # use number of contacts for transparency
      layout = layout_with_kk, 
      vertex.label = NA, 
      vertex.size = rescale(V(G1)$degree, c(1, 15)))
 ```
 
 
-## 3.1 Redes por especie: 
+## Networks by species: 
   
-Para crear un subconjunto de nuestra red, podemosusar la funcion `induced_graph` en la cual tenemos que especificar la red de la que extraeremos el subconjunto y los ids de los vertices, para esto usamos `which()` y especificamos que solo estamos interesados en la especie deer.  
+To create a subset of our network we can use the function `induced_graph`, where we need to specify the network that we will extract from and the ids of the nodes, for this we use the function `which()` and specify that we watn the deer only.  
 
 ```{r}
 VIDs <- which(V(G1)$species_type == "deer")
@@ -240,11 +255,13 @@ DeerG <- induced_subgraph(graph = G1s, vids = VIDs)
 
 
 plot(DeerG, 
-     edge.color = alpha("black", rescale(E(DeerG)$w, c(0.01, 1))), # crear transparencia conforme al numero de veces contactado
+     edge.color = alpha("black", rescale(E(DeerG)$w, c(0.01, 1))),
      layout = layout_with_kk, 
      vertex.label = NA, 
      vertex.size = rescale(V(G1)$degree[VIDs], c(1, 15)), 
      vertex.color = "darkgreen")
 ```
 
-**Ejercicio:**  Realiza lo mismo para la red de vacas y cerdos
+**Exercise:** create the network for the other 2 species
+
+___________________________________________________
