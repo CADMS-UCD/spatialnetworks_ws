@@ -243,8 +243,9 @@ tm_shape(Iop) +
 ```{r}
 library(ggplot2)
 
-p <- ggplot() +
-  geom_sf(data = Iop, aes(fill = Prevalence)) +
+p <- ggplot() + # first we call the ggplot() function
+  geom_sf(data = Iop, # we specify our data
+          aes(fill = Prevalence)) + # we use aes() to add the variables that we want to plot
   theme_void()
 
 p

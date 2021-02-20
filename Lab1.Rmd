@@ -195,8 +195,9 @@ Other option for plotting is the package `ggraph` which uses the same syntax tha
 net %>%
   as_tbl_graph() %>%
   ggraph(layout = 'kk') +
-  geom_edge_link(aes(alpha = pigs.moved)) +
-  geom_node_point(aes(col = farm_type, size = indegree))
+  geom_edge_link(aes(alpha = pigs.moved)) + # change the transparency based on number of animals moved
+  geom_node_point(aes(col = farm_type, size = indegree)) + # size based on indegree
+  theme_void()
 ```
 
 Now we will add the network statistics to the data.frame so we can use them later.  

@@ -2,44 +2,14 @@
 title: "Lab 2"
 ---
 
-#3 Calculando la distancia euclediana
-
-```{r}
-library(raster)
-# Primero necesitamos incluir la informacion de la localizacion de origen y destino
-edge <- edge %>% 
-  left_join(node[c("id", "lat", "long")], by = c("id_orig" = "id")) %>%
-  rename(O_Lat = lat, O_Long = long) %>%
-  left_join(node[c("id", "lat", "long")], by = c("id_dest" = "id")) %>%
-  rename(D_Lat = lat, D_Long = long)
-# Calculamos la distancia
-edge$dist <- pointDistance(p1 = edge[c("O_Long", "O_Lat")], # Primer set de coordenadas
-                           p2 = edge[c("D_Long", "D_Lat")], # Segundo set de coordenadas
-                           lonlat = T) # Especificamos que usamos LatLong
-
-# dividimos por 1000 para obtener la distancia en KM
-summary(edge$dist/1000)
-# Obtenemos los quantiles:
-quantile(edge$dist/1000, c(0.05,0.95))
-# Podemos usar graficos para demostrar la distribucion de las distancias
-hist(edge$dist/1000, # EL valo que vamos a graficar
-     xlim=range(0,500),  # los limites de la grafica
-     breaks=20,  # numero de grupos
-     main = "Distribution of euclidean distance (Km)", xlab="distance (km)")
-
-boxplot(edge$dist/1000, 
-        ylim=c(0,500), 
-        main = "Boxlot of euclidean distance (Km)", ylab="distance (km)")
-```
-
 ```{r include=FALSE}
-knitr::opts_chunk$set(warninr = F, message = F)
+knitr::opts_chunk$set(warning = F, message = F)
 ```
 
-# 1 Deteccion de comunidades
+# 1 Community detection
 
 ```{r}
-# Si empezamos una nueva sesion tendremosque cargar las librerias y los datos de nuevo
+# If you are starting a new sesion, load the files and libraries again 
 net <- readRDS("Data/Outputs/net.rds")
 # Cargar los datos
 node <- read.csv("Data/Outputs/node.csv")
@@ -48,68 +18,67 @@ library(igraph)
 library(dplyr)
 ```
 
-Vamos a utilizar el algoritmo walktrap para detectar comunidades en la red observada usando la funcion `walktrap()`.   
+Now we will use the walktrap algorithm for community detection in the observed network. For this we use the function `cluster_walktrap()`.   
 
 ```{r}
-# Primero simplificamos la red
+# First we need to simplify the network
 c<-simplify(net)
-# Despues usamos 
+# Then we can use the function
 wc <- cluster_walktrap(c)
-# Identificar el numero de comunidad al que pertenece:
+# To identify the communities we use:
 membership(wc)
-# Graficar la red y las comunidades
+# We can plot the network and the comunities.
 plot(wc, c, edge.arrow.size=.2,vertex.size=4,vertex.label=NA)
 ```
 
 
-## 2 Representacion espacial de la red
+## 2 Spatial representation of the network
 
 
 ```{r}
-# cargar los paquetes
-library(sf) # para objetos espaciales
-library(ggplot2) # para graficar
+# Loading the packages
+library(sf) # Package for spatial objects
+library(ggplot2) # package for plots
 
-# Cargar el objeto espacial
+# We load the spatial object from the package STNet
 iowa <- st_read(system.file("data/Io.shp", package = "STNet"))
 
 # plot map using sf
 plot(iowa$geometry)
 ```
 
-Transformamos los nodos a un objeto espacial:  
+Now we can transform the nodes as a spatial points object:  
 
 ```{r Transform nodes to spatial}
-NodeSp <- node %>% # Aqui va el data.frame
-  st_as_sf(coords = c("long", "lat"), # Nombre de las variables que indican las coordenadas
-           crs = st_crs(iowa)) # El sistema de coordenadas que usamos
+NodeSp <- node %>% # This is our node data.frame
+  st_as_sf(coords = c("long", "lat"), # Variables for the coordinates
+           crs = st_crs(iowa)) # This is the CRS we are using
 ```
 
 
 ## 2.1 Graficar el shapefile de Iowa
 
+One of the nice things of ggplot is that we can create a map and store it in an object and later we can keep adding layers to this map.  
 
 ```{r}
 map <- ggplot() +
-  geom_sf(data = iowa, color="gray",fill="white", size=0.2)
+  geom_sf(data = iowa, # name of the spatial dataset
+          color="grey20", # color of the shape border
+          fill="white", # fill of the shape
+          size=0.4) + # width of the border
+  theme_void() # This is a theme form ggplot
 ```
 
 
-## 2.2 Graficar los nodos
+## 2.2 Plot the nodes
+
+Now we will add the nodes to our map
+```{r}
+map + geom_sf(data = NodeSp, aes(color = farm_type))
+```
+
 
 ```{r}
-#plot nodes#
-# Agregamos los puntos solamente
-map+geom_sf(data = NodeSp, color = "red")
-
-# Agregamos los puntos con el tipo de granja
-map+
-  geom_sf(data = NodeSp, aes(color = farm_type))
-
-# ajustamos el tamaño
-map2 <- map+
-  geom_sf(data = NodeSp, aes(color = farm_type), size = 3)
-
 # Agregamos la leyenda 
 map +
   geom_sf(data = NodeSp, 
@@ -178,6 +147,36 @@ edge %>%
   scale_colour_discrete(name="Origin type", breaks=c("boar stud","finisher","GDU","nursery","sow farm"), labels=c("boar stud","finisher","GDU","nursery","sow farm"))
 ```
 
+
+#3 Calculando la distancia euclediana
+
+```{r}
+library(raster)
+# Primero necesitamos incluir la informacion de la localizacion de origen y destino
+edge <- edge %>% 
+  left_join(node[c("id", "lat", "long")], by = c("id_orig" = "id")) %>%
+  rename(O_Lat = lat, O_Long = long) %>%
+  left_join(node[c("id", "lat", "long")], by = c("id_dest" = "id")) %>%
+  rename(D_Lat = lat, D_Long = long)
+# Calculamos la distancia
+edge$dist <- pointDistance(p1 = edge[c("O_Long", "O_Lat")], # Primer set de coordenadas
+                           p2 = edge[c("D_Long", "D_Lat")], # Segundo set de coordenadas
+                           lonlat = T) # Especificamos que usamos LatLong
+
+# dividimos por 1000 para obtener la distancia en KM
+summary(edge$dist/1000)
+# Obtenemos los quantiles:
+quantile(edge$dist/1000, c(0.05,0.95))
+# Podemos usar graficos para demostrar la distribucion de las distancias
+hist(edge$dist/1000, # EL valo que vamos a graficar
+     xlim=range(0,500),  # los limites de la grafica
+     breaks=20,  # numero de grupos
+     main = "Distribution of euclidean distance (Km)", xlab="distance (km)")
+
+boxplot(edge$dist/1000, 
+        ylim=c(0,500), 
+        main = "Boxlot of euclidean distance (Km)", ylab="distance (km)")
+```
 
 ## 3 Mapa de kernel density
 
