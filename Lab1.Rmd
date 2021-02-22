@@ -201,6 +201,41 @@ net %>%
   theme_void()
 ```
   
+## Interactive visualization using networkD3
+
+The package `networkD3` offer some interesting visualization options. This package uses javascript to create interactive visualizations so we need to start our indexing at 0 and not at 1 for the edges. for this we will substract 1 to the edges indexing
+
+```{r}
+# Loading the library
+library(networkD3)
+# SUbstract 1 from the indexing of the nodes
+edge_s <- edge %>%
+  count(id_orig, id_dest) %>%
+  mutate(id_orig = id_orig - 1, id_dest = id_dest - 1)
+
+# Plot a simple network
+simpleNetwork(edge_s)
+```
+
+We can also add more information to our network such as the name, type of node and size of the edges.  
+
+```{r}
+# Plot
+forceNetwork(Links = edge_s, Nodes = node,
+            Source = "id_orig", Target = "id_dest",
+            Value = "n", NodeID = "name",
+            Group = "farm_type", opacity = 0.8)
+```
+
+Another interesting visualization from this package are the Sankey Networks. THis type of visualizations can be very helpful to se the flow of the movements. The height of the rectangles will represent the indegree, and the shaded line between two nodes represent the number of movements between a pair of nodes
+
+```{r}
+# Plot
+sankeyNetwork(Links = edge_s, Nodes = node, Source = "id_orig",
+             Target = "id_dest", Value = "n", NodeID = "name",
+             fontSize = 12, nodeWidth = 30)
+```
+  
   
 # Calculating euclidean distance
 
