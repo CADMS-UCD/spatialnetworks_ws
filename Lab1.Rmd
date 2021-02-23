@@ -19,6 +19,8 @@ install.packages("intergraph")
 install.packages("network")
 install.packages("RColorBrewer")
 install.packages("tidygraph")
+install.packages('networkD3')
+install.packages("ggraph")
 ```
 
 
@@ -242,7 +244,7 @@ sankeyNetwork(Links = edge_s, Nodes = node, Source = "id_orig",
 We can also use the spatial location of the nodes to calculate the distance between a movement. To represent this distance we use euclidean distance, which is the distance using a straight line between two locations.  
 We will use the package `raster` for this part, so make sure its installed.  
 
-```{r}
+```{r warning=F, message=F}
 library(raster)
 # First we need to include the information of origins and destination
 edge <- edge %>%
