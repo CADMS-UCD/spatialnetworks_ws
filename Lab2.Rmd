@@ -13,12 +13,15 @@ knitr::opts_chunk$set(warning = F, message = F)
 
 # Community detection
 
+First we will have to load the data. Remember that on the previous lab we exported a dataset at the end, we will continue using this.  
+
 ```{r}
-# If you are starting a new sesion, load the files and libraries again 
+# If you are starting a new session, load the files and libraries again 
 net <- readRDS("Data/Outputs/net.rds")
-# Cargar los datos
+# Load the data
 node <- read.csv("Data/Outputs/node.csv")
 edge <- read.csv("Data/Outputs/edge.csv")
+# libraries we will use.
 library(igraph)
 library(dplyr)
 library(sf)
@@ -33,12 +36,21 @@ c<-simplify(net)
 wc <- cluster_walktrap(c)
 # To identify the communities we use:
 membership(wc)
-# We can plot the network and the comunities.
+```
+  
+We can put this communities on a plot using the base `plot()` function. For this we will need to include in the arguments our simplified network and the communities we detected using the walktrap algorithm.  
+
+```{r}
+# We can plot the network and the communities.
 plot(wc, c, edge.arrow.size=.2,vertex.size=4,vertex.label=NA)
 ```
 
+
 # Spatial representation of the network
 
+Now we will use the network we created and the spatial location of our farms to see the movements on a map.  
+We will be using the `sf` package to manipulate the spatial objects, and the `ggplot2` package for visualization.  
+In the `STNet` package there is a spatial polygons data, which includes the counties in the state of Iowa.  
 
 ```{r}
 # Loading the packages
@@ -52,7 +64,7 @@ iowa <- st_read(system.file("data/Io.shp", package = "STNet"))
 plot(iowa$geometry)
 ```
 
-Now we can transform the nodes as a spatial points object:  
+Next we will transform the nodes as a spatial points object, for this we use the function `st_to_sf()` and we need to specify the names of the columns that have the spatial coordinates.    
 
 ```{r Transform nodes to spatial}
 NodeSp <- node %>% # This is our node data.frame
@@ -63,7 +75,7 @@ NodeSp <- node %>% # This is our node data.frame
 
 ## Plotting our map
 
-One of the nice things of ggplot is that we can create a map and store it in an object and later we can keep adding layers to this map.  
+One of the nice things of ggplot is that we can create a map and store it in an object and later we can keep adding layers to this map. So first we will create a map of the state.    
 
 ```{r}
 map <- ggplot() +
@@ -77,7 +89,8 @@ map <- ggplot() +
 
 ## Plot the nodes
 
-Now we will add the nodes to our map
+Once we have the base map of the state, we can add the spatial points data we created previously. We can specify the size of the points using a variable.  
+
 ```{r}
 map + geom_sf(data = NodeSp, # name of our data
               aes(color = farm_type, # we color the nodes by farm type
@@ -91,8 +104,10 @@ map + geom_sf(data = NodeSp, # name of our data
 
 ## Adding the euclidean contacts
 
+In the previous lab we calculated the euclidean distance between each pair of farms involved in a movement. Here we will visualize those movements.  
+
 ```{r}
-# The function geom_segment adds a straigth line between two coordinates:
+# The function geom_segment adds a straight line between two coordinates:
 map +
   geom_segment(data=edge, 
                aes(x=O_Long, y=O_Lat, # this is where the line starts
@@ -110,6 +125,8 @@ map +
 
 ## Putting everything together
 
+Now we will add both the farm locations and the direction of the movements between the farms on a map.  
+
 ```{r}
 #plot nodes & edges - add both commands geom_segment and geom_point#
 map +
@@ -126,6 +143,8 @@ map +
 
 ## Subsetting the data
 
+Sometimes we are interested in a particular type of movements. We can subset this using the dplyr functions such as `filter()`. In the next plot we will select only the movements that comes from sow farms.  
+
 ```{r}
 # plot movements from sow farms only
 map +
@@ -138,12 +157,15 @@ map +
   geom_sf(data = NodeSp, 
           aes(color = farm_type), size=3, show.legend = "point")
 ```
+  
+  We can be even more specific and filter the movements from sow farms that are directed to GDU.  
+We will also add at the end the function `ggplotly()` from the package `plotly` to obtain a map were we can zoom and hover over some features to obtain more information.  
 
+  
 ```{r}
-# plot only movements between GDU to sow farm
-map +
+# We store the map of movements between GDU to sow farm
+m <- map +
   edge %>%
-  # filter(type_orig == "sow farm" & type_dest == "sow farm") %>%
   filter(type_orig == 'GDU', type_dest == "sow farm") %>%
   geom_segment(data = ., aes(x=O_Long, y=O_Lat,
                              xend=D_Long, yend=D_Lat, 
@@ -152,7 +174,13 @@ map +
           aes(color = farm_type),
           size=3, show.legend = "point") +
   ggtitle("GDU to Sow farm Movments")
+
+# We use the function from plotly to transform our map into n interactive map.  
+library(plotly)
+
+ggplotly(m)
 ```
+
 
 # Kernel density map
 
@@ -213,7 +241,6 @@ plot(Erc)
 plot(iowa$geometry, col=NA, border = "grey80", add = T)
 ```
 
-**Excercise:** Create a kernel density map for the incoming movements.
-
+**Exercise:** Create a kernel density map for the incoming movements.  
 
 ___________________________________________________
