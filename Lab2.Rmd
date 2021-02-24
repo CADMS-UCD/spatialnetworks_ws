@@ -244,3 +244,34 @@ plot(iowa$geometry, col=NA, border = "grey80", add = T)
 **Exercise:** Create a kernel density map for the incoming movements.  
 
 ___________________________________________________
+
+# Optional: More on interactive maps. 
+
+If you are interested in more about interactive maps `plotly` also has option for using background maps, but for this you need to get a public [Mapbox access token](https://www.mapbox.com/studio), which is free, but requires registration. Some great resources for more information:  
+  
+  - https://plotly-r.com/maps.html
+  - https://plotly.com/r/maps/
+
+Here I provide an example of the kind of maps you can get using mapbox, but this **This code will not run unless you use your own API Key**
+```{r}
+# Sys.setenv('MAPBOX_TOKEN' = yourKey)
+
+plot_mapbox() %>%
+  add_segments(
+    data = group_by(edge, id_orig, id_dest),
+    x = ~O_Long, xend = ~D_Long,
+    y = ~O_Lat, yend = ~D_Lat,
+    alpha = 0.1, size = I(1), hoverinfo = "none"
+  )   %>%
+  add_markers(data = node,
+    x = ~long, y = ~lat, size = ~indegree, text = ~id,
+    split = ~farm_type,
+    hoverinfo = "text"
+  ) %>%
+  layout(
+    mapbox = list(
+      style = 'open-street-map',
+      zoom = 6,
+      center = list(lat = 42, lon = -93)
+    ))
+```
