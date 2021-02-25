@@ -15,7 +15,6 @@ knitr::opts_chunk$set(message=F, warning =F)
 
 These are the libraries that we will use in this lab:
 
-
 ```{r }
 # install.packages("igraph")
 # install.packages("maps")
@@ -79,12 +78,11 @@ library(networkDynamic)
 # To visualize and get network statistics
 library(ndtv)
 library(tsna)
-# Format the variable as date:
-net$date <- as.Date(net$date, format = '%m/%d/%y')
-# Create a new variable for year from the date
-net$year<-as.numeric(strftime(net$date,format = "%Y"))
-# Create a new variable to show the week of the year
-net$w<-as.numeric(strftime(net$date,format = "%V"))
+
+net <- net %>%
+  mutate(date = as.Date(date, format = '%m/%d/%y'), # Format the variable as date:
+         year = as.numeric(strftime(date,format = "%Y")), # Create a new variable for year from the date
+         w = as.numeric(strftime(date,format = "%V"))) # Create a new variable to show the week of the year
 ```
 
 In this analysis we will use a one week resolution. Since we have no information on the duration of the contact, we will assume that the duration is one week. As we have multiple years, we need to number the weeks from the first week in which we have data to the last week with data. For this, we will use an offset that will add 53 weeks or 106 depending on the year.
@@ -231,7 +229,7 @@ plot.extract <- function(n, onset, terminus){
 O <- seq(from = 25, to = 95, by = 10)
 # We set the layout we want for the plot:
 par(mfrow = c(2,4), mar = c(0,0,1,0))
-# We use a foor loop to plot the network at the defined time intervals.
+# We use a for loop to plot the network at the defined time intervals.
 for(i in O){
   plot.extract(n1, onset = i, terminus = i + 10)
 }
@@ -247,12 +245,10 @@ a <- as.matrix(node_attrib[, c("long", "lat")])
 
 # Modify the function:
 plot.extract <- function(n, onset, terminus, Bg){
-  plot(Bg, col = "grey80", main = paste0("t", onset, "-", "t", terminus))
+  plot(Bg, col = "grey90", lwd = 0.3, main = paste0("t", onset, "-", "t", terminus))
   n %>% # The input network
     network.extract(onset = onset, terminus = terminus) %>% #Extract the time interval
     plot(vertex.cex = 1, coord=as.matrix(a), new = F) #Plot the network
-  
-  # plot(network.extract(n1,onset=onset,terminus=terminus),vertex.cex = 1, coord=as.matrix(a), main = paste0("t", onset, "-", "t", terminus))
 }
 
 
@@ -293,7 +289,7 @@ data.frame(id = 1:length(fwd), fwd, bwd) %>%
 
 It looks like node ("id") 7 presents the highest number of reachable farms. 
 
-We can visualize the reachable st using the functions `tpath` and `transmissionTimeline`. Both of them provide the node id and the time when the contact happened. The first function allow us to visualize the nodes spatially and the second one shows them in a nice timeline. Let's start with the first one.
+We can visualize the reachable set using the functions `tpath` and `transmissionTimeline`. Both of them provide the node id and the time when the contact happened. The first function allow us to visualize the nodes spatially and the second one shows them in a nice timeline. Let's start with the first one.
 
 ```{r}
 P17 <- tPath(n1, 17, direction = "fwd")
@@ -306,11 +302,11 @@ We can also visualize the paths in the full network.
 plotPaths(n1, P17, vertex.col = colpal[1], label.cex = 0.5, vertex.cex = 2)
 ```
 
-A better way to visualize the paths trought the time period is using the function `transmissionTimeline()`. In this visualization, the x axis represents the time when the event happened and the y axis represents the generation or steps that happened to reach that node
+A better way to visualize the paths trough the time period is using the function `transmissionTimeline()`. In this visualization, the x axis represents the time when the event happened and the y axis represents the generation or steps that happened to reach that node
 
 ```{r}
 transmissionTimeline(P17,jitter=T,
-          main='Earliest forward path from vertex 137')
+          main='Earliest forward path from vertex 17')
 ```
 
 We can also see the backward reachability, which represents the set of nodes that reach a specific node over a time period.
@@ -324,13 +320,20 @@ Now we will create a function to show the paths in a spatial and non-spatial plo
 
 ```{r}
 MaPaths <- function(Net, v, direction, Pts, coords, BG){
+  # Settings for the visualization arrangement:
   par(mfrow = c(1,2), oma = c(0, 0, 2, 0), mar = c(1, 1, 1, 1))
+  # Geth the path for the node we want
   P1 <- tPath(Net, v = v, direction = direction)
-  plot(BG, col = "grey80", axes = F)
+  # Plot the map that will be used for background
+  plot(BG, col = "grey90", lwd = 0.3, axes = F)
+  # add the farm locations:
   points(Pts[, c("long", "lat")], pch = 16, cex = 0.5, col = rgb(0, 150, 100, max = 255, alpha = 50))
+  # add the edges to the map
   plot(P1, coord = coords, displaylabels = F, edge.label.col = rgb(0,0,0,0), edge.lwd = 2, vertex.col = "white", edge.col = rgb(0, 200, 50, max=255, alpha=166), new = F)
   
+  # add the edges on the side for a non-spatial visualization
   plot(P1, displaylabels = F,edge.lwd = 2, vertex.col = "white", edge.col = rgb(255, 0, 50, max=255, alpha=166))
+  # add the text
   mtext(paste0("Reachable set of farm", v), outer = TRUE, cex = 1.5)
 }
 

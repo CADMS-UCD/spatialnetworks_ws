@@ -452,7 +452,7 @@ V(g1)$fullname &lt;- as.character(node_attrib$name[poss])
 # check the correct assignation of the attributes in the object
 
 summary(g1)</code></pre>
-<pre><code>## IGRAPH 8abf8df DN-B 40 1611 -- 
+<pre><code>## IGRAPH 1a8c00f DN-B 40 1611 -- 
 ## + attr: name (v/c), lat (v/n), long (v/n), type (v/c), fullname (v/c),
 ## | date (e/c), pigs.moved (e/n), type_orig (e/c), type_dest (e/c)</code></pre>
 <div id="introduction-to-dynamic-networks" class="section level1" number="1">
@@ -613,7 +613,7 @@ plot.extract &lt;- function(n, onset, terminus){
 O &lt;- seq(from = 25, to = 95, by = 10)
 # We set the layout we want for the plot:
 par(mfrow = c(2,4), mar = c(0,0,1,0))
-# We use a foor loop to plot the network at the defined time intervals.
+# We use a for loop to plot the network at the defined time intervals.
 for(i in O){
   plot.extract(n1, onset = i, terminus = i + 10)
 }</code></pre>
@@ -625,12 +625,10 @@ a &lt;- as.matrix(node_attrib[, c(&quot;long&quot;, &quot;lat&quot;)])
 
 # Modify the function:
 plot.extract &lt;- function(n, onset, terminus, Bg){
-  plot(Bg, col = &quot;grey80&quot;, main = paste0(&quot;t&quot;, onset, &quot;-&quot;, &quot;t&quot;, terminus))
+  plot(Bg, col = &quot;grey90&quot;, lwd = 0.3, main = paste0(&quot;t&quot;, onset, &quot;-&quot;, &quot;t&quot;, terminus))
   n %&gt;% # The input network
     network.extract(onset = onset, terminus = terminus) %&gt;% #Extract the time interval
     plot(vertex.cex = 1, coord=as.matrix(a), new = F) #Plot the network
-  
-  # plot(network.extract(n1,onset=onset,terminus=terminus),vertex.cex = 1, coord=as.matrix(a), main = paste0(&quot;t&quot;, onset, &quot;-&quot;, &quot;t&quot;, terminus))
 }
 
 
@@ -670,16 +668,16 @@ axis(2, at = c(1,2), labels = c(&quot;Fwd&quot;, &quot;Bwd&quot;), las=2, lty = 
 ## 9  19  13  15
 ## 10 26  13   1</code></pre>
 <p>It looks like node (“id”) 7 presents the highest number of reachable farms.</p>
-<p>We can visualize the reachable st using the functions <code>tpath</code> and <code>transmissionTimeline</code>. Both of them provide the node id and the time when the contact happened. The first function allow us to visualize the nodes spatially and the second one shows them in a nice timeline. Let’s start with the first one.</p>
+<p>We can visualize the reachable set using the functions <code>tpath</code> and <code>transmissionTimeline</code>. Both of them provide the node id and the time when the contact happened. The first function allow us to visualize the nodes spatially and the second one shows them in a nice timeline. Let’s start with the first one.</p>
 <pre class="r"><code>P17 &lt;- tPath(n1, 17, direction = &quot;fwd&quot;)
 plot(P17)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 <p>We can also visualize the paths in the full network.</p>
 <pre class="r"><code>plotPaths(n1, P17, vertex.col = colpal[1], label.cex = 0.5, vertex.cex = 2)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
-<p>A better way to visualize the paths trought the time period is using the function <code>transmissionTimeline()</code>. In this visualization, the x axis represents the time when the event happened and the y axis represents the generation or steps that happened to reach that node</p>
+<p>A better way to visualize the paths trough the time period is using the function <code>transmissionTimeline()</code>. In this visualization, the x axis represents the time when the event happened and the y axis represents the generation or steps that happened to reach that node</p>
 <pre class="r"><code>transmissionTimeline(P17,jitter=T,
-          main=&#39;Earliest forward path from vertex 137&#39;)</code></pre>
+          main=&#39;Earliest forward path from vertex 17&#39;)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 <p>We can also see the backward reachability, which represents the set of nodes that reach a specific node over a time period.</p>
 <pre class="r"><code>P17 &lt;- tPath(n1, 17, direction = &quot;bkwd&quot;, type = &quot;latest.depart&quot;)
@@ -687,13 +685,20 @@ plot(P17, edge.col = colpal[3])</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
 <p>Now we will create a function to show the paths in a spatial and non-spatial plot.</p>
 <pre class="r"><code>MaPaths &lt;- function(Net, v, direction, Pts, coords, BG){
+  # Settings for the visualization arrangement:
   par(mfrow = c(1,2), oma = c(0, 0, 2, 0), mar = c(1, 1, 1, 1))
+  # Geth the path for the node we want
   P1 &lt;- tPath(Net, v = v, direction = direction)
-  plot(BG, col = &quot;grey80&quot;, axes = F)
+  # Plot the map that will be used for background
+  plot(BG, col = &quot;grey90&quot;, lwd = 0.3, axes = F)
+  # add the farm locations:
   points(Pts[, c(&quot;long&quot;, &quot;lat&quot;)], pch = 16, cex = 0.5, col = rgb(0, 150, 100, max = 255, alpha = 50))
+  # add the edges to the map
   plot(P1, coord = coords, displaylabels = F, edge.label.col = rgb(0,0,0,0), edge.lwd = 2, vertex.col = &quot;white&quot;, edge.col = rgb(0, 200, 50, max=255, alpha=166), new = F)
   
+  # add the edges on the side for a non-spatial visualization
   plot(P1, displaylabels = F,edge.lwd = 2, vertex.col = &quot;white&quot;, edge.col = rgb(255, 0, 50, max=255, alpha=166))
+  # add the text
   mtext(paste0(&quot;Reachable set of farm&quot;, v), outer = TRUE, cex = 1.5)
 }
 
@@ -718,6 +723,7 @@ compute.animation(n1, animation.mode = &quot;kamadakawai&quot;,
 
 timePrism(n1, at = c(30, 40, 50, 60), planes = T)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+<hr />
 </div>
 
 

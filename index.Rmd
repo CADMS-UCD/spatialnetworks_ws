@@ -68,5 +68,5 @@ ________________________________________________________________________________
 
 |Time       |Feb 23              | Feb 24                           | Feb 25                                   |
 |-----------|-------------------|---------------------------------|-----------------------------------------|
-|6:00-6:30  |[Introduction to SNA](Part_I.html)|[Lab2](Lab2.html)|Dynamic Networks and network based models|
-|6:30-8:00  |[Lab 1](Lab1.html)              | [Lab 3](Lab3.html)                           | Lab 4                                   |
+|6:00-6:30  |[Introduction to SNA](Part_I.html)|[Lab2](Lab2.html)|[Dynamic Networks](Part_III.html) |
+|6:30-8:00  |[Lab 1](Lab1.html)              | [Lab 3](Lab3.html)                           | [Lab 4](Lab4.html)                                   |
