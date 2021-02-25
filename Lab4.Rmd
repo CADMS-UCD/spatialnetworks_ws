@@ -71,7 +71,7 @@ summary(g1)
 The `networkDynamic` package has functions that allow to analyze and visualize a network and incorporate temporality to it.
 To incorporate a temporal window, we need to specify the start time (onset) and end time (termini). For the purposes of this example we will assume that the contact time is one week.
 
-```{r echo=FALSE}
+```{r }
 # Load libraries
 ## For dynamic networks
 library(networkDynamic)

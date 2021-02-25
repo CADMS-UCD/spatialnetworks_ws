@@ -462,12 +462,23 @@ V(g1)$fullname &lt;- as.character(node_attrib$name[poss])
 # check the correct assignation of the attributes in the object
 
 summary(g1)</code></pre>
-<pre><code>## IGRAPH 6457c51 DN-B 40 1611 -- 
+<pre><code>## IGRAPH 051ae44 DN-B 40 1611 -- 
 ## + attr: name (v/c), lat (v/n), long (v/n), type (v/c), fullname (v/c),
 ## | date (e/c), pigs.moved (e/n), type_orig (e/c), type_dest (e/c)</code></pre>
 <div id="introduction-to-dynamic-networks" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> Introduction to dynamic networks</h1>
 <p>The <code>networkDynamic</code> package has functions that allow to analyze and visualize a network and incorporate temporality to it. To incorporate a temporal window, we need to specify the start time (onset) and end time (termini). For the purposes of this example we will assume that the contact time is one week.</p>
+<pre class="r"><code># Load libraries
+## For dynamic networks
+library(networkDynamic)
+# To visualize and get network statistics
+library(ndtv)
+library(tsna)
+
+net &lt;- net %&gt;%
+  mutate(date = as.Date(date, format = &#39;%m/%d/%y&#39;), # Format the variable as date:
+         year = as.numeric(strftime(date,format = &quot;%Y&quot;)), # Create a new variable for year from the date
+         w = as.numeric(strftime(date,format = &quot;%V&quot;))) # Create a new variable to show the week of the year</code></pre>
 <p>In this analysis we will use a one week resolution. Since we have no information on the duration of the contact, we will assume that the duration is one week. As we have multiple years, we need to number the weeks from the first week in which we have data to the last week with data. For this, we will use an offset that will add 53 weeks or 106 depending on the year.</p>
 <pre class="r"><code># Create the onset starting from 2015, 
 # Use ifelse inside another ifelse to determinate the offset
