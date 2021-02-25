@@ -438,6 +438,16 @@ div.tocify {
 # install.packages(&quot;plotKML&quot;)
 # install.packages(&quot;scatterplot3d&quot;)</code></pre>
 <p>Let’s start by importing the data for edges, node attributes, and the shapefile of the area of study.</p>
+<pre class="r"><code>colpal &lt;- RColorBrewer::brewer.pal(4, &quot;Dark2&quot;)
+library(dplyr)
+library(sf)
+# Load data of movements and nodes 
+net &lt;- STNet::SwineMov
+node_attrib &lt;- STNet::SwinePrem
+# Format id as character to use it later
+node_attrib$idch &lt;- as.character(node_attrib$id)
+# Load the spatial object
+IO &lt;- st_read(system.file(&quot;data/Io.shp&quot;, package = &quot;STNet&quot;), quiet = T)</code></pre>
 <p>We will now use the <code>graph.data.frame</code> function to create a directed network.</p>
 <pre class="r"><code>library(igraph)
 g1 &lt;- graph.data.frame(net, directed = T)</code></pre>
@@ -452,7 +462,7 @@ V(g1)$fullname &lt;- as.character(node_attrib$name[poss])
 # check the correct assignation of the attributes in the object
 
 summary(g1)</code></pre>
-<pre><code>## IGRAPH 1a8c00f DN-B 40 1611 -- 
+<pre><code>## IGRAPH 6457c51 DN-B 40 1611 -- 
 ## + attr: name (v/c), lat (v/n), long (v/n), type (v/c), fullname (v/c),
 ## | date (e/c), pigs.moved (e/n), type_orig (e/c), type_dest (e/c)</code></pre>
 <div id="introduction-to-dynamic-networks" class="section level1" number="1">

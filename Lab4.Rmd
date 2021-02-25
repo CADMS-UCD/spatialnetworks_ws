@@ -31,7 +31,7 @@ These are the libraries that we will use in this lab:
 
 Let's start by importing the data for edges, node attributes, and the shapefile of the area of study.
 
-```{r  echo=FALSE}
+```{r }
 colpal <- RColorBrewer::brewer.pal(4, "Dark2")
 library(dplyr)
 library(sf)
