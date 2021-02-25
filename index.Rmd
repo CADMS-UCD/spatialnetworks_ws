@@ -70,3 +70,12 @@ ________________________________________________________________________________
 |-----------|-------------------|---------------------------------|-----------------------------------------|
 |6:00-6:30  |[Introduction to SNA](Part_I.html)|[Lab2](Lab2.html)|[Dynamic Networks](Part_III.html) |
 |6:30-8:00  |[Lab 1](Lab1.html)              | [Lab 3](Lab3.html)                           | [Lab 4](Lab4.html)                                   |
+  
+Additional material:  
+
+[Lab 5](Lab5.html)
+  
+_________________________________
+
+# Post workshop survey
+We would appreciate if you take a minute to fill a quick anonymous survey for feedback. To go to the survey follow [THIS LINK](https://ucdavis.co1.qualtrics.com/jfe/form/SV_40oI9hjyLzb4W0K)
