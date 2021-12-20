@@ -21,10 +21,10 @@ This workshop is aimed for students, researchers and other people interested in 
 
  - Analyze and describe static and dynamic networks.
  - Advantages and disadvantages of static and dynamic networks and when we can use them.
- - How to incorporate the spatial relationships in the analysis of networks.
+ - Incorporate the spatial relationships in the analysis of networks.
  - Visualize and present networks using spatial and non spatial approaches.
- - How to incorporate the transmission and potential spread of diseases in a network.
- - How to incorporate the results from network analysis with other statistical methods.
+ - Incorporate the transmission and potential spread of diseases in a network.
+ - Incorporate the results from network analysis with other statistical methods.
  
 
 # Requisites
@@ -62,20 +62,20 @@ An introduction to R and spatial data can be found in the following links:
   - Silk, M.J., Croft, D.P., Delahay, R.J., Hodgson, D.J., Weber, N., Boots, M. and McDonald, R.A. (2017), The application of statistical network models in disease research. Methods Ecol Evol, 8: 1026-1041. https://doi.org/10.1111/2041-210X.12770
 
   
-____________________________________________________________________________________________________________
-  
-# Schedule
+<!-- ____________________________________________________________________________________________________________ -->
 
-|Time       |Feb 23              | Feb 24                           | Feb 25                                   |
-|-----------|-------------------|---------------------------------|-----------------------------------------|
-|6:00-6:30  |[Introduction to SNA](Part_I.html)|[Lab2](Lab2.html)|[Dynamic Networks](Part_III.html) |
-|6:30-8:00  |[Lab 1](Lab1.html)              | [Lab 3](Lab3.html)                           | [Lab 4](Lab4.html)                                   |
-  
-Additional material:  
+<!-- # Tentative schedule -->
 
-[Lab 5](Lab5.html)
+<!-- |Time       |Feb 23              | Feb 24                           | Feb 25                                   | -->
+<!-- |-----------|-------------------|---------------------------------|-----------------------------------------| -->
+<!-- |6:00-6:30  |[Introduction to SNA]()|[Lab2]()|[Dynamic Networks]() | -->
+<!-- |6:30-8:00  |[Lab 1]()              | [Lab 3]()                           | [Lab 4]()                                   | -->
+
+<!-- Additional material:   -->
+
+<!-- [Lab 5]() -->
   
 _________________________________
 
-# Post workshop survey
-We would appreciate if you take a minute to fill a quick anonymous survey for feedback. To go to the survey follow [THIS LINK](https://ucdavis.co1.qualtrics.com/jfe/form/SV_40oI9hjyLzb4W0K)
+<!-- # Post workshop survey -->
+<!-- We would appreciate if you take a minute to fill a quick anonymous survey for feedback. To go to the survey follow [THIS LINK](https://ucdavis.co1.qualtrics.com/jfe/form/SV_40oI9hjyLzb4W0K) -->
