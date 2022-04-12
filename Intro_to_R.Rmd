@@ -85,6 +85,8 @@ To read *.xls*, *.xlsx* and *.shp* files we will need to install some libraries.
 
 **Suggestion:** Sometimes when we want to use only one function from a library, we can just write the name of the library followed by the operator `::` and the name of the function, for example: `package::function()`. This way we won't have to load the whole library.  
 
+Now we will import some data into R, you can download the data we are using from [THIS LINK](https://ucdavis.box.com/s/hps8jk0s06inp5b83n5y14ddnoae64qz)
+
 ```{r}
 # If we dont have the library installed, we use:
 # install.packages("readxl")

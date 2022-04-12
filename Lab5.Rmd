@@ -196,10 +196,7 @@ for (z in 1:n.reps) {
         probs <- prob(beta,network.static[which(ids$infected.static==0),which(ids$infected.static==1),drop=FALSE], acc)
         ids$infected.static[which(ids$infected.static==0)] <- apply(probs,1,function(x) { as.numeric(sum(sapply(x,function(y) { sample(c(0,1),1,prob=c(y,1-y))}))>0) })
         n.infected.static[z,i] <- sum(ids$infected.static)
-
     }
-
-
 }
 ```
 

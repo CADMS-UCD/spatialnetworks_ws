@@ -31,7 +31,7 @@ install.packages("ggraph")
 
 ```{r message = F, warning = F}
 library(dplyr)
-library(scales)
+# library(scales)
 library(ggplot2)
 library(ggraph)
 # Libraries for network objects
@@ -41,6 +41,12 @@ library(tidygraph)
 node <- STNet::SwinePrem
 edge <- STNet::SwineMov
 ```
+
+
+The datsets we will be using are:
+  
+  - `node` which includes the information of the farms 
+  - `edge` which includes the information for the movements between the farms.  
 
 We use the function `graph_from_data_frame()`  to create the network from a `data.frame`. This function takes as arguments:`d`  which requires the contacts data, `vertices` which is the data of the nodes (farms in our example), and `directed` which specifies if we want to consider the direction of the contact.    
 

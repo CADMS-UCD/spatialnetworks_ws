@@ -13,13 +13,22 @@
 
 <title>Lab 3</title>
 
-<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
@@ -39,11 +48,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +60,6 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
 
 
 
@@ -92,10 +70,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +86,13 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 60px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h2 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h3 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h4 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h5 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h6 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +120,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +132,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -196,10 +143,23 @@ $(document).ready(function () {
   var menuAnchor = $('a[href="' + href + '"]');
 
   // mark it active
-  menuAnchor.parent().addClass('active');
+  menuAnchor.tab('show');
 
   // if it's got a parent navbar menu mark it active as well
   menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,7 +171,6 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -337,7 +296,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -387,21 +346,21 @@ div.tocify {
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="Instructors.html">
-        <span class="fas fa-users"></span>
+        <span class="fa fa-users"></span>
          
         Instructors
       </a>
     </li>
     <li>
       <a href="https://cadms.vetmed.ucdavis.edu">
-        <span class="fas fa-server"></span>
+        <span class="fa fa-server"></span>
          
         CADMS Website
       </a>
     </li>
     <li>
       <a href="mailto:jpgo@ucdavis.edu">
-        <span class="fas fa-envelope"></span>
+        <span class="fa fa-envelope"></span>
          
         Email
       </a>
@@ -416,7 +375,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -428,7 +387,7 @@ div.tocify {
 <p>In this section we will use a different dataset which consist on GPS locations of 3 different species.<br />
 We will define our contact network based on proximity between two animals from the GPS location records.</p>
 <div id="exploratory-analysis" class="section level1" number="1">
-<h1 number="1"><span class="header-section-number">1</span> Exploratory analysis</h1>
+<h1><span class="header-section-number">1</span> Exploratory analysis</h1>
 <pre class="r"><code># libraries we will use
 library(dplyr)
 library(sf)
@@ -440,7 +399,7 @@ GPSc &lt;- STNet::GPSc</code></pre>
 <pre class="r"><code>GPSc %&gt;%
   group_by(species_type) %&gt;%
   summarise(N = n())</code></pre>
-<pre><code>## # A tibble: 3 x 2
+<pre><code>## # A tibble: 3 × 2
 ##   species_type     N
 ##   &lt;fct&gt;        &lt;int&gt;
 ## 1 cattle        9309
@@ -450,7 +409,7 @@ GPSc &lt;- STNet::GPSc</code></pre>
 <pre class="r"><code>Nodes &lt;- GPSc %&gt;%
   distinct(CollarID, species_type)</code></pre>
 <div id="temporal-visualization" class="section level2" number="1.1">
-<h2 number="1.1"><span class="header-section-number">1.1</span> Temporal visualization</h2>
+<h2><span class="header-section-number">1.1</span> Temporal visualization</h2>
 <p>Now lets see how does the GPS records varies during the observation period:</p>
 <pre class="r"><code>Daily &lt;- GPSc %&gt;%
   count(Date, species_type)
@@ -461,7 +420,7 @@ ggplot() +
 <p><img src="Lab3_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 <div id="spatial-distribution-of-the-records" class="section level2" number="1.2">
-<h2 number="1.2"><span class="header-section-number">1.2</span> Spatial distribution of the records</h2>
+<h2><span class="header-section-number">1.2</span> Spatial distribution of the records</h2>
 <p>First we will tronsform our data into a spatial points object.</p>
 <pre class="r"><code>GPScSP &lt;- GPSc %&gt;%
   st_as_sf(coords = c(&quot;X&quot;, &quot;Y&quot;), crs = st_crs(4326)) %&gt;%
@@ -475,7 +434,7 @@ ggplot() +
 </div>
 </div>
 <div id="species-range-maps" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> Species range maps</h1>
+<h1><span class="header-section-number">2</span> Species range maps</h1>
 <p>The <code>STNet</code> package includes a function called <code>HexGrid</code>, which creates a hexagonal grid on a spatial field. Here we will use the extent of our points to create the grid.</p>
 <pre class="r"><code># First we create a field that represents the study area:
 Border &lt;- as(raster::extent(GPScSP), &quot;SpatialPolygons&quot;) %&gt;%
@@ -512,9 +471,9 @@ GPScSP %&gt;%
 <p><strong>Exercise:</strong> Create the range maps for the other 2 species (deer y pig) and use different colors.</p>
 </div>
 <div id="defining-the-network" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Defining the network:</h1>
+<h1><span class="header-section-number">3</span> Defining the network:</h1>
 <div id="defining-the-contacts" class="section level2" number="3.1">
-<h2 number="3.1"><span class="header-section-number">3.1</span> Defining the contacts:</h2>
+<h2><span class="header-section-number">3.1</span> Defining the contacts:</h2>
 <p>Now we will define our network. We are interested in all the contacts that happened between animals at a distance of &lt; 1 m.</p>
 <p>This function might take some time, if you want to skip this part, the data is available inside the <code>STNet</code> package.</p>
 <pre class="r"><code># Lets change the names to test the function:
@@ -539,7 +498,7 @@ Edges &lt;- CreateNetwork(DF = GPSc[,], # This is our data
 <li><em>X.x</em>, <em>Y.x</em>, <em>X.y</em>, <em>Y.y</em>: the spatial location of the nodes at that time.</li>
 </ul>
 <div id="contacts-between-species" class="section level3" number="3.1.1">
-<h3 number="3.1.1"><span class="header-section-number">3.1.1</span> Contacts between species:</h3>
+<h3><span class="header-section-number">3.1.1</span> Contacts between species:</h3>
 <p>We can also detect areas where the contacts between species are happening.<br />
 For this we will create a subset of the data that includes only contacts between different species.</p>
 <pre class="r"><code># Add variable for species
@@ -568,7 +527,7 @@ ggplot(IspH, aes(fill = N)) +
 </div>
 </div>
 <div id="define-the-nodes" class="section level2" number="3.2">
-<h2 number="3.2"><span class="header-section-number">3.2</span> Define the nodes:</h2>
+<h2><span class="header-section-number">3.2</span> Define the nodes:</h2>
 <p>We previously defined the nodes, we can see that there are 36 animals in our network.</p>
 <pre class="r"><code>Nodes %&gt;%
   count(species_type)</code></pre>
@@ -578,7 +537,7 @@ ggplot(IspH, aes(fill = N)) +
 ## 3          pig  7</code></pre>
 </div>
 <div id="creating-the-network" class="section level2" number="3.3">
-<h2 number="3.3"><span class="header-section-number">3.3</span> Creating the network:</h2>
+<h2><span class="header-section-number">3.3</span> Creating the network:</h2>
 <pre class="r"><code># Libraries we will use:
 library(igraph)
 library(scales)
@@ -602,7 +561,7 @@ plot(G1s,
 <p><img src="Lab3_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
 <div id="networks-by-species" class="section level2" number="3.4">
-<h2 number="3.4"><span class="header-section-number">3.4</span> Networks by species:</h2>
+<h2><span class="header-section-number">3.4</span> Networks by species:</h2>
 <p>To create a subset of our network we can use the function <code>induced_graph</code>, where we need to specify the network that we will extract from and the ids of the nodes, for this we use the function <code>which()</code> and specify that we watn the deer only.</p>
 <pre class="r"><code>VIDs &lt;- which(V(G1)$species_type == &quot;deer&quot;)
 DeerG &lt;- induced_subgraph(graph = G1s, vids = VIDs)
@@ -649,7 +608,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -658,6 +617,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')
