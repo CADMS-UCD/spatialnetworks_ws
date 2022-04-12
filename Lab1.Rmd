@@ -7,24 +7,6 @@ output:
     number_sections: true
 ---
 
-Libraries we will use (install if necessary):  
-
-```{r eval = F}
-install.packages("readr")
-install.packages("igraph")
-install.packages("dplyr")
-install.packages("raster")
-install.packages("scales")
-install.packages("intergraph")
-install.packages("network")
-install.packages("RColorBrewer")
-install.packages("tidygraph")
-install.packages('networkD3')
-install.packages("ggraph")
-```
-
-
-
 # Network visualization
 
 ## Loading the data and visualizing the network
@@ -38,32 +20,43 @@ library(ggraph)
 library(igraph)
 library(tidygraph)
 # Loading the data from the STNet package
-node <- STNet::SwinePrem
-edge <- STNet::SwineMov
+node <- STNet::SwinePrem %>% 
+  mutate(id = as.character(id))
+
+edge <- STNet::SwineMov %>% 
+  mutate(id_orig = as.character(id_orig), id_dest = as.character(id_dest))
 ```
 
 
-The datsets we will be using are:
+The datasets we will be using are:
   
   - `node` which includes the information of the farms 
   - `edge` which includes the information for the movements between the farms.  
 
-We use the function `graph_from_data_frame()`  to create the network from a `data.frame`. This function takes as arguments:`d`  which requires the contacts data, `vertices` which is the data of the nodes (farms in our example), and `directed` which specifies if we want to consider the direction of the contact.    
+We use the function `as_tbl_graph()` to create the network from a data.frame. This function takes as arguments:`x`  which requires the contacts data and assumes that contacts are directed. If we print the results, we will see a object from the class `tbl_graph`, which we will explain:
 
-```{r}
-# Create the network
-net <- graph_from_data_frame(d=edge, vertices=node, directed=T)
-# We can examine the contents of the network using the function summary()
-summary(net)
+```{r create the network}
+net <- as_tbl_graph(edge)
+
+net
 ```
 
-The result will show a summary of the network. The first line shows that is an object class `igraph` with 40 nodes and 1611 contacts (edges).
-Then we have a list of all the attributes of the network. The network attributes can be node attributes (n) or edge attributes (e).  
-Here we can also see the attribute class:    
-  - `c` = character.  
-  - `n` = numeric.  
+The results of printing the object will show us the number of nodes and edges, we can see that our network has 40 nodes and 1611 edges. Then we can also see the attributes for the nodes (which in this case there is only the name) and the edges (which for this example has from, to, date, pigs.moved, type_orig, and type_dest).  
   
-For example, the attribute "name(v/c)" its a node attribute of class character, and the attribute "pigs.moved (e/n)" is an attribute of the edge of class numeric.    
+We can treat this object like two data frames that are joined by an key or identification variable. Whenever we want to access one of the data frames to modify it, we can use either the function `activate()` or when using the pipes we can use `%N>%` to call the nodes or `%E>%` to call the edges. In the next example we will add the rest of the node information to our `tbl_graph`
+
+```{r}
+net <- net %N>% # <- Notice we are including 'N' inside our pipe to specify we want to access the nodes
+  left_join(node, by = c('name' = 'id')) # Now we join to the node dataframe to include other variables
+
+# When we print our object again we will see the new variables:
+net
+```
+
+
+```{r}
+plot(net)
+```
 
 To visualize the network we can use the function `plot()`.  
 
@@ -77,138 +70,100 @@ This figure looks a bit messy, to make it more informative we can visualize dome
 
 ```{r}
 #make it clearer: adjust size, remove labels#
-plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.label=NA)
+plot(net, # Our network object
+     edge.arrow.size=0.2, # define the arrow size
+     vertex.size=4,  # the sie of the node
+     vertex.label=NA) # We remove the name of the nodes
 ```
 
 **Exercise:** Change the size of the nodes and the arrows to make a different graph.  
 
+## Using ggraph
 
-## Node color
+We can use base R to make our figures, but since we will be focusing on ggplot2, we will use the library ggraph which has a very similar syntax to ggplot.  
 
-We can get specific attributes from the `igraph` object using `V()` for nodes, and `E()` for edges.  
-The same way we do for a `data.frame`, we can create new attributes of the network using the `$` operator and assigning a name to a new variables. Now we will create a new variable for the node color.  
+### Changing the node color
+
+We can get specific attributes from the `tbl_graph` inside the `aes()` argument, similar to what we would do for ggplot2. In the following plot, we will set the node color to the type of farm.  
 
 ```{r}
-# Create a color palette
-colpal <- RColorBrewer::brewer.pal(length(levels(node$farm_type)), 
-                                   "Dark2")
-colpal <- rainbow(length(levels(node$farm_type)), s = 0.6)
-# Assign a new variable for the color:
-V(net)$color <- colpal[factor(V(net)$farm_type)]
-#plot with colors
-#vertex.color assigns colors by calling to the newly created "color" or "color2" variables that are now in the vertex (so node) dimension of the network#
-#the vertex dimension is called to by naming it V(net)#
-plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA)
-legend("bottomleft", legend = levels(factor(V(net)$farm_type)), col = colpal, pch = 16, bty = "n")
+ggraph(graph = net) + # First we call the ggraph and specify our network
+  geom_edge_link() + # Add the edges
+  geom_node_point(aes(color = farm_type), size = 3) # add the nodes
 ```
 
 
 ## Layouts
 
-We can change the position of the nodes using the argument `layout`. Now we will use different layouts to see how the network changes.  
+We can change the position of the nodes using the argument `layout`. If we don't specify any layout, ggraph will automatically set the layout 'stress'. Force directed layouts place the nodes in fixed places based on various criteria. The layouts 'nicely' and 'kk' force the network in clear layouts, based on the position of the nodes in the network in terms of connectivity.  They also attempt to keep the distance between connected nodes fixed.
 
 ```{r}
-#layout_randomly uses a random location
-plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA, layout=layout_randomly)
-legend("bottomleft", legend = levels(factor(V(net)$farm_type)), col = colpal, pch = 16, bty = "n")
+# Plot with layout nicely
+ggraph(net, layout = 'nicely') +
+  geom_edge_link() + # Add the edges
+  geom_node_point(aes(color = farm_type), size = 3) + # add the nodes
+  labs(title = 'Layout nicely')
+
+# Plot with layout kk
+ggraph(net, layout = 'kk') +
+  geom_edge_link() + # Add the edges
+  geom_node_point(aes(color = farm_type), size = 3) +
+  labs(title = 'Layout KK')
 ```
 
-Force directed layouts place the nodes in fixed places based on various criteria. The layouts `layout_nicely` and `layout_with_kk` force the network in clear layouts, based on the position of the nodes in the network in terms of connectivity.  They also attempt to keep the distance between connected nodes fixed.
+You can read more about the different layours available [HERE](https://ggraph.data-imaginist.com/articles/Layouts.html)
 
-```{r}
-par(mfrow = c(1,2))
-plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)
-#the following layouts force nodes to adopt certain shapes#
-plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA, layout=layout_in_circle)
-```
+Now we will use different layouts to see how the network changes.  
 
-**Excercise:** Try different layouts: `layout_nicely`, `layout_with_graphopt`, `layout_as_star`, `layout_with_fr`, `layout_on_grid`.    
 
+**Excercise:** Try different layouts: 'fr', 'lgl', 'graphopt'.    
 
 
 ## Size of the edge
 
 ```{r}
-# We will change the edge size based on the number of aimals moved
-E(net)$width <- E(net)$pigs.moved
-plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)
-# Since the edgge sizes are very large, we will constrain the edge size based on a scale using the package scales
-E(net)$width <- scales::rescale(E(net)$pigs.moved, c(0.2, 3))
-plot(net, edge.arrow.size=0.2, vertex.size=4, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)
+ggraph(net, layout = 'kk') +
+  geom_edge_link(aes(width = pigs.moved)) + # Add the edges
+  geom_node_point(aes(color = farm_type), size = 3) +
+  scale_edge_width(range = c(0.01, 0.9))
 ```
   
   
 ## Node size
 
-We will use the indegree value to assign the node size. First we will calculate indegree using the function `degree()` with the argument `mode = "in"`, and we will also get rid of the loops.  
+We will use the indegree value to assign the node size. First we will calculate indegree using the function `centrality_degree()` with the argument `mode = "in"`, and we will also get rid of the loops with the argument `loops = F`.    
 
 ```{r}
-#Calculate the indegree
-#mode lets you choose between "in", "out" and "all" for the type of degree
-#loops=FALSE removes internal farm shipments
-V(net)$indegree <- degree(net,v=V(net),mode=c("in"), loops=FALSE)
-#plot the network by adding the vertex.size argument
-plot(net, edge.arrow.size=0.2, vertex.size=V(net)$indegree, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)
+net <- net %>% 
+  mutate(indegree = centrality_degree(mode = 'in', loops = F))
+
+ggraph(net, layout = 'kk') +
+  geom_edge_link(aes(width = pigs.moved)) + # Add the edges
+  geom_node_point(aes(color = farm_type, size = indegree)) +
+  scale_edge_width(range = c(0.01, 0.9))
 ```
 
-As you can see, there is one node that receives a lot of movements and you cant really see the edges of the network.  
-
-**Excercise:** since the node size is too large, rescale the values of the node size so you can see the eddges of the network.  
-
-We can also obtain the outdegree using the argument `mode = "out"` side the function `degree()`.  
+We can use other network centrality measures such as outdegree, closeness, betwenness, among others.
 
 ```{r}
-#give weight to node: outdegree#
-#same steps with outdegree#
-V(net)$outdegree <- degree(net,v=V(net),mode=c("out"), loops=FALSE)
+net <- net %>% 
+  mutate(outdegree  = centrality_degree(mode = 'out', loops = F),
+         closeness = centrality_closeness(),
+         betweenness = centrality_betweenness(),
+         Nbs = neighborhood.size(graph = .)
+         )
+
+net
 ```
 
-**Excercise:** Now change the node size using the outdegree value.  
 
-```{r}
-# Now we will calculate the betweeness and use the network to visualize it
-# We use the argument directed=T to consider the directionality of the movement
-bet <- betweenness(net, v=V(net), directed=TRUE)
-# We make sure that we reascale it so we can see the edges
-V(net)$size <- scales::rescale(bet, c(5, 15))
-plot(net, edge.arrow.size=0.2, vertex.size=V(net)$size, vertex.color=V(net)$color, vertex.label=NA, layout=layout_with_kk)
-```
+**Excercise:** explore plotting the network using the different centrality measures to change its color or size.  
+
 
 # Using other packages to plot the network
 
 Besides `igraph`, there are other packages to plot the network in R. The package `network()` provides almost the same functions that igraph for plotting, but igraph has more functions for network statistics. To switch between the formats, there is a package calls `intergraph()` which provides functions to going from an igraph object to a network object and the other way.    
 
-## network package 
-Here we will use the package `network()` to plot a network with the names scaled to the number of neighbors.  
-
-```{r fig.height=10, fig.width=10}
-# First we obtain the number of neighbors for each node
-V(net)$nb <- neighborhood.size(net)
-# then we switch the format to the network package
-G <- intergraph::asNetwork(net)
-# Now we plot the network
-plot(G, # The name of the network
-     displaylabels = T, # We want to show labels
-     label.cex = rescale(V(net)$nb, to = c(0.001, 1.5)),# We use the number of neighbors to scale the size
-     vertex.cex = 0.001, # Reduce the node size so we dont see it
-     arrowhead.cex = 0.001, # reduce the arrowhead size
-     label.pos = 5, # the position of label (5 = center)
-     edge.col = "lightgreen") # Edge color
-```
-
-## ggraph
-
-Other option for plotting is the package `ggraph` which uses the same syntax than `ggplot`.  
-
-```{r}
-net %>%
-  as_tbl_graph() %>%
-  ggraph(layout = 'kk') +
-  geom_edge_link(aes(alpha = pigs.moved)) + # change the transparency based on number of animals moved
-  geom_node_point(aes(col = farm_type, size = indegree)) + # size based on indegree
-  theme_void()
-```
-  
 ## Interactive visualization using networkD3
 
 The package `networkD3` offer some interesting visualization options. This package uses javascript to create interactive visualizations so we need to start our indexing at 0 and not at 1 for the edges. for this we will substract 1 to the edges indexing
@@ -219,7 +174,7 @@ library(networkD3)
 # SUbstract 1 from the indexing of the nodes
 edge_s <- edge %>%
   count(id_orig, id_dest) %>%
-  mutate(id_orig = id_orig - 1, id_dest = id_dest - 1)
+  mutate(id_orig = as.numeric(id_orig) - 1, id_dest = as.numeric(id_dest) - 1)
 
 # Plot a simple network
 simpleNetwork(edge_s)
@@ -281,8 +236,8 @@ boxplot(edge$dist/1000,
 Now we will add the network statistics to the data.frame so we can use them later.  
 
 ```{r}
-node <- node %>%
-  mutate(indegree = V(net)$indegree, outdegree = V(net)$outdegree, nb = V(net)$nb, Bet = bet)
+node <- net %N>% 
+  data.frame()
 ```
 
 
