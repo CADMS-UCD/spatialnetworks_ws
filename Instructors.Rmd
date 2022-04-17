@@ -30,17 +30,25 @@ _____________________________________________
 # Jerome Baron
 <img src ="Images/JB.jpg" style="width:20%;float:right">  
 
-earned his DVM from the University of Liège, Belgium, in 2013 and his MSc in Veterinary Epidemiology from the London School of Hygiene and Tropical Medicine and the Royal Veterinary College, London, in 2015. After a year working as an epidemiologist in human oncology in the private sector, he started the PhD program  at UC Davis in 2016, and is working as an analyst for CADMS, supporting the partnership with the Veterinary Center for Clinical Trials of UC Davis and other research projects from CADMS. His main interest are in infectious zoonotic disease and he aims to pursue his education and research in that domain.
+Earned his DVM from the University of Liège, Belgium, in 2013 and his MSc in Veterinary Epidemiology from the London School of Hygiene and Tropical Medicine and the Royal Veterinary College, London, in 2015. After a year working as an epidemiologist in human oncology in the private sector, he started the PhD program  at UC Davis in 2016, and is working as an analyst for CADMS, supporting the partnership with the Veterinary Center for Clinical Trials of UC Davis and other research projects from CADMS. His main interest are in infectious zoonotic disease and he aims to pursue his education and research in that domain.
   
 email: jnbaron@ucdavis.edu
   
 _____________________________________________
 
-  
-# José Manuel Díaz Cao
+# Shadira Gordon
 
-<img src ="Images/JM.jpg" style="width:20%;float:left">  
+<img src ="Images/SG.jpg" style="width:15%;float:left">  
 
-Dr. José Manuel Díaz Cao (DVM, PhD) is a postdoctoral researcher interested in the epidemiology of infectious diseases. He has been working on risk factor analysis and the characterization and modeling of the ways in which diseases are transmitted and maintained in animal populations. He obtained his doctorate at the University of Santiago de Compostela, Spain, and his dissertation focused on reproductive pathogens in domestic ruminants, the analysis of the determinants of exposure and outbreaks, the detection of spatio-temporal trends and how to take advantage of the information generated on farms to anticipate and mitigate risks. He has extended this work to a wide number of pathogens in different animal species, including livestock, wildlife and zoonotic diseases. He also is experienced in the environmental detection of infectious pathogens, laboratory diagnosis and epidemiological and statistical analysis. He is collaborating with the department in the application and development of new methods and epidemiological monitoring systems that allow the information generated in livestock and animal health to be used to inform early on the risks on animal health in order to improve and optimize control, biosecurity and surveillance of infectious pathogens.   
+(DVM, MPVMc) is a Ph.D. student in the Graduate Group in Epidemiology at UCD. Currently, she is analyzing the association between wildfire occurrence and respiratory, cardiovascular, and ophthalmic diseases in the metropolitan area of Indonesia. Also, she is evaluating the effect of climatic variations in fish pathogens distribution across Plumas County, California. Her main interests are developing strategies for emerging zoonotic threats preparedness, improving global disease surveillance systems, and preventing and controlling infectious diseases through a One Health approach.
 
-email: jmdiazcao@ucdavis.edu  
+<!-- _____________________________________________ -->
+
+
+<!-- # José Manuel Díaz Cao -->
+
+<!-- <img src ="Images/JM.jpg" style="width:20%;float:left">   -->
+
+<!-- Dr. José Manuel Díaz Cao (DVM, PhD) is a postdoctoral researcher interested in the epidemiology of infectious diseases. He has been working on risk factor analysis and the characterization and modeling of the ways in which diseases are transmitted and maintained in animal populations. He obtained his doctorate at the University of Santiago de Compostela, Spain, and his dissertation focused on reproductive pathogens in domestic ruminants, the analysis of the determinants of exposure and outbreaks, the detection of spatio-temporal trends and how to take advantage of the information generated on farms to anticipate and mitigate risks. He has extended this work to a wide number of pathogens in different animal species, including livestock, wildlife and zoonotic diseases. He also is experienced in the environmental detection of infectious pathogens, laboratory diagnosis and epidemiological and statistical analysis. He is collaborating with the department in the application and development of new methods and epidemiological monitoring systems that allow the information generated in livestock and animal health to be used to inform early on the risks on animal health in order to improve and optimize control, biosecurity and surveillance of infectious pathogens.    -->
+
+<!-- email: jmdiazcao@ucdavis.edu   -->

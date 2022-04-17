@@ -13,13 +13,22 @@
 
 <title>Instructors</title>
 
-<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -36,11 +45,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -53,32 +57,7 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
 
 
 
@@ -89,10 +68,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -109,40 +84,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 60px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h2 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h3 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h4 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h5 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h6 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -170,7 +121,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -182,7 +133,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -193,10 +144,23 @@ $(document).ready(function () {
   var menuAnchor = $('a[href="' + href + '"]');
 
   // mark it active
-  menuAnchor.parent().addClass('active');
+  menuAnchor.tab('show');
 
   // if it's got a parent navbar menu mark it active as well
   menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -208,7 +172,6 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -275,7 +238,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -288,7 +251,7 @@ $(document).ready(function () {
   <a href="index.html">Home</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Pre Workshop
      
     <span class="caret"></span>
@@ -303,7 +266,7 @@ $(document).ready(function () {
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Contact
      
     <span class="caret"></span>
@@ -311,21 +274,21 @@ $(document).ready(function () {
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="Instructors.html">
-        <span class="fas fa-users"></span>
+        <span class="fa fa-users"></span>
          
         Instructors
       </a>
     </li>
     <li>
       <a href="https://cadms.vetmed.ucdavis.edu">
-        <span class="fas fa-server"></span>
+        <span class="fa fa-server"></span>
          
         CADMS Website
       </a>
     </li>
     <li>
       <a href="mailto:jpgo@ucdavis.edu">
-        <span class="fas fa-envelope"></span>
+        <span class="fa fa-envelope"></span>
          
         Email
       </a>
@@ -340,7 +303,7 @@ $(document).ready(function () {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -361,7 +324,7 @@ email: <a href="mailto:beamartinezlopez@ucdavis.edu" class="email">beamartinezlo
 <div id="jose-pablo-gomez-vazquez" class="section level1">
 <h1>Jose Pablo Gomez-Vazquez</h1>
 <p><img src ="Images/Headshot.png" style="width:20%;float:left"></p>
-<p>Pablo got his DVM from the “Universidad Autonoma de Nuevo Leon”, Mexico in 2015 and his MPVM from UC Davis in 2017. Since he started his MPVM, he has been collaborating with Latin American countries for modeling infectious disease dynamics. Previously he had worked with Peru veterinary services modeling Classical Swine Fever transmission and how it relates to the trade network. Currently Pablo is working with Foot-and-Mouth disease related research in disease free countries to evaluate the potential introduction and dissemination of the disease in disease free countries, both, where vaccination is practiced and not practiced. He also is involved in consulting for the Veterinary Center for Clinical Trials at UC Davis and other projects at CADMS involving dynamic network analysis and other statistical methods. His research involves spatio-temporal analysis of networks, spatial distribution and disease spread modeling.<br />
+<p>Pablo got his DVM from the “Universidad Autonoma de Nuevo Leon”, Mexico in 2015 and his MPVM from UC Davis in 2017. Since he started his MPVM, he has been collaborating with Latin American countries for modeling infectious disease dynamics. Previously he had worked with Peru veterinary services modeling Classical Swine Fever transmission and how it relates to the trade network. Currently Pablo is working with Foot-and-Mouth disease related research in disease free countries to evaluate the potential introduction and dissemination of the disease in disease free countries, both, where vaccination is practiced and not practiced. He also is involved in consulting for the Veterinary Center for Clinical Trials at UC Davis and other projects at CADMS involving dynamic network analysis and other statistical methods. His research involves spatio-temporal analysis and complex systems modeling.<br />
 email: <a href="mailto:jpgo@ucdavis.edu" class="email">jpgo@ucdavis.edu</a><br />
 website: <a href="http://jpablo91.github.io/" class="uri">http://jpablo91.github.io/</a></p>
 <hr />
@@ -369,15 +332,19 @@ website: <a href="http://jpablo91.github.io/" class="uri">http://jpablo91.github
 <div id="jerome-baron" class="section level1">
 <h1>Jerome Baron</h1>
 <p><img src ="Images/JB.jpg" style="width:20%;float:right"></p>
-<p>earned his DVM from the University of Liège, Belgium, in 2013 and his MSc in Veterinary Epidemiology from the London School of Hygiene and Tropical Medicine and the Royal Veterinary College, London, in 2015. After a year working as an epidemiologist in human oncology in the private sector, he started the PhD program at UC Davis in 2016, and is working as an analyst for CADMS, supporting the partnership with the Veterinary Center for Clinical Trials of UC Davis and other research projects from CADMS. His main interest are in infectious zoonotic disease and he aims to pursue his education and research in that domain.</p>
+<p>Earned his DVM from the University of Liège, Belgium, in 2013 and his MSc in Veterinary Epidemiology from the London School of Hygiene and Tropical Medicine and the Royal Veterinary College, London, in 2015. After a year working as an epidemiologist in human oncology in the private sector, he started the PhD program at UC Davis in 2016, and is working as an analyst for CADMS, supporting the partnership with the Veterinary Center for Clinical Trials of UC Davis and other research projects from CADMS. His main interest are in infectious zoonotic disease and he aims to pursue his education and research in that domain.</p>
 <p>email: <a href="mailto:jnbaron@ucdavis.edu" class="email">jnbaron@ucdavis.edu</a></p>
 <hr />
 </div>
-<div id="josé-manuel-díaz-cao" class="section level1">
-<h1>José Manuel Díaz Cao</h1>
-<p><img src ="Images/JM.jpg" style="width:20%;float:left"></p>
-<p>Dr. José Manuel Díaz Cao (DVM, PhD) is a postdoctoral researcher interested in the epidemiology of infectious diseases. He has been working on risk factor analysis and the characterization and modeling of the ways in which diseases are transmitted and maintained in animal populations. He obtained his doctorate at the University of Santiago de Compostela, Spain, and his dissertation focused on reproductive pathogens in domestic ruminants, the analysis of the determinants of exposure and outbreaks, the detection of spatio-temporal trends and how to take advantage of the information generated on farms to anticipate and mitigate risks. He has extended this work to a wide number of pathogens in different animal species, including livestock, wildlife and zoonotic diseases. He also is experienced in the environmental detection of infectious pathogens, laboratory diagnosis and epidemiological and statistical analysis. He is collaborating with the department in the application and development of new methods and epidemiological monitoring systems that allow the information generated in livestock and animal health to be used to inform early on the risks on animal health in order to improve and optimize control, biosecurity and surveillance of infectious pathogens.</p>
-<p>email: <a href="mailto:jmdiazcao@ucdavis.edu" class="email">jmdiazcao@ucdavis.edu</a></p>
+<div id="shadira-gordon" class="section level1">
+<h1>Shadira Gordon</h1>
+<p><img src ="Images/SG.jpg" style="width:15%;float:left"></p>
+<p>(DVM, MPVMc) is a Ph.D. student in the Graduate Group in Epidemiology at UCD. Currently, she is analyzing the association between wildfire occurrence and respiratory, cardiovascular, and ophthalmic diseases in the metropolitan area of Indonesia. Also, she is evaluating the effect of climatic variations in fish pathogens distribution across Plumas County, California. Her main interests are developing strategies for emerging zoonotic threats preparedness, improving global disease surveillance systems, and preventing and controlling infectious diseases through a One Health approach.</p>
+<!-- _____________________________________________ -->
+<!-- # José Manuel Díaz Cao -->
+<!-- <img src ="Images/JM.jpg" style="width:20%;float:left">   -->
+<!-- Dr. José Manuel Díaz Cao (DVM, PhD) is a postdoctoral researcher interested in the epidemiology of infectious diseases. He has been working on risk factor analysis and the characterization and modeling of the ways in which diseases are transmitted and maintained in animal populations. He obtained his doctorate at the University of Santiago de Compostela, Spain, and his dissertation focused on reproductive pathogens in domestic ruminants, the analysis of the determinants of exposure and outbreaks, the detection of spatio-temporal trends and how to take advantage of the information generated on farms to anticipate and mitigate risks. He has extended this work to a wide number of pathogens in different animal species, including livestock, wildlife and zoonotic diseases. He also is experienced in the environmental detection of infectious pathogens, laboratory diagnosis and epidemiological and statistical analysis. He is collaborating with the department in the application and development of new methods and epidemiological monitoring systems that allow the information generated in livestock and animal health to be used to inform early on the risks on animal health in order to improve and optimize control, biosecurity and surveillance of infectious pathogens.    -->
+<!-- email: jmdiazcao@ucdavis.edu   -->
 </div>
 
 
@@ -407,7 +374,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
