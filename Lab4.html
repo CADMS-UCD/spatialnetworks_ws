@@ -13,13 +13,22 @@
 
 <title>Lab 4</title>
 
-<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
@@ -39,11 +48,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +60,7 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
 
 
 
@@ -92,10 +71,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +87,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 60px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h2 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h3 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h4 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h5 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
-.section h6 {
-  padding-top: 65px;
-  margin-top: -65px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +124,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +136,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -196,10 +147,23 @@ $(document).ready(function () {
   var menuAnchor = $('a[href="' + href + '"]');
 
   // mark it active
-  menuAnchor.parent().addClass('active');
+  menuAnchor.tab('show');
 
   // if it's got a parent navbar menu mark it active as well
   menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,7 +175,6 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -337,7 +300,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +314,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -364,7 +327,7 @@ div.tocify {
   <a href="index.html">Home</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Pre Workshop
      
     <span class="caret"></span>
@@ -379,7 +342,7 @@ div.tocify {
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Contact
      
     <span class="caret"></span>
@@ -387,21 +350,21 @@ div.tocify {
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="Instructors.html">
-        <span class="fas fa-users"></span>
+        <span class="fa fa-users"></span>
          
         Instructors
       </a>
     </li>
     <li>
       <a href="https://cadms.vetmed.ucdavis.edu">
-        <span class="fas fa-server"></span>
+        <span class="fa fa-server"></span>
          
         CADMS Website
       </a>
     </li>
     <li>
       <a href="mailto:jpgo@ucdavis.edu">
-        <span class="fas fa-envelope"></span>
+        <span class="fa fa-envelope"></span>
          
         Email
       </a>
@@ -416,7 +379,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -425,48 +388,20 @@ div.tocify {
 </div>
 
 
-<p>These are the libraries that we will use in this lab:</p>
-<pre class="r"><code># install.packages(&quot;igraph&quot;)
-# install.packages(&quot;maps&quot;)
-# install.packages(&quot;raster&quot;)
-# install.packages(&quot;rgdal&quot;)
-# install.packages(&quot;ggplot2&quot;)
-# devtools::install_github(&quot;GIScience/openrouteservice-r&quot;)
-# install.packages(&quot;sp&quot;)
-# install.packages(&quot;maptools&quot;)
-# install.packages(&quot;spacetime&quot;)
-# install.packages(&quot;plotKML&quot;)
-# install.packages(&quot;scatterplot3d&quot;)</code></pre>
 <p>Let’s start by importing the data for edges, node attributes, and the shapefile of the area of study.</p>
 <pre class="r"><code>colpal &lt;- RColorBrewer::brewer.pal(4, &quot;Dark2&quot;)
+
 library(dplyr)
 library(sf)
+library(tidygraph)
 # Load data of movements and nodes 
 net &lt;- STNet::SwineMov
-node_attrib &lt;- STNet::SwinePrem
-# Format id as character to use it later
-node_attrib$idch &lt;- as.character(node_attrib$id)
+node_attrib &lt;- STNet::SwinePrem %&gt;% 
+  mutate(idch = as.character(id)) # Format id as character to use it later
 # Load the spatial object
 IO &lt;- st_read(system.file(&quot;data/Io.shp&quot;, package = &quot;STNet&quot;), quiet = T)</code></pre>
-<p>We will now use the <code>graph.data.frame</code> function to create a directed network.</p>
-<pre class="r"><code>library(igraph)
-g1 &lt;- graph.data.frame(net, directed = T)</code></pre>
-<p>As we have seen earlier, we can add network attributes for both vertices <code>V ()</code> or edges <code>E ()</code>. In the next section we will add some attributes related with the location of farms and farm type.</p>
-<pre class="r"><code># We match the identifiers in the network with the data table 
-poss&lt;-match(V(g1)$name,node_attrib$idch)
-# Add the attributes to the network
-V(g1)$lat &lt;- node_attrib$lat[poss]
-V(g1)$long &lt;- node_attrib$long[poss]
-V(g1)$type &lt;- as.character(node_attrib$farm_type[poss])
-V(g1)$fullname &lt;- as.character(node_attrib$name[poss])
-# check the correct assignation of the attributes in the object
-
-summary(g1)</code></pre>
-<pre><code>## IGRAPH 051ae44 DN-B 40 1611 -- 
-## + attr: name (v/c), lat (v/n), long (v/n), type (v/c), fullname (v/c),
-## | date (e/c), pigs.moved (e/n), type_orig (e/c), type_dest (e/c)</code></pre>
 <div id="introduction-to-dynamic-networks" class="section level1" number="1">
-<h1 number="1"><span class="header-section-number">1</span> Introduction to dynamic networks</h1>
+<h1><span class="header-section-number">1</span> Introduction to dynamic networks</h1>
 <p>The <code>networkDynamic</code> package has functions that allow to analyze and visualize a network and incorporate temporality to it. To incorporate a temporal window, we need to specify the start time (onset) and end time (termini). For the purposes of this example we will assume that the contact time is one week.</p>
 <pre class="r"><code># Load libraries
 ## For dynamic networks
@@ -547,7 +482,7 @@ set.vertex.attribute(n1,&quot;type&quot;,as.character(node_attrib$farm_type))</c
 <pre><code>## [1] &quot;lat&quot;          &quot;long&quot;         &quot;na&quot;           &quot;name&quot;         &quot;type&quot;        
 ## [6] &quot;vertex.names&quot;</code></pre>
 <p>If we want to see the values of these attributes, we can use <code>get.vertex.attribute()</code>:</p>
-<pre class="r"><code>get.vertex.attribute(n1,&quot;vertex.names&quot;)</code></pre>
+<pre class="r"><code>get.vertex.attribute(n1, &quot;vertex.names&quot;)</code></pre>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
 ## [26] 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40</code></pre>
 <pre class="r"><code>get.vertex.attribute(n1,&quot;type&quot;)</code></pre>
@@ -591,37 +526,38 @@ set.vertex.attribute(n1,&quot;type&quot;,as.character(node_attrib$farm_type))</c
 ##                                    Max.   :9.00   Max.   :86.00</code></pre>
 </div>
 <div id="temporal-statistics" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> Temporal statistics</h1>
+<h1><span class="header-section-number">2</span> Temporal statistics</h1>
 <p>We can evaluate several measures at the graph level, vertex level or traces of the period of study of our network using the function <code>tSnaStats()</code>.</p>
 <p>This function uses arguments to include the <code>networkDynamic</code> object that we have created and to specify the function with the desired statistic that we want to apply (through the argument “snafun=”). For example, if we want to calculate the density of the network in different periods, we will do this:</p>
 <pre class="r"><code>tSnaStats(n1, snafun = &quot;gden&quot;) %&gt;% # &quot;gden&quot; to show graph density
   plot(col = colpal[2], lwd = 2, main = &quot;Network density during the study period&quot;)</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>In the previous plot we can see that the activity of movements is bigger at the beginning of the time series and slowly decreases over time until reaching approximately zero.</p>
 <p>The function <code>tSnaStats()</code> also allows us to use arguments to define specific periods of time from which we want to calculate the statistics</p>
 <pre class="r"><code>tSnaStats(n1, snafun = &quot;grecip&quot;, start = 30, end = 60) %&gt;% 
   plot(main = &quot;Network Reciprocity during the interval 30-60&quot;, col = colpal[3], lwd = 2)</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <p>We can also see node-level statistics (e.g. betweenness) using the next function.</p>
-<pre class="r"><code>apply(tSnaStats(n1, snafun = &quot;betweenness&quot;), 1, mean) %&gt;% plot(type = &quot;l&quot;, lwd = 2, col = colpal[4])</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<pre class="r"><code>apply(tSnaStats(n1, snafun = &quot;betweenness&quot;), 1, mean) %&gt;% 
+  plot(type = &quot;l&quot;, lwd = 2, col = colpal[4])</code></pre>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 <div id="plotting-the-network" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Plotting the network</h1>
+<h1><span class="header-section-number">3</span> Plotting the network</h1>
 <p>We can use the function <code>plot()</code> to see the network object, but we can only see the static network because we are not defining any time interval</p>
 <pre class="r"><code>plot(n1,mode=&quot;kamadakawai&quot;) </code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <p>If we want to see a specific period of time, we need to define it. For this, we can use the function <code>network.extract()</code> to extract a specific period in the network and then use <code>plot()</code> to show this extract.</p>
 <pre class="r"><code># Plot an interval of time
 n1 %&gt;% 
   network.extract(onset = 1, terminus = 60) %&gt;%
   plot()</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <pre class="r"><code># Plot a specific timepoint and remove isolates
 n1 %&gt;% 
   network.extract(at = 35) %&gt;%
   plot(displayisolates = F)</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <p>Now we are going to create a plot with multiple periods of time</p>
 <pre class="r"><code># First we create a function to plot the network extract we want:
 plot.extract &lt;- function(n, onset, terminus){
@@ -638,7 +574,7 @@ par(mfrow = c(2,4), mar = c(0,0,1,0))
 for(i in O){
   plot.extract(n1, onset = i, terminus = i + 10)
 }</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <p>We can use different layouts to plot the extracts of the network. Now, we are going to plot the nodes in their spatial location. For this, we will have to make a little modification of our previous function so we can add the coordinates.</p>
 <pre class="r"><code># We set fixed coordinates from the longitude and latitude
 a &lt;- as.matrix(node_attrib[, c(&quot;long&quot;, &quot;lat&quot;)])
@@ -659,20 +595,20 @@ par(mfrow = c(2,4), mar = c(0,0,1,0))
 for(i in O){
   plot.extract(n1, onset = i, terminus = i + 10, Bg = IO$geometry)
 }</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 </div>
 <div id="temporally-reachable-sets" class="section level1" number="4">
-<h1 number="4"><span class="header-section-number">4</span> Temporally reachable sets</h1>
+<h1><span class="header-section-number">4</span> Temporally reachable sets</h1>
 <p>The reachability of a farm help us to identify important nodes in the network that may have a key role in the disease spread. Forward reachability (“fwd”) refers to all the nodes than can be reached from a given node <span class="math inline">\(v_i\)</span> and backward reachability (“bkwd”) refers to those nodes that reach a given node <span class="math inline">\(v_i\)</span>. We can visualize the distribution of the forward and backward reachability using boxplots</p>
 <pre class="r"><code>fwd &lt;- tReach(n1, &quot;fwd&quot;)
 bwd &lt;- tReach(n1, &quot;bkwd&quot;)
 par(mar=c(2,4,2,2))
 boxplot(fwd, bwd, col = &quot;lightgreen&quot;, horizontal = T, yaxt = &#39;n&#39;, main = &quot;Reachability of farms&quot;)
 axis(2, at = c(1,2), labels = c(&quot;Fwd&quot;, &quot;Bwd&quot;), las=2, lty = 0)</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <p>We can also use a dot plot to explore whether any interesting relationship between both types of reachability exists.</p>
 <pre class="r"><code>plot(fwd, bwd, xlab = &quot;Fwd&quot;, ylab = &quot;Bwd&quot;, pch = 16, col = rgb(0, 155, 50, max=255, alpha=100))</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <p>Now, let’s have a look at the farms with the highest forward reachability:</p>
 <pre class="r"><code>data.frame(id = 1:length(fwd), fwd, bwd) %&gt;% 
   arrange(desc(fwd)) %&gt;% 
@@ -692,18 +628,18 @@ axis(2, at = c(1,2), labels = c(&quot;Fwd&quot;, &quot;Bwd&quot;), las=2, lty = 
 <p>We can visualize the reachable set using the functions <code>tpath</code> and <code>transmissionTimeline</code>. Both of them provide the node id and the time when the contact happened. The first function allow us to visualize the nodes spatially and the second one shows them in a nice timeline. Let’s start with the first one.</p>
 <pre class="r"><code>P17 &lt;- tPath(n1, 17, direction = &quot;fwd&quot;)
 plot(P17)</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 <p>We can also visualize the paths in the full network.</p>
 <pre class="r"><code>plotPaths(n1, P17, vertex.col = colpal[1], label.cex = 0.5, vertex.cex = 2)</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 <p>A better way to visualize the paths trough the time period is using the function <code>transmissionTimeline()</code>. In this visualization, the x axis represents the time when the event happened and the y axis represents the generation or steps that happened to reach that node</p>
 <pre class="r"><code>transmissionTimeline(P17,jitter=T,
           main=&#39;Earliest forward path from vertex 17&#39;)</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 <p>We can also see the backward reachability, which represents the set of nodes that reach a specific node over a time period.</p>
 <pre class="r"><code>P17 &lt;- tPath(n1, 17, direction = &quot;bkwd&quot;, type = &quot;latest.depart&quot;)
 plot(P17, edge.col = colpal[3])</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 <p>Now we will create a function to show the paths in a spatial and non-spatial plot.</p>
 <pre class="r"><code>MaPaths &lt;- function(Net, v, direction, Pts, coords, BG){
   # Settings for the visualization arrangement:
@@ -724,13 +660,13 @@ plot(P17, edge.col = colpal[3])</code></pre>
 }
 
 MaPaths(Net = n1, v = 17, direction = &quot;fwd&quot;, Pts = node_attrib, coords = a, BG = IO$geometry)</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
 <p>Another way to visualize the network activity is to show the time points when each of the nodes was active. In the following plot, the upper part represents the presence of the node in the network and the lower part represents the activity of the node in the network.</p>
 <pre class="r"><code>timeline(n1)</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 </div>
 <div id="animations" class="section level1" number="5">
-<h1 number="5"><span class="header-section-number">5</span> Animations</h1>
+<h1><span class="header-section-number">5</span> Animations</h1>
 <p>We can also create animations to show the evolution of the contact patterns over time using the function <code>render.d3movie()</code>. First we will use the function <code>compute.animation()</code> to set the layout and time frame for the animation.</p>
 <pre class="r"><code>render.d3movie(n1,
                displaylabels=F, 
@@ -743,7 +679,7 @@ compute.animation(n1, animation.mode = &quot;kamadakawai&quot;,
                          aggregate.dur=1, rule=&#39;any&#39;))
 
 timePrism(n1, at = c(30, 40, 50, 60), planes = T)</code></pre>
-<p><img src="Lab4_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+<p><img src="Lab4_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <hr />
 </div>
 
@@ -776,7 +712,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -785,6 +721,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

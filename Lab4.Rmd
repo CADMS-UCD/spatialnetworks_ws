@@ -12,59 +12,22 @@ knitr::opts_chunk$set(message=F, warning =F)
 ```
 
 
-
-These are the libraries that we will use in this lab:
-
-```{r }
-# install.packages("igraph")
-# install.packages("maps")
-# install.packages("raster")
-# install.packages("rgdal")
-# install.packages("ggplot2")
-# devtools::install_github("GIScience/openrouteservice-r")
-# install.packages("sp")
-# install.packages("maptools")
-# install.packages("spacetime")
-# install.packages("plotKML")
-# install.packages("scatterplot3d")
-```
-
 Let's start by importing the data for edges, node attributes, and the shapefile of the area of study.
 
 ```{r }
 colpal <- RColorBrewer::brewer.pal(4, "Dark2")
+
 library(dplyr)
 library(sf)
+library(tidygraph)
 # Load data of movements and nodes 
 net <- STNet::SwineMov
-node_attrib <- STNet::SwinePrem
-# Format id as character to use it later
-node_attrib$idch <- as.character(node_attrib$id)
+node_attrib <- STNet::SwinePrem %>% 
+  mutate(idch = as.character(id)) # Format id as character to use it later
 # Load the spatial object
 IO <- st_read(system.file("data/Io.shp", package = "STNet"), quiet = T)
 ```
 
-We will now use the `graph.data.frame` function to create a directed network.
-
-```{r}
-library(igraph)
-g1 <- graph.data.frame(net, directed = T)
-```
-
-As we have seen earlier, we can add network attributes for both vertices `V ()` or edges `E ()`. In the next section we will add some attributes related with the location of farms and farm type.
-
-```{r}
-# We match the identifiers in the network with the data table 
-poss<-match(V(g1)$name,node_attrib$idch)
-# Add the attributes to the network
-V(g1)$lat <- node_attrib$lat[poss]
-V(g1)$long <- node_attrib$long[poss]
-V(g1)$type <- as.character(node_attrib$farm_type[poss])
-V(g1)$fullname <- as.character(node_attrib$name[poss])
-# check the correct assignation of the attributes in the object
-
-summary(g1)
-```
 
 # Introduction to dynamic networks
 
@@ -148,7 +111,7 @@ list.vertex.attributes(n1)
 If we want to see the values of these attributes, we can use  `get.vertex.attribute()`:
 
 ```{r}
-get.vertex.attribute(n1,"vertex.names")
+get.vertex.attribute(n1, "vertex.names")
 ```
 
 ```{r}
@@ -188,7 +151,8 @@ tSnaStats(n1, snafun = "grecip", start = 30, end = 60) %>%
 We can also see node-level statistics (e.g. betweenness) using the next function.
 
 ```{r}
-apply(tSnaStats(n1, snafun = "betweenness"), 1, mean) %>% plot(type = "l", lwd = 2, col = colpal[4])
+apply(tSnaStats(n1, snafun = "betweenness"), 1, mean) %>% 
+  plot(type = "l", lwd = 2, col = colpal[4])
 ```
 
 # Plotting the network
