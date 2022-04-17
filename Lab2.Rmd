@@ -11,40 +11,94 @@ output:
 knitr::opts_chunk$set(warning = F, message = F)
 ```
 
-# Community detection
+In this lab we will review concepts of community detection and how to represent our network in a map.  
 
-First we will have to load the data. Remember that on the previous lab we exported a dataset at the end, we will continue using this.  
+First we will load the data and the libraries we will be using. Remember that on the previous lab we exported a data set at the end, we will continue using this objects.  
 
 ```{r}
 # If you are starting a new session, load the files and libraries again 
-net <- readRDS("Data/Outputs/net.rds")
 # Load the data
-node <- read.csv("Data/Outputs/node.csv")
-edge <- read.csv("Data/Outputs/edge.csv")
+net <- readRDS("Data/Outputs/net.rds") # Loading the network object
+node <- read.csv("Data/Outputs/node.csv") # loading the nodes
+edge <- read.csv("Data/Outputs/edge.csv") # Loading the edges
 # libraries we will use.
-library(igraph)
-library(dplyr)
-library(sf)
+library(dplyr) # Data manipulation
+library(sf) # Spatial data manipulation
+library(tidygraph) # Network manipulation and analyisis
+library(purrr) # for data manipulation
+library(ggraph) # for network visualization
+library(ggpubr) # for arranging plots
 ```
 
-Now we will use the walktrap algorithm for community detection in the observed network. For this we use the function `cluster_walktrap()`.   
+
+
+# Community detection
+
+In this section we will use different algorithms to identify communities in our network. 
 
 ```{r}
 # First we need to simplify the network
-c<-simplify(net)
-# Then we can use the function
-wc <- cluster_walktrap(c)
-# To identify the communities we use:
-membership(wc)
+c <- net %E>%  # we call our network and activate the edges
+  mutate(N = as.integer(1)) %>%  # create a variable for the number of movements (each row is 1 movement)
+  convert(to_simple) %E>%  # now we will convert it to a simple network
+  mutate(weight = map_int(.orig_data, ~.x %>% pull(N) %>% sum())) %N>%  # We have to sum all the repeated movements
+  mutate(walktrap = factor(group_walktrap(weights = weight)), # use the walktrap algorithm for community detection
+         infomap = factor(group_infomap(weights = weight))) # use the infomap for community detection
 ```
-  
-We can put this communities on a plot using the base `plot()` function. For this we will need to include in the arguments our simplified network and the communities we detected using the walktrap algorithm.  
+
+Then we will create an empty list to fill with plots and compare the different algorithms.
 
 ```{r}
-# We can plot the network and the communities.
-plot(wc, c, edge.arrow.size=.2,vertex.size=4,vertex.label=NA)
+# Create the empty list
+CP <- list()
+# Make a plot for the edges only
+pc <- c %>% # our simplified network
+  ggraph(layout = 'nicely') + # call the ggraph function
+  geom_edge_link() + # add the edges
+  theme(legend.position = 'bottom') # set the legend position to bottom
+
+CP[['Infomap']] <- pc + # We call our plot with only the edges
+  geom_node_point(aes(col = infomap), size = 2) + # we add the nodes
+  labs(title = 'Infomap') # title of our plot
+
+CP[['Walktrap']] <- pc +
+  geom_node_point(aes(col = walktrap), size = 2) +
+  labs(title = 'Walktrap') 
+
+# We arrange our plots in a single figure
+ggarrange(plotlist = CP)
 ```
 
+*Excercise: * Now increase the number of steps in the walk trap algorithm, what happens when we increase the number of steps? What do you think would be the optimal number of steps for this example
+
+```{r eval=FALSE, include=FALSE}
+# c <- c %N>% 
+#   mutate(walktrap10 = factor(group_walktrap(weights = weight, steps = 10)),
+#          walktrap15 = factor(group_walktrap(weights = weight, steps = 15)),
+#          walktrap20 = factor(group_walktrap(weights = weight, steps = 20)))
+# 
+# # Make a plot for the edges only
+# pc <- c %>% # our simplified network
+#   ggraph(layout = 'nicely') + # call the ggraph function
+#   geom_edge_link() + # add the edges
+#   theme(legend.position = 'bottom') # set the legend position to bottom
+# 
+# 
+# # Increase the number of steps until no more groups are created
+# CP[['Walktrap10']] <- pc +
+#   geom_node_point(aes(col = walktrap10), size = 2) +
+#   labs(title = 'Walktrap 10 steps') 
+# 
+# CP[['Walktrap15']] <- pc +
+#   geom_node_point(aes(col = walktrap15), size = 2) +
+#   labs(title = 'Walktrap 15 steps')
+# 
+# CP[['Walktrap20']] <-pc +
+#   geom_node_point(aes(col = walktrap20), size = 2) +
+#   labs(title = 'Walktrap 20 steps') 
+# 
+# ggarrange(plotlist = CP[-1])
+```
 
 # Spatial representation of the network
 
@@ -245,7 +299,7 @@ plot(iowa$geometry, col=NA, border = "grey80", add = T)
 
 ___________________________________________________
 
-# Optional: More on interactive maps. 
+# More on interactive maps. 
 
 If you are interested in more about interactive maps `plotly` also has option for using background maps, but for this you need to get a public [Mapbox access token](https://www.mapbox.com/studio), which is free, but requires registration. Some great resources for more information:  
   
@@ -253,6 +307,13 @@ If you are interested in more about interactive maps `plotly` also has option fo
   - https://plotly.com/r/maps/
 
 Here I provide an example of the kind of maps you can get using mapbox, but this **This code will not run unless you use your own API Key**
+
+```{r include=FALSE}
+Sys.setenv('MAPBOX_TOKEN' = 'pk.eyJ1Ijoiam9zZXBhYmxvOTEiLCJhIjoiY2tsaXR5ZGd3MmJoNzJ3bWxrbTF5emw1eSJ9.THUKAPF8TYZ-qpIDKD5Icg')
+```
+
+
+
 ```{r}
 # Sys.setenv('MAPBOX_TOKEN' = yourKey)
 
@@ -275,3 +336,5 @@ plot_mapbox() %>%
       center = list(lat = 42, lon = -93)
     ))
 ```
+
+____________________________________________________________________

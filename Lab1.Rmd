@@ -7,18 +7,20 @@ output:
     number_sections: true
 ---
 
+In this lab we will start making our first network objects, obtain network statistics and some visualization of the data.  
+
+
 # Network visualization
 
 ## Loading the data and visualizing the network
 
 ```{r message = F, warning = F}
-library(dplyr)
-# library(scales)
-library(ggplot2)
-library(ggraph)
-# Libraries for network objects
-library(igraph)
-library(tidygraph)
+# Libraries we will use:
+library(dplyr) # for data manipulation
+library(ggplot2) # For making figures
+library(ggraph) # For ploting the networks
+library(igraph) # for network analysis
+library(tidygraph) # tidyverse friendly network analysis
 # Loading the data from the STNet package
 node <- STNet::SwinePrem %>% 
   mutate(id = as.character(id))
@@ -28,7 +30,7 @@ edge <- STNet::SwineMov %>%
 ```
 
 
-The datasets we will be using are:
+The data sets we will be using are:
   
   - `node` which includes the information of the farms 
   - `edge` which includes the information for the movements between the farms.  
@@ -53,11 +55,6 @@ net <- net %N>% # <- Notice we are including 'N' inside our pipe to specify we w
 net
 ```
 
-
-```{r}
-plot(net)
-```
-
 To visualize the network we can use the function `plot()`.  
 
 ```{r}
@@ -80,7 +77,7 @@ plot(net, # Our network object
 
 ## Using ggraph
 
-We can use base R to make our figures, but since we will be focusing on ggplot2, we will use the library ggraph which has a very similar syntax to ggplot.  
+We can use base R to make our figures, but since we will be focusing on ggplot2, we will use the library ggraph which is based in ggplot2.  
 
 ### Changing the node color
 
@@ -114,7 +111,6 @@ ggraph(net, layout = 'kk') +
 You can read more about the different layours available [HERE](https://ggraph.data-imaginist.com/articles/Layouts.html)
 
 Now we will use different layouts to see how the network changes.  
-
 
 **Excercise:** Try different layouts: 'fr', 'lgl', 'graphopt'.    
 
@@ -161,8 +157,6 @@ net
 
 
 # Using other packages to plot the network
-
-Besides `igraph`, there are other packages to plot the network in R. The package `network()` provides almost the same functions that igraph for plotting, but igraph has more functions for network statistics. To switch between the formats, there is a package calls `intergraph()` which provides functions to going from an igraph object to a network object and the other way.    
 
 ## Interactive visualization using networkD3
 
@@ -233,15 +227,14 @@ boxplot(edge$dist/1000,
         main = "Boxlot of euclidean distance (Km)", ylab="distance (km)")
 ```
 
-Now we will add the network statistics to the data.frame so we can use them later.  
+
 
 ```{r}
 node <- net %N>% 
   data.frame()
 ```
 
-
-Finally we will export the network as a RDS file so we can load it in another session.  
+Now we will add the network statistics to the data.frame and export the objects so we can load it in another session.  
 
 ```{r eval = F}
 # we can export the network as a RDS object using the package readr
