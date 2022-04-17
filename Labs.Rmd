@@ -4,9 +4,10 @@ title: "Labs"
 
 Here are the links to the labs:  
   
+  - [Preworkshop 1](Intro_to_R.html)
+  - [Preworkshop 2](Spatial_intro.html)
   - [Lab 1](Lab1.html)
   - [Lab 2](Lab2.html)
   - [Lab 3](Lab3.html)
   - [Lab 4](Lab4.html)
-  - [Lab 5](Lab5.html)
   
