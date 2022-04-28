@@ -50,10 +50,16 @@ We can treat this object like two data frames that are joined by an key or ident
 ```{r}
 net <- net %N>% # <- Notice we are including 'N' inside our pipe to specify we want to access the nodes
   left_join(node, by = c('name' = 'id')) # Now we join to the node dataframe to include other variables
-
-# When we print our object again we will see the new variables:
-net
 ```
+
+
+```{r eval = F}
+# We can ask for the nodes data specifically to see the changes
+net %N>% 
+  data.frame() %>% 
+  View()
+```
+
 
 To visualize the network we can use the function `plot()`.  
 
