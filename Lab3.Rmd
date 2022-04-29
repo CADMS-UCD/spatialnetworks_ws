@@ -18,10 +18,13 @@ knitr::opts_chunk$set(message = F)
 
 ```{r message = F}
 # libraries we will use
-library(dplyr)
-library(sf)
-library(sp)
-library(ggplot2)
+library(dplyr) # for data manipulation
+library(sf) # For spatial data manipulation
+library(sp) # for spatial data
+library(ggplot2) # for making figures
+library(purrr) # for network transformation
+library(tidygraph) # for network manipulation
+library(ggraph) # for plotting networks
 # We get the data from the STNet package
 GPSc <- STNet::GPSc
 ```
@@ -29,16 +32,16 @@ GPSc <- STNet::GPSc
 First we will see how many locations were recorded during the observation period by species:  
 
 ```{r}
-GPSc %>%
-  group_by(species_type) %>%
-  summarise(N = n())
+GPSc %>% 
+  count(species_type) # count by species
 ```
 
 Now lets create a dataset for the nodes.  
 
 ```{r}
-Nodes <- GPSc %>%
-  distinct(CollarID, species_type)
+Nodes <- GPSc %>% 
+  mutate(CollarID = as.character(CollarID)) %>% # convert to character
+  distinct(CollarID, species_type) # unique IDs
 ```
 
 ## Temporal visualization
@@ -47,29 +50,31 @@ Now lets see how does the GPS records varies during the observation period:
 
 ```{r}
 Daily <- GPSc %>%
-  count(Date, species_type)
+  count(Date, species_type) # Count by species and date
 
-ggplot() +
-  geom_line(data = Daily, aes(x = Date, y = n, color = species_type), size = 1) +
+ggplot(data = Daily) + # call ggplot
+  geom_line(aes(x = Date, y = n, color = species_type), size = 1) +
   theme_minimal()
 ```
 
 
 ## Spatial distribution of the records
 
-First we will tronsform our data into a spatial points object.  
+First we will transform our data into a spatial points object.  
 ```{r}
 GPScSP <- GPSc %>%
-  st_as_sf(coords = c("X", "Y"), crs = st_crs(4326)) %>%
-  st_transform(st_crs(32615))
+  st_as_sf(coords = c("X", "Y"), crs = st_crs(4326)) %>% # convert to spatial data
+  st_transform(st_crs(32615)) # project the data
 ```
 
-Now we use `geom_sf()` to see the locations on a map.
+Now we use `geom_sf()` to show the recorded locations on a map.
 
 ```{r}
-ggplot() +
-  geom_sf(data = GPScSP, aes(color = species_type), show.legend = "point") +
-  theme_minimal()
+GPScSP %>% 
+  ggplot() + # 
+  geom_sf(aes(color = species_type), alpha = 0.2, size = 0.4) +
+  theme_minimal() +
+  theme(legend.position = 'top')
 ```
 
 It looks like the 3 different species have movement ranges where they coincide. To identify where are the species coinciding more often we will use a hexagonal grid.  
@@ -106,13 +111,13 @@ Now lets plot the movement ranges for the species on the observed period:
 ```{r}
 # For cattle:
 GPScSP %>%
-  filter(species_type == "cattle") %>%
-  HexMap(Hex = BorderHex, .) %>%
-  ggplot(., aes(fill = N)) +
-  geom_sf() +
-  scale_fill_gradient(low="white", high="red") +
-  ggtitle("Cattle Range") +
-  theme_void()
+  filter(species_type == "cattle") %>% # we filter to only cattle records
+  HexMap(Hex = BorderHex, .) %>% # count the points per grid cell
+  ggplot(., aes(fill = N)) + # call ggplot
+  geom_sf() + # add the spatial layer
+  scale_fill_gradient(low="white", high="red") + # define the gradient for the fill
+  ggtitle("Cattle Range") + # add a title
+  theme_void() #add a theme 
 ```
 
 **Exercise:** Create the range maps for the other 2 species (deer y pig) and use different colors.  
@@ -164,8 +169,10 @@ Edges <- CreateNetwork(DF = GPSc[,], # This is our data
 To load the data directly from the `STNet` package we can use the function:  
 
 ```{r}
-Edges <- STNet::.
+Edges <- STNet::. %>%  # load the dataset from the package
+  mutate_at(.vars = c('Var1', 'Var2'), .funs = as.character) # convert the variables to character
 ```
+
 This dataset includes:  
   
   - *Distance*: distance between the recorded contact.  
@@ -181,7 +188,7 @@ For this we will create a subset of the data that includes only contacts between
 ```{r}
 # Add variable for species
 Edges <- Edges %>%
-  left_join(Nodes, by = c("Var1" = "CollarID")) %>% #Var1 one of the nodes
+  left_join(Nodes, by = c("Var1" = "CollarID")) %>% # Var1 one of the nodes
   rename(Sp1 = species_type) %>%
   left_join(Nodes, by = c("Var2" = "CollarID")) %>% # Var 2 is the other node
   rename(Sp2 = species_type)
@@ -193,13 +200,16 @@ InterSp <- Edges %>%
 
 
 ```{r}
+# we create a projected dataset 
 InterSp_sp <- InterSp %>%
   dplyr::select(DateTime, Var1, Var2, Sp1, Sp2, X.x, Y.x) %>%
-  st_as_sf(coords = c("X.x", "Y.x"), crs = st_crs("+init=EPSG:4326")) %>%
+  st_as_sf(coords = c("X.x", "Y.x"), crs = st_crs(4326)) %>%
   st_transform(st_crs(32615))
   
+# Count the observations per grid cell
 IspH <- HexMap(BorderHex, Points = InterSp_sp)
 
+# make the figure
 ggplot(IspH, aes(fill = N)) +
   geom_sf() +
   scale_fill_gradient(low="white", high="gold3") +
@@ -222,45 +232,36 @@ Nodes %>%
 ## Creating the network:
 
 ```{r}
-# Libraries we will use:
-library(igraph)
-library(scales)
 # Create the network:
-G1 <- graph_from_data_frame(Edges[c("Var1", "Var2")], vertices = Nodes, directed = F)
-# Create a variable to count the number of contact:
-E(G1)$w <- 1
-# Simplifying the network:
-G1s <- simplify(G1, # Name of the network
-                remove.multiple = T, # Remove multiple contacts
-                edge.attr.comb = list(w = "sum")) # Function to do with the multiple contacts
+G1 <- as_tbl_graph(Edges[c("Var1", "Var2")], directed = F) %N>% 
+  mutate(degree = centrality_degree()) %>% 
+  left_join(Nodes, by = c('name' = 'CollarID')) %E>%
+  mutate(N = as.integer(1)) %>% # Create a variable to count the number of contact:
+  convert(to_simple) %E>%  # now we will convert it to a simple network
+  mutate(weight = map_int(.orig_data, ~.x %>% pull(N) %>% sum()))  # We have to sum all the repeated movements
 
-# calculate the degree (since its not directed we can not define indegree or outdegree)
-V(G1)$degree <- degree(G1, mode = "all")
-
-plot(G1s, 
-     edge.color = alpha("black", rescale(E(G1s)$w, c(0.01, 1))), # use number of contacts for transparency
-     layout = layout_with_kk, 
-     vertex.label = NA, 
-     vertex.size = rescale(V(G1)$degree, c(1, 15)))
+ggraph(graph = G1) +
+  geom_edge_link(aes(alpha = weight)) +
+  geom_node_point(aes(size = degree), col = 'darkred') +
+  scale_size(range = c(0.3, 10)) +
+  theme_void()
 ```
 
 
 ## Networks by species: 
-  
-To create a subset of our network we can use the function `induced_graph`, where we need to specify the network that we will extract from and the ids of the nodes, for this we use the function `which()` and specify that we watn the deer only.  
+
+We can filter the nodes based on the species type to create a figure of only one species type.  
+
 
 ```{r}
-VIDs <- which(V(G1)$species_type == "deer")
-DeerG <- induced_subgraph(graph = G1s, vids = VIDs)
-
-
-plot(DeerG, 
-     edge.color = alpha("black", rescale(E(DeerG)$w, c(0.01, 1))),
-     layout = layout_with_kk, 
-     vertex.label = NA, 
-     vertex.size = rescale(V(G1)$degree[VIDs], c(1, 15)), 
-     vertex.color = "darkgreen")
+G1 %N>% 
+  filter(species_type == 'cattle') %>% 
+  ggraph() +
+  geom_edge_link(aes(alpha = weight)) +
+  geom_node_point(aes(size = degree), col = 'darkgreen') +
+  theme_void()
 ```
+
 
 **Exercise:** create the network for the other 2 species
 

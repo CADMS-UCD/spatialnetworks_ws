@@ -393,46 +393,49 @@ We will define our contact network based on proximity between two animals from t
 <div id="exploratory-analysis" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Exploratory analysis</h1>
 <pre class="r"><code># libraries we will use
-library(dplyr)
-library(sf)
-library(sp)
-library(ggplot2)
+library(dplyr) # for data manipulation
+library(sf) # For spatial data manipulation
+library(sp) # for spatial data
+library(ggplot2) # for making figures
+library(purrr) # for network transformation
+library(tidygraph) # for network manipulation
+library(ggraph) # for plotting networks
 # We get the data from the STNet package
 GPSc &lt;- STNet::GPSc</code></pre>
 <p>First we will see how many locations were recorded during the observation period by species:</p>
-<pre class="r"><code>GPSc %&gt;%
-  group_by(species_type) %&gt;%
-  summarise(N = n())</code></pre>
-<pre><code>## # A tibble: 3 × 2
-##   species_type     N
-##   &lt;fct&gt;        &lt;int&gt;
-## 1 cattle        9309
-## 2 deer         11511
-## 3 pig           4428</code></pre>
+<pre class="r"><code>GPSc %&gt;% 
+  count(species_type) # count by species</code></pre>
+<pre><code>##   species_type     n
+## 1       cattle  9309
+## 2         deer 11511
+## 3          pig  4428</code></pre>
 <p>Now lets create a dataset for the nodes.</p>
-<pre class="r"><code>Nodes &lt;- GPSc %&gt;%
-  distinct(CollarID, species_type)</code></pre>
+<pre class="r"><code>Nodes &lt;- GPSc %&gt;% 
+  mutate(CollarID = as.character(CollarID)) %&gt;% # convert to character
+  distinct(CollarID, species_type) # unique IDs</code></pre>
 <div id="temporal-visualization" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Temporal visualization</h2>
 <p>Now lets see how does the GPS records varies during the observation period:</p>
 <pre class="r"><code>Daily &lt;- GPSc %&gt;%
-  count(Date, species_type)
+  count(Date, species_type) # Count by species and date
 
-ggplot() +
-  geom_line(data = Daily, aes(x = Date, y = n, color = species_type), size = 1) +
+ggplot(data = Daily) + # call ggplot
+  geom_line(aes(x = Date, y = n, color = species_type), size = 1) +
   theme_minimal()</code></pre>
 <p><img src="Lab3_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 <div id="spatial-distribution-of-the-records" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Spatial distribution of the records</h2>
-<p>First we will tronsform our data into a spatial points object.</p>
+<p>First we will transform our data into a spatial points object.</p>
 <pre class="r"><code>GPScSP &lt;- GPSc %&gt;%
-  st_as_sf(coords = c(&quot;X&quot;, &quot;Y&quot;), crs = st_crs(4326)) %&gt;%
-  st_transform(st_crs(32615))</code></pre>
-<p>Now we use <code>geom_sf()</code> to see the locations on a map.</p>
-<pre class="r"><code>ggplot() +
-  geom_sf(data = GPScSP, aes(color = species_type), show.legend = &quot;point&quot;) +
-  theme_minimal()</code></pre>
+  st_as_sf(coords = c(&quot;X&quot;, &quot;Y&quot;), crs = st_crs(4326)) %&gt;% # convert to spatial data
+  st_transform(st_crs(32615)) # project the data</code></pre>
+<p>Now we use <code>geom_sf()</code> to show the recorded locations on a map.</p>
+<pre class="r"><code>GPScSP %&gt;% 
+  ggplot() + # 
+  geom_sf(aes(color = species_type), alpha = 0.2, size = 0.4) +
+  theme_minimal() +
+  theme(legend.position = &#39;top&#39;)</code></pre>
 <p><img src="Lab3_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>It looks like the 3 different species have movement ranges where they coincide. To identify where are the species coinciding more often we will use a hexagonal grid.</p>
 </div>
@@ -465,13 +468,13 @@ plot(BorderHex$geometry)</code></pre>
 <p>Now lets plot the movement ranges for the species on the observed period:</p>
 <pre class="r"><code># For cattle:
 GPScSP %&gt;%
-  filter(species_type == &quot;cattle&quot;) %&gt;%
-  HexMap(Hex = BorderHex, .) %&gt;%
-  ggplot(., aes(fill = N)) +
-  geom_sf() +
-  scale_fill_gradient(low=&quot;white&quot;, high=&quot;red&quot;) +
-  ggtitle(&quot;Cattle Range&quot;) +
-  theme_void()</code></pre>
+  filter(species_type == &quot;cattle&quot;) %&gt;% # we filter to only cattle records
+  HexMap(Hex = BorderHex, .) %&gt;% # count the points per grid cell
+  ggplot(., aes(fill = N)) + # call ggplot
+  geom_sf() + # add the spatial layer
+  scale_fill_gradient(low=&quot;white&quot;, high=&quot;red&quot;) + # define the gradient for the fill
+  ggtitle(&quot;Cattle Range&quot;) + # add a title
+  theme_void() #add a theme </code></pre>
 <p><img src="Lab3_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p><strong>Exercise:</strong> Create the range maps for the other 2 species (deer y pig) and use different colors.</p>
 </div>
@@ -491,7 +494,8 @@ Edges &lt;- CreateNetwork(DF = GPSc[,], # This is our data
                        coords = c(&quot;Longitude&quot;, &quot;Latitude&quot;) # Name of variable for coordinated
                        ) # 14,869</code></pre>
 <p>To load the data directly from the <code>STNet</code> package we can use the function:</p>
-<pre class="r"><code>Edges &lt;- STNet::.</code></pre>
+<pre class="r"><code>Edges &lt;- STNet::. %&gt;%  # load the dataset from the package
+  mutate_at(.vars = c(&#39;Var1&#39;, &#39;Var2&#39;), .funs = as.character) # convert the variables to character</code></pre>
 <p>This dataset includes:</p>
 <ul>
 <li><em>Distance</em>: distance between the recorded contact.<br />
@@ -508,7 +512,7 @@ Edges &lt;- CreateNetwork(DF = GPSc[,], # This is our data
 For this we will create a subset of the data that includes only contacts between different species.</p>
 <pre class="r"><code># Add variable for species
 Edges &lt;- Edges %&gt;%
-  left_join(Nodes, by = c(&quot;Var1&quot; = &quot;CollarID&quot;)) %&gt;% #Var1 one of the nodes
+  left_join(Nodes, by = c(&quot;Var1&quot; = &quot;CollarID&quot;)) %&gt;% # Var1 one of the nodes
   rename(Sp1 = species_type) %&gt;%
   left_join(Nodes, by = c(&quot;Var2&quot; = &quot;CollarID&quot;)) %&gt;% # Var 2 is the other node
   rename(Sp2 = species_type)
@@ -516,13 +520,16 @@ Edges &lt;- Edges %&gt;%
 InterSp &lt;- Edges %&gt;% 
   filter(Sp1 != Sp2) %&gt;% # select contacts where the species are different
   data.frame()</code></pre>
-<pre class="r"><code>InterSp_sp &lt;- InterSp %&gt;%
+<pre class="r"><code># we create a projected dataset 
+InterSp_sp &lt;- InterSp %&gt;%
   dplyr::select(DateTime, Var1, Var2, Sp1, Sp2, X.x, Y.x) %&gt;%
-  st_as_sf(coords = c(&quot;X.x&quot;, &quot;Y.x&quot;), crs = st_crs(&quot;+init=EPSG:4326&quot;)) %&gt;%
+  st_as_sf(coords = c(&quot;X.x&quot;, &quot;Y.x&quot;), crs = st_crs(4326)) %&gt;%
   st_transform(st_crs(32615))
   
+# Count the observations per grid cell
 IspH &lt;- HexMap(BorderHex, Points = InterSp_sp)
 
+# make the figure
 ggplot(IspH, aes(fill = N)) +
   geom_sf() +
   scale_fill_gradient(low=&quot;white&quot;, high=&quot;gold3&quot;) +
@@ -543,41 +550,30 @@ ggplot(IspH, aes(fill = N)) +
 </div>
 <div id="creating-the-network" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> Creating the network:</h2>
-<pre class="r"><code># Libraries we will use:
-library(igraph)
-library(scales)
-# Create the network:
-G1 &lt;- graph_from_data_frame(Edges[c(&quot;Var1&quot;, &quot;Var2&quot;)], vertices = Nodes, directed = F)
-# Create a variable to count the number of contact:
-E(G1)$w &lt;- 1
-# Simplifying the network:
-G1s &lt;- simplify(G1, # Name of the network
-                remove.multiple = T, # Remove multiple contacts
-                edge.attr.comb = list(w = &quot;sum&quot;)) # Function to do with the multiple contacts
+<pre class="r"><code># Create the network:
+G1 &lt;- as_tbl_graph(Edges[c(&quot;Var1&quot;, &quot;Var2&quot;)], directed = F) %N&gt;% 
+  mutate(degree = centrality_degree()) %&gt;% 
+  left_join(Nodes, by = c(&#39;name&#39; = &#39;CollarID&#39;)) %E&gt;%
+  mutate(N = as.integer(1)) %&gt;% # Create a variable to count the number of contact:
+  convert(to_simple) %E&gt;%  # now we will convert it to a simple network
+  mutate(weight = map_int(.orig_data, ~.x %&gt;% pull(N) %&gt;% sum()))  # We have to sum all the repeated movements
 
-# calculate the degree (since its not directed we can not define indegree or outdegree)
-V(G1)$degree &lt;- degree(G1, mode = &quot;all&quot;)
-
-plot(G1s, 
-     edge.color = alpha(&quot;black&quot;, rescale(E(G1s)$w, c(0.01, 1))), # use number of contacts for transparency
-     layout = layout_with_kk, 
-     vertex.label = NA, 
-     vertex.size = rescale(V(G1)$degree, c(1, 15)))</code></pre>
+ggraph(graph = G1) +
+  geom_edge_link(aes(alpha = weight)) +
+  geom_node_point(aes(size = degree), col = &#39;darkred&#39;) +
+  scale_size(range = c(0.3, 10)) +
+  theme_void()</code></pre>
 <p><img src="Lab3_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
 <div id="networks-by-species" class="section level2" number="3.4">
 <h2><span class="header-section-number">3.4</span> Networks by species:</h2>
-<p>To create a subset of our network we can use the function <code>induced_graph</code>, where we need to specify the network that we will extract from and the ids of the nodes, for this we use the function <code>which()</code> and specify that we watn the deer only.</p>
-<pre class="r"><code>VIDs &lt;- which(V(G1)$species_type == &quot;deer&quot;)
-DeerG &lt;- induced_subgraph(graph = G1s, vids = VIDs)
-
-
-plot(DeerG, 
-     edge.color = alpha(&quot;black&quot;, rescale(E(DeerG)$w, c(0.01, 1))),
-     layout = layout_with_kk, 
-     vertex.label = NA, 
-     vertex.size = rescale(V(G1)$degree[VIDs], c(1, 15)), 
-     vertex.color = &quot;darkgreen&quot;)</code></pre>
+<p>We can filter the nodes based on the species type to create a figure of only one species type.</p>
+<pre class="r"><code>G1 %N&gt;% 
+  filter(species_type == &#39;cattle&#39;) %&gt;% 
+  ggraph() +
+  geom_edge_link(aes(alpha = weight)) +
+  geom_node_point(aes(size = degree), col = &#39;darkgreen&#39;) +
+  theme_void()</code></pre>
 <p><img src="Lab3_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <p><strong>Exercise:</strong> create the network for the other 2 species</p>
 <hr />
