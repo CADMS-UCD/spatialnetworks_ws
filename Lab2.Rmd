@@ -72,32 +72,32 @@ ggarrange(plotlist = CP)
 *Excercise: * Now increase the number of steps in the walk trap algorithm, what happens when we increase the number of steps? What do you think would be the optimal number of steps for this example
 
 ```{r eval=FALSE, include=FALSE}
-# c <- c %N>% 
-#   mutate(walktrap10 = factor(group_walktrap(weights = weight, steps = 10)),
-#          walktrap15 = factor(group_walktrap(weights = weight, steps = 15)),
-#          walktrap20 = factor(group_walktrap(weights = weight, steps = 20)))
-# 
-# # Make a plot for the edges only
-# pc <- c %>% # our simplified network
-#   ggraph(layout = 'nicely') + # call the ggraph function
-#   geom_edge_link() + # add the edges
-#   theme(legend.position = 'bottom') # set the legend position to bottom
-# 
-# 
-# # Increase the number of steps until no more groups are created
-# CP[['Walktrap10']] <- pc +
-#   geom_node_point(aes(col = walktrap10), size = 2) +
-#   labs(title = 'Walktrap 10 steps') 
-# 
-# CP[['Walktrap15']] <- pc +
-#   geom_node_point(aes(col = walktrap15), size = 2) +
-#   labs(title = 'Walktrap 15 steps')
-# 
-# CP[['Walktrap20']] <-pc +
-#   geom_node_point(aes(col = walktrap20), size = 2) +
-#   labs(title = 'Walktrap 20 steps') 
-# 
-# ggarrange(plotlist = CP[-1])
+c <- c %N>%
+  mutate(walktrap10 = factor(group_walktrap(weights = weight, steps = 10)),
+         walktrap15 = factor(group_walktrap(weights = weight, steps = 15)),
+         walktrap20 = factor(group_walktrap(weights = weight, steps = 20)))
+
+# Make a plot for the edges only
+pc <- c %>% # our simplified network
+  ggraph(layout = 'nicely') + # call the ggraph function
+  geom_edge_link() + # add the edges
+  theme(legend.position = 'bottom') # set the legend position to bottom
+
+
+# Increase the number of steps until no more groups are created
+CP[['Walktrap10']] <- pc +
+  geom_node_point(aes(col = walktrap10), size = 2) +
+  labs(title = 'Walktrap 10 steps')
+
+CP[['Walktrap15']] <- pc +
+  geom_node_point(aes(col = walktrap15), size = 2) +
+  labs(title = 'Walktrap 15 steps')
+
+CP[['Walktrap20']] <-pc +
+  geom_node_point(aes(col = walktrap20), size = 2) +
+  labs(title = 'Walktrap 20 steps')
+
+ggarrange(plotlist = CP[-1])
 ```
 
 # Spatial representation of the network

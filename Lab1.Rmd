@@ -244,6 +244,7 @@ Now we will add the network statistics to the data.frame and export the objects 
 
 ```{r eval = F}
 # we can export the network as a RDS object using the package readr
+
 readr::write_rds(net, "Data/Outputs/net.rds")
 # We will also export the edges with the distance and coordinates
 write.csv(edge, "Data/Outputs/edge.csv", row.names = F)
