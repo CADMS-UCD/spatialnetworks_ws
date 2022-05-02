@@ -24,7 +24,7 @@ edge <- read.csv("Data/Outputs/edge.csv") # Loading the edges
 # libraries we will use.
 library(dplyr) # Data manipulation
 library(sf) # Spatial data manipulation
-library(tidygraph) # Network manipulation and analyisis
+library(tidygraph) # Network manipulation and analysis
 library(purrr) # for data manipulation
 library(ggraph) # for network visualization
 library(ggpubr) # for arranging plots
