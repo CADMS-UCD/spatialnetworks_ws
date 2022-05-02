@@ -55,7 +55,8 @@ ________________________________________________________________________________
 
 ## Other Links
   
-  - [Shared folder](https://ucdavis.box.com/s/hps8jk0s06inp5b83n5y14ddnoae64qz), we will use this folder to provide some workshop materials such as code, data, or other resources
+  - [Shared folder](https://ucdavis.box.com/s/hps8jk0s06inp5b83n5y14ddnoae64qz), we will use this folder to provide some workshop materials such as code, data, or other resources.  
+  - [visNetwork](https://datastorm-open.github.io/visNetwork/), package for interactive network visualization.  
   
 ### Recommended reading
   
@@ -97,10 +98,10 @@ ________________________________________________________________________________
   
 _________________________________
 
-<!-- # Post workshop survey -->
+# Post workshop survey
 
 <!-- ICAHS -->
-<!-- We would appreciate if you take a minute to fill a quick anonymous survey for feedback. To go to the survey follow [THIS LINK](Survey.html) -->
+We would appreciate if you take a minute to fill a quick anonymous survey for feedback. To go to the survey follow [THIS LINK](Survey.html)
 <!-- https://forms.gle/2NLzs7vLYUdumYjT9 -->
 
 <!-- NIFNAF -->
