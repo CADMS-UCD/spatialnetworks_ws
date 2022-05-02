@@ -3,4 +3,4 @@ title: "Post workshop survey"
 output: html_document
 ---
 
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfW1wgPuEaQ3nYKtupiK4RRJ_1tHLcDCqhqMuPtChYUqkUzRg/viewform?embedded=true" width="640" height="2675" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfW1wgPuEaQ3nYKtupiK4RRJ_1tHLcDCqhqMuPtChYUqkUzRg/viewform?embedded=true" width="750" height="2675" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
