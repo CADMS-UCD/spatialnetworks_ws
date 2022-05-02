@@ -261,4 +261,23 @@ plotly::ggplotly(p)
 
 ggplot and tmap have more personalization options that will not be covered in this tutorial. For more plotting information i recommend the [R Graph Gallery](https://www.r-graph-gallery.com) which has several examples and code for making different types of plots
 
+# Getting data for other countries/regions
+
+One of the easiest ways to get data from other countries or regions is downloading directly from R using the `raster` library. For example, we will get a shapefile for Denmark. The data will be downloaded in your computer and store in your project directory. Once downloaded you can just load it directly from your computer without internet connectiom with the function `read_sf`.
+
+```{r}
+DK <- raster::getData(name = 'GADM', # this is the data source
+                      level = 1, # Level of administration
+                      country = 'DK') %>%  # country code
+  st_as_sf() # Now transform the data to sf
+
+# the dataset can be quite detailed, so we can simplify it to make it easier to plot
+DK <- rmapshaper::ms_simplify(DK)
+
+# Plot the map
+ggplot() +
+  geom_sf(data = DK)
+```
+
+
 [Go Back](index.html)
