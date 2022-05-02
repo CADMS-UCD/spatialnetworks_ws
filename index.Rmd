@@ -97,5 +97,10 @@ ________________________________________________________________________________
   
 _________________________________
 
-<!-- # Post workshop survey -->
+# Post workshop survey
+
+<!-- ICAHS -->
+We would appreciate if you take a minute to fill a quick anonymous survey for feedback. To go to the survey follow [THIS LINK](Survey.html)
+
+<!-- NIFNAF -->
 <!-- We would appreciate if you take a minute to fill a quick anonymous survey for feedback. To go to the survey follow [THIS LINK](https://ucdavis.co1.qualtrics.com/jfe/form/SV_40oI9hjyLzb4W0K) -->
