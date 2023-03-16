@@ -13,7 +13,7 @@
 
 <title>Lab 4</title>
 
-<script src="site_libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -146,11 +146,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -179,8 +183,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -188,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -388,7 +385,8 @@ div.tocify {
 </div>
 
 
-<p>Let’s start by importing the data for edges, node attributes, and the shapefile of the area of study.</p>
+<p>Let’s start by importing the data for edges, node attributes, and the
+shapefile of the area of study.</p>
 <pre class="r"><code>colpal &lt;- RColorBrewer::brewer.pal(4, &quot;Dark2&quot;)
 
 library(dplyr)
@@ -400,9 +398,15 @@ node_attrib &lt;- STNet::SwinePrem %&gt;%
   mutate(idch = as.character(id)) # Format id as character to use it later
 # Load the spatial object
 IO &lt;- st_read(system.file(&quot;data/Io.shp&quot;, package = &quot;STNet&quot;), quiet = T)</code></pre>
-<div id="introduction-to-dynamic-networks" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Introduction to dynamic networks</h1>
-<p>The <code>networkDynamic</code> package has functions that allow to analyze and visualize a network and incorporate temporality to it. To incorporate a temporal window, we need to specify the start time (onset) and end time (termini). For the purposes of this example we will assume that the contact time is one week.</p>
+<div id="introduction-to-dynamic-networks" class="section level1"
+number="1">
+<h1><span class="header-section-number">1</span> Introduction to dynamic
+networks</h1>
+<p>The <code>networkDynamic</code> package has functions that allow to
+analyze and visualize a network and incorporate temporality to it. To
+incorporate a temporal window, we need to specify the start time (onset)
+and end time (termini). For the purposes of this example we will assume
+that the contact time is one week.</p>
 <pre class="r"><code># Load libraries
 ## For dynamic networks
 library(networkDynamic)
@@ -414,7 +418,12 @@ net &lt;- net %&gt;%
   mutate(date = as.Date(date, format = &#39;%m/%d/%y&#39;), # Format the variable as date:
          year = as.numeric(strftime(date,format = &quot;%Y&quot;)), # Create a new variable for year from the date
          w = as.numeric(strftime(date,format = &quot;%V&quot;))) # Create a new variable to show the week of the year</code></pre>
-<p>In this analysis we will use a one week resolution. Since we have no information on the duration of the contact, we will assume that the duration is one week. As we have multiple years, we need to number the weeks from the first week in which we have data to the last week with data. For this, we will use an offset that will add 53 weeks or 106 depending on the year.</p>
+<p>In this analysis we will use a one week resolution. Since we have no
+information on the duration of the contact, we will assume that the
+duration is one week. As we have multiple years, we need to number the
+weeks from the first week in which we have data to the last week with
+data. For this, we will use an offset that will add 53 weeks or 106
+depending on the year.</p>
 <pre class="r"><code># Create the onset starting from 2015, 
 # Use ifelse inside another ifelse to determinate the offset
 net$w_onset&lt;-as.numeric(ifelse(net$year==2015 #First condition
@@ -425,7 +434,14 @@ net$w_onset&lt;-as.numeric(ifelse(net$year==2015 #First condition
 
 # Now we state that the duration of the contact is one week 
 net$w_termini&lt;-net$w_onset+1</code></pre>
-<p>Now we will create a dynamic network with this information. The <code>networkDynamic</code> function is able to reproduce the data in different formats. Here we will use a <code>data.frame</code> format. The function will read the data and will expect a list of variables following this order: <code>head</code>, <code>tail</code>, <code>onset</code> and <code>termini</code>, where: <code>head</code> = Origins. <code>tail</code> = Destination. <code>onset</code> = Start of contact. <code>termini</code> = End of contact.</p>
+<p>Now we will create a dynamic network with this information. The
+<code>networkDynamic</code> function is able to reproduce the data in
+different formats. Here we will use a <code>data.frame</code> format.
+The function will read the data and will expect a list of variables
+following this order: <code>head</code>, <code>tail</code>,
+<code>onset</code> and <code>termini</code>, where: <code>head</code> =
+Origins. <code>tail</code> = Destination. <code>onset</code> = Start of
+contact. <code>termini</code> = End of contact.</p>
 <pre class="r"><code>n1 &lt;- networkDynamic(edge.spells = net[c(&quot;w_onset&quot;, &quot;w_termini&quot;, &quot;id_dest&quot;, &quot;id_orig&quot;)])</code></pre>
 <pre><code>## Initializing base.net of size 40 imputed from maximum vertex id in edge records
 ## Created net.obs.period to describe network
@@ -435,7 +451,16 @@ net$w_termini&lt;-net$w_onset+1</code></pre>
 ##   Temporal mode: continuous 
 ##   Time unit: unknown 
 ##   Suggested time increment: NA</code></pre>
-<p>Now we can add attributes to the data. These attributes can be static or change during the period. <strong>Note:</strong> the functions <code>set.edge.attribute()</code> and <code>set.vertex.attribute()</code> from the package network can be masked by other functions with the same name that are present in other packages, such as the <code>igraph</code> package. If we have already loaded these other packages with functions in conflict, we will need to specify which package contains the function that we want to use to prevent wrong calls (i.e. by typing <code>network::set.edge.attribute()</code>).</p>
+<p>Now we can add attributes to the data. These attributes can be static
+or change during the period. <strong>Note:</strong> the functions
+<code>set.edge.attribute()</code> and
+<code>set.vertex.attribute()</code> from the package network can be
+masked by other functions with the same name that are present in other
+packages, such as the <code>igraph</code> package. If we have already
+loaded these other packages with functions in conflict, we will need to
+specify which package contains the function that we want to use to
+prevent wrong calls (i.e. by typing
+<code>network::set.edge.attribute()</code>).</p>
 <pre class="r"><code>set.edge.attribute(n1, #Name of the network
                    &quot;pigs.moved&quot;,  # Name of the attribute
                    net$pigs.moved) # Values</code></pre>
@@ -444,7 +469,8 @@ net$w_termini&lt;-net$w_onset+1</code></pre>
 set.vertex.attribute(n1,&quot;lat&quot;,node_attrib$lat)
 set.vertex.attribute(n1,&quot;long&quot;,node_attrib$long)
 set.vertex.attribute(n1,&quot;type&quot;,as.character(node_attrib$farm_type))</code></pre>
-<p>Once we have the node attributes, we can print them by calling the <code>networkDynamic</code> object that we have just created</p>
+<p>Once we have the node attributes, we can print them by calling the
+<code>networkDynamic</code> object that we have just created</p>
 <pre class="r"><code>n1</code></pre>
 <pre><code>## NetworkDynamic properties:
 ##   distinct change times: 51 
@@ -475,13 +501,15 @@ set.vertex.attribute(n1,&quot;type&quot;,as.character(node_attrib$farm_type))</c
 ## 
 ##  Edge attribute names: 
 ##     active pigs.moved</code></pre>
-<p>This object summarizes the network including the period and number of vertices and edges</p>
+<p>This object summarizes the network including the period and number of
+vertices and edges</p>
 <pre class="r"><code>list.edge.attributes(n1)</code></pre>
 <pre><code>## [1] &quot;active&quot;     &quot;na&quot;         &quot;pigs.moved&quot;</code></pre>
 <pre class="r"><code>list.vertex.attributes(n1)</code></pre>
 <pre><code>## [1] &quot;lat&quot;          &quot;long&quot;         &quot;na&quot;           &quot;name&quot;         &quot;type&quot;        
 ## [6] &quot;vertex.names&quot;</code></pre>
-<p>If we want to see the values of these attributes, we can use <code>get.vertex.attribute()</code>:</p>
+<p>If we want to see the values of these attributes, we can use
+<code>get.vertex.attribute()</code>:</p>
 <pre class="r"><code>get.vertex.attribute(n1, &quot;vertex.names&quot;)</code></pre>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
 ## [26] 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40</code></pre>
@@ -493,7 +521,9 @@ set.vertex.attribute(n1,&quot;type&quot;,as.character(node_attrib$farm_type))</c
 ## [25] &quot;GDU&quot;       &quot;sow farm&quot;  &quot;nursery&quot;   &quot;nursery&quot;   &quot;nursery&quot;   &quot;nursery&quot;  
 ## [31] &quot;GDU&quot;       &quot;boar stud&quot; &quot;sow farm&quot;  &quot;sow farm&quot;  &quot;sow farm&quot;  &quot;sow farm&quot; 
 ## [37] &quot;sow farm&quot;  &quot;sow farm&quot;  &quot;sow farm&quot;  &quot;sow farm&quot;</code></pre>
-<p>We can also obtain more information of the network, such as the activity by using <code>get.vertex.activity()</code> or <code>get.edge.activity()</code></p>
+<p>We can also obtain more information of the network, such as the
+activity by using <code>get.vertex.activity()</code> or
+<code>get.edge.activity()</code></p>
 <pre class="r"><code>summary(get.vertex.activity(n1, as.spellList=TRUE))</code></pre>
 <pre><code>##      onset       terminus    vertex.id     onset.censored terminus.censored
 ##  Min.   :31   Min.   :93   Min.   : 1.00   Mode:logical   Mode:logical     
@@ -526,28 +556,46 @@ set.vertex.attribute(n1,&quot;type&quot;,as.character(node_attrib$farm_type))</c
 ##                                    Max.   :9.00   Max.   :86.00</code></pre>
 </div>
 <div id="temporal-statistics" class="section level1" number="2">
-<h1><span class="header-section-number">2</span> Temporal statistics</h1>
-<p>We can evaluate several measures at the graph level, vertex level or traces of the period of study of our network using the function <code>tSnaStats()</code>.</p>
-<p>This function uses arguments to include the <code>networkDynamic</code> object that we have created and to specify the function with the desired statistic that we want to apply (through the argument “snafun=”). For example, if we want to calculate the density of the network in different periods, we will do this:</p>
+<h1><span class="header-section-number">2</span> Temporal
+statistics</h1>
+<p>We can evaluate several measures at the graph level, vertex level or
+traces of the period of study of our network using the function
+<code>tSnaStats()</code>.</p>
+<p>This function uses arguments to include the
+<code>networkDynamic</code> object that we have created and to specify
+the function with the desired statistic that we want to apply (through
+the argument “snafun=”). For example, if we want to calculate the
+density of the network in different periods, we will do this:</p>
 <pre class="r"><code>tSnaStats(n1, snafun = &quot;gden&quot;) %&gt;% # &quot;gden&quot; to show graph density
   plot(col = colpal[2], lwd = 2, main = &quot;Network density during the study period&quot;)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
-<p>In the previous plot we can see that the activity of movements is bigger at the beginning of the time series and slowly decreases over time until reaching approximately zero.</p>
-<p>The function <code>tSnaStats()</code> also allows us to use arguments to define specific periods of time from which we want to calculate the statistics</p>
+<p>In the previous plot we can see that the activity of movements is
+bigger at the beginning of the time series and slowly decreases over
+time until reaching approximately zero.</p>
+<p>The function <code>tSnaStats()</code> also allows us to use arguments
+to define specific periods of time from which we want to calculate the
+statistics</p>
 <pre class="r"><code>tSnaStats(n1, snafun = &quot;grecip&quot;, start = 30, end = 60) %&gt;% 
   plot(main = &quot;Network Reciprocity during the interval 30-60&quot;, col = colpal[3], lwd = 2)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
-<p>We can also see node-level statistics (e.g. betweenness) using the next function.</p>
+<p>We can also see node-level statistics (e.g. betweenness) using the
+next function.</p>
 <pre class="r"><code>apply(tSnaStats(n1, snafun = &quot;betweenness&quot;), 1, mean) %&gt;% 
   plot(type = &quot;l&quot;, lwd = 2, col = colpal[4])</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 <div id="plotting-the-network" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Plotting the network</h1>
-<p>We can use the function <code>plot()</code> to see the network object, but we can only see the static network because we are not defining any time interval</p>
+<h1><span class="header-section-number">3</span> Plotting the
+network</h1>
+<p>We can use the function <code>plot()</code> to see the network
+object, but we can only see the static network because we are not
+defining any time interval</p>
 <pre class="r"><code>plot(n1,mode=&quot;kamadakawai&quot;) </code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>If we want to see a specific period of time, we need to define it. For this, we can use the function <code>network.extract()</code> to extract a specific period in the network and then use <code>plot()</code> to show this extract.</p>
+<p>If we want to see a specific period of time, we need to define it.
+For this, we can use the function <code>network.extract()</code> to
+extract a specific period in the network and then use
+<code>plot()</code> to show this extract.</p>
 <pre class="r"><code># Plot an interval of time
 n1 %&gt;% 
   network.extract(onset = 1, terminus = 60) %&gt;%
@@ -560,10 +608,10 @@ n1 %&gt;%
 <p><img src="Lab4_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <p>Now we are going to create a plot with multiple periods of time</p>
 <pre class="r"><code># First we create a function to plot the network extract we want:
-plot.extract &lt;- function(n, onset, terminus){
+plot.extract &lt;- function(n, onset, terminus, displayisolates = T){
   n %&gt;% # The input network
     network.extract(onset = onset, terminus = terminus) %&gt;% #Extract the time interval
-    plot(vertex.cex = 1.5, main = paste0(&quot;t&quot;, onset, &quot;-&quot;, &quot;t&quot;, terminus)) #Plot the network
+    plot(vertex.cex = 1.5, main = paste0(&quot;t&quot;, onset, &quot;-&quot;, &quot;t&quot;, terminus), displayisolates = displayisolates) #Plot the network
 }
 
 # Then we define out time intervals
@@ -575,7 +623,22 @@ for(i in O){
   plot.extract(n1, onset = i, terminus = i + 10)
 }</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
-<p>We can use different layouts to plot the extracts of the network. Now, we are going to plot the nodes in their spatial location. For this, we will have to make a little modification of our previous function so we can add the coordinates.</p>
+<p>We can also use remove the isolates from our visualization to
+highlight the active nodes, since the last time step (t95-105) had no
+edges, we will omit this from out time series:</p>
+<pre class="r"><code># Then we define out time intervals
+O &lt;- seq(from = 25, to = 85, by = 10)
+# We set the layout we want for the plot:
+par(mfrow = c(2,4), mar = c(0,0,1,0))
+# We use a for loop to plot the network at the defined time intervals.
+for(i in O){
+  plot.extract(n1, onset = i, terminus = i + 10, displayisolates = F) # Notice we added the argument displayisolates = F to remove the isolates
+}</code></pre>
+<p><img src="Lab4_files/figure-html/Removing%20isolates-1.png" width="672" /></p>
+<p>We can use different layouts to plot the extracts of the network.
+Now, we are going to plot the nodes in their spatial location. For this,
+we will have to make a little modification of our previous function so
+we can add the coordinates.</p>
 <pre class="r"><code># We set fixed coordinates from the longitude and latitude
 a &lt;- as.matrix(node_attrib[, c(&quot;long&quot;, &quot;lat&quot;)])
 
@@ -598,18 +661,27 @@ for(i in O){
 <p><img src="Lab4_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 </div>
 <div id="temporally-reachable-sets" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Temporally reachable sets</h1>
-<p>The reachability of a farm help us to identify important nodes in the network that may have a key role in the disease spread. Forward reachability (“fwd”) refers to all the nodes than can be reached from a given node <span class="math inline">\(v_i\)</span> and backward reachability (“bkwd”) refers to those nodes that reach a given node <span class="math inline">\(v_i\)</span>. We can visualize the distribution of the forward and backward reachability using boxplots</p>
+<h1><span class="header-section-number">4</span> Temporally reachable
+sets</h1>
+<p>The reachability of a farm help us to identify important nodes in the
+network that may have a key role in the disease spread. Forward
+reachability (“fwd”) refers to all the nodes than can be reached from a
+given node <span class="math inline">\(v_i\)</span> and backward
+reachability (“bkwd”) refers to those nodes that reach a given node
+<span class="math inline">\(v_i\)</span>. We can visualize the
+distribution of the forward and backward reachability using boxplots</p>
 <pre class="r"><code>fwd &lt;- tReach(n1, &quot;fwd&quot;)
 bwd &lt;- tReach(n1, &quot;bkwd&quot;)
 par(mar=c(2,4,2,2))
 boxplot(fwd, bwd, col = &quot;lightgreen&quot;, horizontal = T, yaxt = &#39;n&#39;, main = &quot;Reachability of farms&quot;)
 axis(2, at = c(1,2), labels = c(&quot;Fwd&quot;, &quot;Bwd&quot;), las=2, lty = 0)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
-<p>We can also use a dot plot to explore whether any interesting relationship between both types of reachability exists.</p>
+<p>We can also use a dot plot to explore whether any interesting
+relationship between both types of reachability exists.</p>
 <pre class="r"><code>plot(fwd, bwd, xlab = &quot;Fwd&quot;, ylab = &quot;Bwd&quot;, pch = 16, col = rgb(0, 155, 50, max=255, alpha=100))</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
-<p>Now, let’s have a look at the farms with the highest forward reachability:</p>
+<p>Now, let’s have a look at the farms with the highest forward
+reachability:</p>
 <pre class="r"><code>data.frame(id = 1:length(fwd), fwd, bwd) %&gt;% 
   arrange(desc(fwd)) %&gt;% 
   head(10)</code></pre>
@@ -624,23 +696,33 @@ axis(2, at = c(1,2), labels = c(&quot;Fwd&quot;, &quot;Bwd&quot;), las=2, lty = 
 ## 8   1  13  12
 ## 9  19  13  15
 ## 10 26  13   1</code></pre>
-<p>It looks like node (“id”) 7 presents the highest number of reachable farms.</p>
-<p>We can visualize the reachable set using the functions <code>tpath</code> and <code>transmissionTimeline</code>. Both of them provide the node id and the time when the contact happened. The first function allow us to visualize the nodes spatially and the second one shows them in a nice timeline. Let’s start with the first one.</p>
+<p>It looks like node (“id”) 7 presents the highest number of reachable
+farms.</p>
+<p>We can visualize the reachable set using the functions
+<code>tpath</code> and <code>transmissionTimeline</code>. Both of them
+provide the node id and the time when the contact happened. The first
+function allow us to visualize the nodes spatially and the second one
+shows them in a nice timeline. Let’s start with the first one.</p>
 <pre class="r"><code>P17 &lt;- tPath(n1, 17, direction = &quot;fwd&quot;)
 plot(P17)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 <p>We can also visualize the paths in the full network.</p>
 <pre class="r"><code>plotPaths(n1, P17, vertex.col = colpal[1], label.cex = 0.5, vertex.cex = 2)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
-<p>A better way to visualize the paths trough the time period is using the function <code>transmissionTimeline()</code>. In this visualization, the x axis represents the time when the event happened and the y axis represents the generation or steps that happened to reach that node</p>
+<p>A better way to visualize the paths trough the time period is using
+the function <code>transmissionTimeline()</code>. In this visualization,
+the x axis represents the time when the event happened and the y axis
+represents the generation or steps that happened to reach that node</p>
 <pre class="r"><code>transmissionTimeline(P17,jitter=T,
           main=&#39;Earliest forward path from vertex 17&#39;)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
-<p>We can also see the backward reachability, which represents the set of nodes that reach a specific node over a time period.</p>
+<p>We can also see the backward reachability, which represents the set
+of nodes that reach a specific node over a time period.</p>
 <pre class="r"><code>P17 &lt;- tPath(n1, 17, direction = &quot;bkwd&quot;, type = &quot;latest.depart&quot;)
 plot(P17, edge.col = colpal[3])</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
-<p>Now we will create a function to show the paths in a spatial and non-spatial plot.</p>
+<p>Now we will create a function to show the paths in a spatial and
+non-spatial plot.</p>
 <pre class="r"><code>MaPaths &lt;- function(Net, v, direction, Pts, coords, BG){
   # Settings for the visualization arrangement:
   par(mfrow = c(1,2), oma = c(0, 0, 2, 0), mar = c(1, 1, 1, 1))
@@ -661,18 +743,26 @@ plot(P17, edge.col = colpal[3])</code></pre>
 
 MaPaths(Net = n1, v = 17, direction = &quot;fwd&quot;, Pts = node_attrib, coords = a, BG = IO$geometry)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
-<p>Another way to visualize the network activity is to show the time points when each of the nodes was active. In the following plot, the upper part represents the presence of the node in the network and the lower part represents the activity of the node in the network.</p>
+<p>Another way to visualize the network activity is to show the time
+points when each of the nodes was active. In the following plot, the
+upper part represents the presence of the node in the network and the
+lower part represents the activity of the node in the network.</p>
 <pre class="r"><code>timeline(n1)</code></pre>
 <p><img src="Lab4_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 </div>
 <div id="animations" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Animations</h1>
-<p>We can also create animations to show the evolution of the contact patterns over time using the function <code>render.d3movie()</code>. First we will use the function <code>compute.animation()</code> to set the layout and time frame for the animation.</p>
+<p>We can also create animations to show the evolution of the contact
+patterns over time using the function <code>render.d3movie()</code>.
+First we will use the function <code>compute.animation()</code> to set
+the layout and time frame for the animation.</p>
 <pre class="r"><code>render.d3movie(n1,
                displaylabels=F, 
                launchBrowser = T, 
                vertex.cex = scales::rescale(degree(n1), to = c(1, 5)), filename = &quot;Animation01.html&quot;) </code></pre>
-<p>If we would like to take specific frames for the animation, we can show them stacked in a plot using the function <code>timePrism()</code>. This visualization method works better for small networks.</p>
+<p>If we would like to take specific frames for the animation, we can
+show them stacked in a plot using the function <code>timePrism()</code>.
+This visualization method works better for small networks.</p>
 <pre class="r"><code># Define the intervals
 compute.animation(n1, animation.mode = &quot;kamadakawai&quot;,
                   slice.par=list(start=30, end=100, interval=1, 

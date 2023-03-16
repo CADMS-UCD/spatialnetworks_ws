@@ -183,10 +183,10 @@ Now we are going to create a plot with multiple periods of time
 
 ```{r}
 # First we create a function to plot the network extract we want:
-plot.extract <- function(n, onset, terminus){
+plot.extract <- function(n, onset, terminus, displayisolates = T){
   n %>% # The input network
     network.extract(onset = onset, terminus = terminus) %>% #Extract the time interval
-    plot(vertex.cex = 1.5, main = paste0("t", onset, "-", "t", terminus)) #Plot the network
+    plot(vertex.cex = 1.5, main = paste0("t", onset, "-", "t", terminus), displayisolates = displayisolates) #Plot the network
 }
 
 # Then we define out time intervals
@@ -198,6 +198,21 @@ for(i in O){
   plot.extract(n1, onset = i, terminus = i + 10)
 }
 ```
+
+We can also use remove the isolates from our visualization to highlight the active nodes, since the last time step (t95-105) had no edges, we will omit this from out time series:
+
+```{r Removing isolates}
+# Then we define out time intervals
+O <- seq(from = 25, to = 85, by = 10)
+# We set the layout we want for the plot:
+par(mfrow = c(2,4), mar = c(0,0,1,0))
+# We use a for loop to plot the network at the defined time intervals.
+for(i in O){
+  plot.extract(n1, onset = i, terminus = i + 10, displayisolates = F) # Notice we added the argument displayisolates = F to remove the isolates
+}
+```
+
+
 
 We can use different layouts to plot the extracts of the network.
 Now, we are going to plot the nodes in their spatial location. For this, we will have to make a little modification of our previous function so we can add the coordinates.
