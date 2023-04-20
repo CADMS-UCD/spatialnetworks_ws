@@ -13,7 +13,7 @@
 
 <title>Home</title>
 
-<script src="site_libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -146,11 +146,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -179,8 +183,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -188,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -391,20 +388,43 @@ div.tocify {
 <p><img src ="Images/cadms-left.png" style="width:50%;position:center"></p>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Most of infectious diseases are transmitted via direct contacts, therefore, animal trade and other contacts between animals play an essential role in the disease spread.<br />
-Social network analysis (SNA) is a powerful tool to explore the interactions between agents in a contact network and obtain additional information regarding the structure and dynamic of a community. The agents or nodes could be defined as the farms that belong to a trade network, wildlife animals tracked by GPS collars, or animals observed in a group. Using SNA methodologies we can identify individuals that could have a bigger role in disease spread when a disease is introduced into the community.</p>
-<p>In this workshop we will use data regarding the movement of production animals in a contact network to demonstrate the applications of spatio-temporal network analysis. These methodologies can be applied to other settings such as wildlife monitoring, or to explore hierarchical relationships between animal groups, among others. The first part of the workshop will focus on the description of static networks and the second part will be using dynamic network analysis, which includes temporal dynamics of the movements. Both parts will also include the spatial component.</p>
-<p>This workshop is aimed for students, researchers and other people interested in disease transmission and population dynamics.</p>
+<p>Most of infectious diseases are transmitted via direct contacts,
+therefore, animal trade and other contacts between animals play an
+essential role in the disease spread.<br />
+Social network analysis (SNA) is a powerful tool to explore the
+interactions between agents in a contact network and obtain additional
+information regarding the structure and dynamic of a community. The
+agents or nodes could be defined as the farms that belong to a trade
+network, wildlife animals tracked by GPS collars, or animals observed in
+a group. Using SNA methodologies we can identify individuals that could
+have a bigger role in disease spread when a disease is introduced into
+the community.</p>
+<p>In this workshop we will use data regarding the movement of
+production animals in a contact network to demonstrate the applications
+of spatio-temporal network analysis. These methodologies can be applied
+to other settings such as wildlife monitoring, or to explore
+hierarchical relationships between animal groups, among others. The
+first part of the workshop will focus on the description of static
+networks and the second part will be using dynamic network analysis,
+which includes temporal dynamics of the movements. Both parts will also
+include the spatial component.</p>
+<p>This workshop is aimed for students, researchers and other people
+interested in disease transmission and population dynamics.</p>
 </div>
 <div id="objectives" class="section level1">
 <h1>Objectives</h1>
 <ul>
 <li>Analyze and describe static and dynamic networks.</li>
-<li>Advantages and disadvantages of static and dynamic networks and when we can use them.</li>
-<li>Incorporate the spatial relationships in the analysis of networks.</li>
-<li>Visualize and present networks using spatial and non spatial approaches.</li>
-<li>Incorporate the transmission and potential spread of diseases in a network.</li>
-<li>Incorporate the results from network analysis with other statistical methods.</li>
+<li>Advantages and disadvantages of static and dynamic networks and when
+we can use them.</li>
+<li>Incorporate the spatial relationships in the analysis of
+networks.</li>
+<li>Visualize and present networks using spatial and non spatial
+approaches.</li>
+<li>Incorporate the transmission and potential spread of diseases in a
+network.</li>
+<li>Incorporate the results from network analysis with other statistical
+methods.</li>
 </ul>
 </div>
 <div id="requisites" class="section level1">
@@ -414,19 +434,37 @@ Social network analysis (SNA) is a powerful tool to explore the interactions bet
 </li>
 <li>Software we will use:
 <ul>
-<li><a href="https://cloud.r-project.org/">R</a> and <a href="https://www.rstudio.com/products/rstudio/">R studio</a>.</li>
+<li><a href="https://cloud.r-project.org/">R</a> and <a
+href="https://www.rstudio.com/products/rstudio/">R studio</a>.</li>
 </ul></li>
 </ul>
 <p><strong>Please make sure you have R version &gt;3.5</strong></p>
 <hr />
+<p><em>This course has been developed with contributions from: <a
+href="https://www.spablo-temporal.network">Jose Pablo Gomez-Vazquez</a>,
+<a
+href="https://www.researchgate.net/profile/Jerome-Baron-2?_iepl%5Bcontexts%5D%5B0%5D=searchReact&amp;_iepl%5BinteractionType%5D=headerSearchResearcher&amp;_iepl%5Bposition%5D=1&amp;_iepl%5BrgKey%5D=AC%3A19976637&amp;_iepl%5Bquery%5D=jerome%20baron&amp;_sg%5B0%5D=h0qwByBH7jEA9pnkn57dm5DqgHcuF9RNJMTd-1Y79ltjmKk1-oUwMXIy0pcjRE2CnEYq1KdLptyRR6s54PsSQTvSojEvOpxGlpJjg6kuLhyfGh3pNjLchg.RUn0HdO-b7dyxeqozqlU1rJYELS8Vbv-3SOTmOVKfhG2vntyZ18MRQemx2xzjlKdofPhapNFbhW2HCVG1gGhtw&amp;_sg%5B1%5D=LN6moeDNOP7fMtM7A31LTwZ9q27yotxpXtAgTlLmDlxFCvXSd6qjzytmLHphEk7feO7YsBVeJEbTHCewI-A.RUn0HdO-b7dyxeqozqlU1rJYELS8Vbv-3SOTmOVKfhG2vntyZ18MRQemx2xzjlKdofPhapNFbhW2HCVG1gGhtw&amp;_sgd%5B2%20words%5D=1&amp;_sgd%5B10-20%20characters%5D=1">Jerome
+Baron</a> and <a
+href="https://cadms.vetmed.ucdavis.edu/about/director">Beatriz
+Martinez-Lopez</a>.<br />
+Feel free to use these training materials for your own research and
+teaching. When using the materials we would appreciate using the proper
+credits. If you would be interested in a training session, please
+contact: <a href="mailto:jpgo@ucdavis.edu"
+class="email">jpgo@ucdavis.edu</a> </em></p>
+<hr />
 <div id="data" class="section level2">
 <h2>Data</h2>
-<p>The data used for this workshop is contained in the package <code>STNet</code>. To install <code>STNet</code> we need the package <code>devtools</code> and use the command <code>devtools::install_github("jpablo91/STNet")</code>.</p>
+<p>The data used for this workshop is contained in the package
+<code>STNet</code>. To install <code>STNet</code> we need the package
+<code>devtools</code> and use the command
+<code>devtools::install_github("jpablo91/STNet")</code>.</p>
 <hr />
 </div>
 <div id="pre-workshop-materials" class="section level2">
 <h2>Pre-workshop materials</h2>
-<p>An introduction to R and spatial data can be found in the following links:</p>
+<p>An introduction to R and spatial data can be found in the following
+links:</p>
 <ul>
 <li><a href="Intro_to_R.html">Introduction to R</a></li>
 <li><a href="Spatial_intro">Spatial data in R</a></li>
@@ -436,17 +474,34 @@ Social network analysis (SNA) is a powerful tool to explore the interactions bet
 <div id="other-links" class="section level2">
 <h2>Other Links</h2>
 <ul>
-<li><a href="https://ucdavis.box.com/s/hps8jk0s06inp5b83n5y14ddnoae64qz">Shared folder</a>, we will use this folder to provide some workshop materials such as code, data, or other resources.<br />
+<li><a
+href="https://ucdavis.box.com/s/hps8jk0s06inp5b83n5y14ddnoae64qz">Shared
+folder</a>, we will use this folder to provide some workshop materials
+such as code, data, or other resources.<br />
 </li>
-<li><a href="https://datastorm-open.github.io/visNetwork/">visNetwork</a>, package for interactive network visualization.</li>
+<li><a
+href="https://datastorm-open.github.io/visNetwork/">visNetwork</a>,
+package for interactive network visualization.</li>
 </ul>
 <div id="recommended-reading" class="section level3">
 <h3>Recommended reading</h3>
 <ul>
-<li>Martínez-López B, Perez AM, Sánchez-Vizcaíno JM. Social network analysis. Review of general concepts and use in preventive veterinary medicine. Transbound Emerg Dis. 2009 May;56(4):109-20. doi: 10.1111/j.1865-1682.2009.01073.x. PMID: 19341388.</li>
-<li>Enright J, Kao RR. Epidemics on dynamic networks. Epidemics. 2018 Sep;24:88-97. doi: 10.1016/j.epidem.2018.04.003. Epub 2018 Apr 28. PMID: 29907403.</li>
-<li>Silk, M.J., Croft, D.P., Delahay, R.J., Hodgson, D.J., Weber, N., Boots, M. and McDonald, R.A. (2017), The application of statistical network models in disease research. Methods Ecol Evol, 8: 1026-1041. <a href="https://doi.org/10.1111/2041-210X.12770" class="uri">https://doi.org/10.1111/2041-210X.12770</a></li>
-<li>Farine, DR. When to choose dynamic vs. static social network analysis. J Anim Ecol. 2018; 87: 128– 138. <a href="https://doi.org/10.1111/1365-2656.12764" class="uri">https://doi.org/10.1111/1365-2656.12764</a></li>
+<li>Martínez-López B, Perez AM, Sánchez-Vizcaíno JM. Social network
+analysis. Review of general concepts and use in preventive veterinary
+medicine. Transbound Emerg Dis. 2009 May;56(4):109-20. doi:
+10.1111/j.1865-1682.2009.01073.x. PMID: 19341388.</li>
+<li>Enright J, Kao RR. Epidemics on dynamic networks. Epidemics. 2018
+Sep;24:88-97. doi: 10.1016/j.epidem.2018.04.003. Epub 2018 Apr 28. PMID:
+29907403.</li>
+<li>Silk, M.J., Croft, D.P., Delahay, R.J., Hodgson, D.J., Weber, N.,
+Boots, M. and McDonald, R.A. (2017), The application of statistical
+network models in disease research. Methods Ecol Evol, 8: 1026-1041. <a
+href="https://doi.org/10.1111/2041-210X.12770"
+class="uri">https://doi.org/10.1111/2041-210X.12770</a></li>
+<li>Farine, DR. When to choose dynamic vs. static social network
+analysis. J Anim Ecol. 2018; 87: 128– 138. <a
+href="https://doi.org/10.1111/1365-2656.12764"
+class="uri">https://doi.org/10.1111/1365-2656.12764</a></li>
 </ul>
 <hr />
 </div>
@@ -522,7 +577,10 @@ Social network analysis (SNA) is a powerful tool to explore the interactions bet
 <div id="post-workshop-survey" class="section level1">
 <h1>Post workshop survey</h1>
 <!-- ICAHS -->
-<p>We would appreciate if you take a minute to fill a quick anonymous survey for feedback. To go to the survey follow <a href="Survey.html">THIS LINK</a> <!-- https://forms.gle/2NLzs7vLYUdumYjT9 --></p>
+<p>We would appreciate if you take a minute to fill a quick anonymous
+survey for feedback. To go to the survey follow <a
+href="Survey.html">THIS LINK</a>
+<!-- https://forms.gle/2NLzs7vLYUdumYjT9 --></p>
 <!-- NIFNAF -->
 <!-- We would appreciate if you take a minute to fill a quick anonymous survey for feedback. To go to the survey follow [THIS LINK](https://ucdavis.co1.qualtrics.com/jfe/form/SV_40oI9hjyLzb4W0K) -->
 </div>

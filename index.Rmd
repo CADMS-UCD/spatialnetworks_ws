@@ -35,6 +35,11 @@ This workshop is aimed for students, researchers and other people interested in 
 **Please make sure you have R version >3.5**  
 
 ____________________________________________________________________________________________________________
+  
+*This course has been developed with contributions from: [Jose Pablo Gomez-Vazquez](https://www.spablo-temporal.network), [Jerome Baron](https://www.researchgate.net/profile/Jerome-Baron-2?_iepl%5Bcontexts%5D%5B0%5D=searchReact&_iepl%5BinteractionType%5D=headerSearchResearcher&_iepl%5Bposition%5D=1&_iepl%5BrgKey%5D=AC%3A19976637&_iepl%5Bquery%5D=jerome%20baron&_sg%5B0%5D=h0qwByBH7jEA9pnkn57dm5DqgHcuF9RNJMTd-1Y79ltjmKk1-oUwMXIy0pcjRE2CnEYq1KdLptyRR6s54PsSQTvSojEvOpxGlpJjg6kuLhyfGh3pNjLchg.RUn0HdO-b7dyxeqozqlU1rJYELS8Vbv-3SOTmOVKfhG2vntyZ18MRQemx2xzjlKdofPhapNFbhW2HCVG1gGhtw&_sg%5B1%5D=LN6moeDNOP7fMtM7A31LTwZ9q27yotxpXtAgTlLmDlxFCvXSd6qjzytmLHphEk7feO7YsBVeJEbTHCewI-A.RUn0HdO-b7dyxeqozqlU1rJYELS8Vbv-3SOTmOVKfhG2vntyZ18MRQemx2xzjlKdofPhapNFbhW2HCVG1gGhtw&_sgd%5B2%20words%5D=1&_sgd%5B10-20%20characters%5D=1) and [Beatriz Martinez-Lopez](https://cadms.vetmed.ucdavis.edu/about/director).  
+Feel free to use these training materials for your own research and teaching. When using the materials we would appreciate using the proper credits. If you would be interested in a training session, please contact: jpgo@ucdavis.edu  *
+
+____________________________________________________________________________________________________________
 
  
 ## Data
