@@ -21,6 +21,7 @@ First we will load the data and the libraries we will be using. Remember that on
 net <- readRDS("Data/Outputs/net.rds") # Loading the network object
 node <- read.csv("Data/Outputs/node.csv") # loading the nodes
 edge <- read.csv("Data/Outputs/edge.csv") # Loading the edges
+
 # libraries we will use.
 library(dplyr) # Data manipulation
 library(sf) # Spatial data manipulation
@@ -28,6 +29,28 @@ library(tidygraph) # Network manipulation and analysis
 library(purrr) # for data manipulation
 library(ggraph) # for network visualization
 library(ggpubr) # for arranging plots
+```
+
+
+```{r}
+Net <- edge %>% 
+  select(type_orig, type_dest) %>% 
+  as_tbl_graph() %N>% 
+  mutate(Degree = centrality_degree()) %E>% 
+  mutate(N = as.integer(1)) %>%  # create a variable for the number of movements (each row is 1 movement)
+  convert(to_simple) %E>%  # now we will convert it to a simple network
+  mutate(weight = map_int(.orig_data, ~.x %>% pull(N) %>% sum())) 
+
+Net %>% 
+  ggraph(layout = 'kk') + # call the ggraph function
+  geom_edge_link(aes(width = weight), colour = 'grey20', 
+                 arrow = arrow(angle = 35, length = unit(.4, 'cm'))) + # add the edges
+  geom_node_label(aes(label = name, size = Degree), 
+                  col = 'red4', fill = 'grey90', alpha = 0.8) +
+  scale_edge_width(range = c(0.5, 3.5)) + 
+  scale_size(range = c(3, 5)) +
+  Pabloverse::theme_print() +
+  theme(legend.position = 'none') # set the legend position to bottom
 ```
 
 
@@ -68,6 +91,17 @@ CP[['Walktrap']] <- pc +
 # We arrange our plots in a single figure
 ggarrange(plotlist = CP)
 ```
+
+```{r}
+c %N>% 
+  filter(walktrap == '4') %>% # filter for community
+  ggraph(layout = 'nicely') + # call the ggraph function
+  geom_edge_link() + # add the edges
+  geom_node_point(aes(col = walktrap), size = 2) + # we add the nodes
+  theme(legend.position = 'bottom') # set the legend position to bottom
+```
+
+
 
 *Excercise: * Now increase the number of steps in the walk trap algorithm, what happens when we increase the number of steps? What do you think would be the optimal number of steps for this example
 

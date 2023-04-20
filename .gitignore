@@ -2,7 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+
+.DS_Store
+
+misc/
+
 Data/
-ShinyApp/
-PDFs/old/
-PDFs/ppts/
